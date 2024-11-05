@@ -1,0 +1,1 @@
+INSERT INTO `jenis_pengguna` (`id_jenis_pengguna`, `nama_jenis_pengguna`) VALUES ('1', 'SuperAdmin'), ('2', 'Admin');
