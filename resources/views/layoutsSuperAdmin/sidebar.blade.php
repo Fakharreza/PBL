@@ -1,78 +1,49 @@
 <div class="sidebar">
-  <!-- SidebarSearch Form -->
-  <div class="form-inline mt-2">
-      <div class="input-group" data-widget="sidebar-search">
-          <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-          <div class="input-group-append">
-              <button class="btn btn-sidebar">
-                  <i class="fas fa-search fa-fw"></i>
-              </button>
-          </div>
-      </div>
-  </div>
-  <!-- Sidebar Menu -->
-  <nav class="mt-2">
-      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <li class="nav-item">
-              <a href="{{ url('/') }}" class="nav-link {{ $activeMenu == 'dashboard' ? 'active' : '' }} ">
-                  <i class="nav-icon fas fa-tachometer-alt"></i>
-                  <p>Dashboard</p>
-              </a>
-          </li>
-          <li class="nav-header">Data Pengguna</li>
-          <li class="nav-item">
-              <a href="{{ url('/jenisPengguna') }}" class="nav-link {{ $activeMenu == 'jenisPengguna' ? 'active' : '' }} ">
-                  <i class="nav-icon fas fa-layer-group"></i>
-                  <p>Jenis Pengguna</p>
-              </a>
-          </li>
-          <li class="nav-item">
-              <a href="{{ url('/user') }}" class="nav-link {{ $activeMenu == 'user' ? 'active' : '' }}">
-                  <i class="nav-icon far fa-user"></i>
-                  <p>Data User</p>
-              </a>
-          </li>
-          <li class="nav-header">Data Barang</li>
-          <li class="nav-item">
-              <a href="{{ url('/supplier') }}" class="nav-link {{ ($activeMenu == 'supplier')? 'active' : '' }} ">
-                  <i class="nav-icon fa fa-truck"></i>
-                  <p>Data Supplier</p>
-              </a>
-          </li>
-          <li class="nav-item">
-              <a href="{{ url('/kategori') }}" class="nav-link {{ $activeMenu == 'kategori' ? 'active' : '' }} ">
-                  <i class="nav-icon far fa-bookmark"></i>
-                  <p>Kategori Barang</p>
-              </a>
-          </li>
-          <li class="nav-item">
-              <a href="{{ url('/barang') }}" class="nav-link {{ $activeMenu == 'barang' ? 'active' : '' }} ">
-                  <i class="nav-icon far fa-list-alt"></i>
-                  <p>Data Barang</p>
-              </a>
-          </li>
-          <li class="nav-header">Data Transaksi</li>
-          <li class="nav-item">
-              <a href="{{ url('/stok') }}" class="nav-link {{ $activeMenu == 'stok' ? 'active' : '' }} ">
-                  <i class="nav-icon fas fa-cubes"></i>
-                  <p>Stok Barang</p>
-              </a>
-          </li>
-          <li class="nav-item">
-              <a href="{{ url('/penjualan') }}" class="nav-link {{ $activeMenu == 'penjualan' ? 'active' : '' }} ">
-                  <i class="nav-icon fas fa-cash-register"></i>
-                  <p>Transaksi Penjualan</p>
-              </a>
-          </li>
-          <li class="nav-item">
-                <a href="{{ url('logout') }}" class="nav-link"
-                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <i class="nav-icon fas fa-sign-out-alt"></i>
-                    <p>Logout</p>
+    <div class="mt-3 px-3">
+        <h5>KELOMPOK 6</h5>
+    </div>
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" role="menu" data-accordion="false">
+            <!-- Beranda -->
+            <li class="nav-item">
+                <a href="{{ url('/') }}" class="nav-link {{ $activeMenu == 'beranda' ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-home"></i>
+                    <p>Beranda</p>
                 </a>
-                <form id="logout-form" action="{{ url('logout') }}" method="GET" style="display: none;">
-                </form>
             </li>
-      </ul>
-  </nav>
+            <!-- Profile -->
+            <li class="nav-item">
+                <a href="{{ url('/profile') }}" class="nav-link {{ $activeMenu == 'beranda' ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-users-cog"></i>
+                    <p>Profile</p>
+                </a>
+            </li>
+            <!-- Kelola jenis Pengguna -->
+            <li class="nav-item">
+                <a href="{{ url('/jenisPengguna') }}" class="nav-link {{ $activeMenu == 'jenisPengguna' ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-users-cog"></i>
+                    <p>Kelola jenis Pengguna</p>
+                </a>
+            </li>
+
+            <!-- Kelola Pengguna -->
+            <li class="nav-item">
+                <a href="{{ url('/pengguna') }}" class="nav-link {{ $activeMenu == 'pengguna' ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-user"></i>
+                    <p>Kelola Pengguna</p>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Logout Button -->
+    <div class="mt-auto p-3">
+        <a href="{{ url('logout') }}" class="btn btn-danger btn-block" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <i class="fas fa-sign-out-alt"></i>
+            Logout
+        </a>
+        <form id="logout-form" action="{{ url('logout') }}" method="GET" style="display: none;">
+        </form>
+    </div>
 </div>
