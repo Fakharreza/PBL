@@ -265,10 +265,10 @@
                         Kata Sandi
                     </label>
                     <input id="password" name="password" type="password" />
-                    <div class="toggle-icon" onclick="togglePassword()">
+                    <!-- <div class="toggle-icon" onclick="togglePassword()">
                         <i class="fas fa-eye"></i>
                         <i class="fas fa-eye-slash"></i>
-                    </div>
+                    </div> -->
                     <small id="error-password" class="error-text text-danger"></small>
                 </div>
                 <button type="submit" class="btn">
@@ -283,19 +283,6 @@
             </form>
         </div>
     </div>
-    <script>
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const toggleIcon = document.querySelector('.toggle-icon');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleIcon.classList.add('show');
-            } else {
-                passwordInput.type = 'password';
-                toggleIcon.classList.remove('show');
-            }
-        }
-    </script>
 
 
     <!-- jQuery -->

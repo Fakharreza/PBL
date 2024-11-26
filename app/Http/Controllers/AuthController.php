@@ -24,7 +24,8 @@ class AuthController extends Controller
             $credentials = $request->only('nama_pengguna', 'password');
 
             if (Auth::attempt($credentials)) {
-                session(['id_pengguna' => Auth::user()->id_pengguna]);
+                session(['id_pengguna' => Auth::user()->id_pengguna,
+                'role' => Auth::user()->jenisPengguna->nama_jenis_pengguna]);
                 return response()->json([
                     'status' => true,
                     'message' => 'Login Berhasil',

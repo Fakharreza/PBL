@@ -35,24 +35,19 @@
         <!-- /.navbar -->
 
         <!-- Main Sidebar Container -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
-               <!-- Brand Logo -->
-               <a href="{{ url('/') }}" class="brand-link">
-                @if (session()->has('profile_img_path'))
-                    <img src="{{ asset('storage/' . session('profile_img_path')) }}" alt="Profile Picture"
-                        class="brand-image img-circle elevation-3">
-                @else
-                    <img src="{{ asset('adminlte/dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo"
+        <aside class="main-sidebar sidebar-light-primary elevation-4">
+            <!-- Brand Logo dengan warna sama seperti header -->
+            <a href="{{ url('/') }}" class="brand-link" style="background-color: #1E3A8A;">
+                    <img src="{{ asset('assets/polinema-logo.png') }}" alt="Polinema Logo"
                         class="brand-image img-circle elevation-3" style="opacity: .8">
-                @endif
-                <span class="brand-text font-weight-light">PWL - Starter Code</span>
-                </a>
-
-
+                <span class="text-white font-weight-bold">POLINEMA</span>
+            </a>
+        
             <!-- Sidebar -->
             @include('layoutsSuperAdmin.sidebar')
             <!-- /.sidebar -->
         </aside>
+           
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
