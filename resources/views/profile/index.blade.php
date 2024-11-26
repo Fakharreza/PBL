@@ -1,43 +1,42 @@
 @extends('layoutsSuperAdmin.template')
-@section('content')
-<div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static"
-    data-keyboard="false" aria-hidden="true"></div>
-<div class="container mt-3 p-3 bg-light rounded">
-    <div class="text-center">
 
-        <!-- Profile Information -->
-        <div class="p-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="mb-0">Profile</h4>
-                
-                <!-- Button Edit Profile -->
-                <button class="btn btn-primary profile-button" onclick="modalAction('{{ url('profile/' . $pengguna->id_pengguna . '/edit') }}')">Edit Profile</button>
-            </div>
-            
-            <div class="row mt-3">
-                <table class="table table-bordered bg-white shadow-sm">
-                    <tr>
-                        <th>Nama</th>
-                        <td>{{ $pengguna->nama_pengguna }}</td>
-                    </tr>
-                    <tr>
-                        <th>Email</th>
-                        <td>{{ $pengguna->email }}</td>
-                    </tr>
-                    <tr>
-                        <th>Jenis Pengguna</th>
-                        <td>{{ $pengguna->jenisPengguna->nama_jenis_pengguna }}</td>
-                    </tr>
-                    <tr>
-                        <th>NIP</th>
-                        <td>{{ $pengguna->nip }}</td>
-                    </tr>
-                    <tr>
-                        <th>Password</th>
-                        <td><span class="text-muted">********</span></td>
-                    </tr>
-                </table>
-            </div>
+@section('content')
+<div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
+
+<div class="container mt-5 p-4 bg-white rounded shadow-sm" style="max-width: 600px;">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <h5 class="mb-0">Data Pengguna</h5>
+    </div>
+
+    <!-- Profile Information -->
+    <div class="p-4">
+        <table class="table table-borderless">
+            <tr>
+                <th>Nama Pengguna</th>
+                <td>{{ $pengguna->nama_pengguna }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ $pengguna->email }}</td>
+            </tr>
+            <tr>
+                <th>Unit</th>
+                <td>{{ $pengguna->jenisPengguna->nama_jenis_pengguna }}</td>
+            </tr>
+            <tr>
+                <th>NIP</th>
+                <td>{{ $pengguna->nip }}</td>
+            </tr>
+            <tr>
+                <th>Kata Sandi</th>
+                <td><span class="text-muted">********</span></td>
+            </tr>
+        </table>
+
+        <!-- Buttons -->
+        <div class="text-center">
+            <button class="btn btn-primary profile-button mb-2" onclick="modalAction('{{ url('profile/' . $pengguna->id_pengguna . '/edit') }}')">Edit Profil</button>
         </div>
     </div>
 </div>
@@ -45,24 +44,47 @@
 
 @push('css')
 <style>
+    .profile-header {
+        background-color: #2d85e2;
+        text-align: center;
+        padding: 10px 0;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        color: #fff;
+    }
+
+    /* Styling for Profile Button */
     .profile-button {
-        transition: background-color 0.3s, transform 0.3s;
+        background-color: #2d85e2;
+        transition: all 0.2s ease-in-out;
     }
 
     .profile-button:hover {
-        background-color: #007bff;
+        background-color: #003369;
         color: #fff;
         transform: translateY(-2px);
     }
 
-    th {
-        background-color: #f8f9fa;
-        font-weight: bold;
-        text-align: center;
+    /* Table Styling */
+    .table th {
+        width: 150px;
+        font-weight: normal;
+        color: #6c757d;
+        text-align: left;
     }
 
-    td {
-        text-align: center;
+    .table td {
+        color: #333;
+        text-align: left;
+    }
+
+    .table-borderless th, .table-borderless td {
+        border: none;
+    }
+
+    /* Container Max Width */
+    .container {
+        max-width: 500px;
     }
 </style>
 @endpush
@@ -78,7 +100,7 @@
 @endpush
 
 @if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
+<div class="alert alert-success mt-3">
+    {{ session('success') }}
+</div>
 @endif
