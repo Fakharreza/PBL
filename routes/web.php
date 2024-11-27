@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\jenisPenggunaController;
+use App\Http\Controllers\JenisPelatihanController;
 use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\WelcomeController;
@@ -70,10 +71,28 @@ Route::middleware('auth')->group(function () {
         Route::get('/export_pdf',[jenisPenggunaController::class,'export_pdf']); // export pdf
     });
 
-    Route::group(['prefix' => 'profile', 'middleware' => ['authorize:SADM']], function () {
+    Route::group(['prefix' => 'profile', 'middleware' => ['authorize:SADM,ADM,DSN']], function () {
         Route::get('/', [ProfileController::class, 'index']);
         Route::get('/{id}/edit', [ProfileController::class, 'edit']);
         Route::put('/{id}', [ProfileController::class, 'update']);
+    });
+
+    Route::group(['prefix' => 'jenisPelatihan','middleware' => ['authorize:ADM']] , function(){
+        Route::get('/', [JenisPelatihanController::class, 'index']);  // Menampilkan halaman awal Stok
+        Route::post('/list', [JenisPelatihanController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
+        Route::get('/create', [JenisPelatihanController::class, 'create']);  // Menampilkan form tambah Stok
+        Route::post('/', [JenisPelatihanController::class, 'store']);  // Menyimpan data Stok
+        Route::get('/create_ajax', [JenisPelatihanController::class, 'create_ajax']);  // Menampilkan form tambah supplier ajax
+        Route::post('/ajax', [JenisPelatihanController::class, 'store_ajax']);  // Menyimpan data supplier baru ajax
+        Route::get('/{id}/edit_ajax', [JenisPelatihanController::class, 'edit_ajax']);  // Menampilkan form edit supplier ajax
+        Route::put('/{id}/update_ajax', [JenisPelatihanController::class, 'update_ajax']);  // Menyimpan perubahan data barang ajax
+        Route::get('/{id}/delete_ajax', [JenisPelatihanController::class, 'confirm_ajax']);  // Menampilkan form konfirmasi delete supplier ajax
+        Route::delete('/{id}/delete_ajax', [JenisPelatihanController::class, 'delete_ajax']);  // Menghapus data supplier ajax
+        Route::get('/{id}/show_ajax', [JenisPelatihanController::class, 'show_ajax']);  // Menampilkan detail supplier
+        Route::get('/import', [JenisPelatihanController::class, 'import']);  // Ajax form upload excel
+        Route::post('/import_ajax', [JenisPelatihanController::class, 'import_ajax']);  // Ajax import excel
+        Route::get('/export_excel', [JenisPelatihanController::class, 'export_excel']);      // export excel
+        Route::get('/export_pdf',[JenisPelatihanController::class,'export_pdf']); // export pdf
     });
     
 });
