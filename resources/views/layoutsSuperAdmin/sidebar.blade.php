@@ -26,6 +26,7 @@
                 </a>
             </li>
 
+            <!-- Sidebar for superadmin -->
             @if (session('role') == "SuperAdmin")
             <!-- Kelola Jenis Pengguna -->
             <li class="nav-item">
@@ -43,6 +44,7 @@
             </li>
             @endif
 
+            <!-- Sidebar for admin -->
             @if (session('role') == "Admin")
             <!-- Statistik Sertifikasi -->
             <li class="nav-item">
@@ -114,6 +116,64 @@
                 </ul>
             </li>
             @endif
+
+            <!-- Sidebar for Dosen -->
+            @if (session('role') == "Dosen")
+            <!-- Daftar Pelatihan Sertifikasi -->
+            <li class="nav-item">
+                <a href="{{ url('/daftarPelatihanSertifikasi') }}" class="nav-link {{ request()->is('daftarPelatihanSertifikasi') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-list"></i>
+                    <p>Daftar Pelatihan Sertifikasi</p>
+                </a>
+            </li>
+            <!-- surat tugas -->
+            <li class="nav-item">
+                <a href="{{ url('/draftSuratTugas') }}" class="nav-link {{ request()->is('draftSuratTugas') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-file-alt"></i>
+                    <p>Draft Surat Tugas</p>
+                </a>
+            </li>
+            <!-- Data Pelatihan Sertifikasi -->
+            <li class="nav-item">
+                <a href="{{ url('/dataPelatihan') }}" class="nav-link {{ request()->is('dataPelatihan') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-database"></i>
+                    <p>Data Pelatihan Sertifikasi</p>
+                </a>
+            </li>
+            @endif
+            
+            <!-- Sidebar for Pimpinan -->
+            @if (session('role') == "Pimpinan")
+            <!-- statistik sertifikasi -->
+            <li class="nav-item">
+                <a href="{{ url('/statistikSertifikasi') }}" class="nav-link {{ request()->is('statistikSertifikasi') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-chart-line"></i>
+                    <p>Statistik Sertifikasi</p>
+                </a>
+            </li>
+            <!-- Daftar Pelatihan Sertifikasi -->
+            <li class="nav-item">
+                <a href="{{ url('/daftarPelatihanSertifikasi') }}" class="nav-link {{ request()->is('daftarPelatihanSertifikasi') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-list"></i>
+                    <p>Daftar Pelatihan Sertifikasi</p>
+                </a>
+            </li>
+            <!-- surat tugas -->
+            <li class="nav-item">
+                <a href="{{ url('/draftSuratTugas') }}" class="nav-link {{ request()->is('draftSuratTugas') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-file-alt"></i>
+                    <p>Draft Surat Tugas</p>
+                </a>
+            </li>
+            <!-- Acc peserta -->
+            <li class="nav-item">
+                <a href="{{ url('/accPeserta') }}" class="nav-link {{ request()->is('accPeserta') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-check-circle"></i>
+                    <p>Acc Peserta</p>
+                </a>
+            </li>
+            @endif
+
         </ul>
     </nav>
 
