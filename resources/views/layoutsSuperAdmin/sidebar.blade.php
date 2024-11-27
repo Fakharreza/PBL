@@ -26,6 +26,23 @@
                 </a>
             </li>
 
+            @if (session('role') == "SuperAdmin")
+            <!-- Kelola Jenis Pengguna -->
+            <li class="nav-item">
+                <a href="{{ url('/jenisPengguna') }}" class="nav-link {{ request()->is('jenisPengguna') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-users-cog"></i>
+                    <p>Kelola Jenis Pengguna</p>
+                </a>
+            </li>
+            <!-- Kelola Pengguna -->
+            <li class="nav-item">
+                <a href="{{ url('/pengguna') }}" class="nav-link {{ request()->is('pengguna') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-user-cog"></i>
+                    <p>Kelola Pengguna</p>
+                </a>
+            </li>
+            @endif
+
             @if (session('role') == "Admin")
             <!-- Statistik Sertifikasi -->
             <li class="nav-item">
