@@ -42,7 +42,12 @@
             </li>
             @endif
             @if (session('role') == "Admin")
-            
+            <li class="nav-item">
+                <a href="{{ url('/jenisPelatihan') }}" class="nav-link {{ request()->is('pengguna') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-user-cog"></i>
+                    <p>Kelola Jenis Pelatihan</p>
+                </a>
+            </li>
             @endif
         </ul>
     </nav>
