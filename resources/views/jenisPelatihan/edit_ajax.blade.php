@@ -1,4 +1,4 @@
-@empty($jenisPengguna)
+@empty($jenisPelatihan)
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -11,54 +11,44 @@
                     <h5><i class="icon fas fa-ban"></i> Kesalahan!!!</h5>
                     Data yang anda cari tidak ditemukan
                 </div>
-                <a href="{{ url('/jenisPengguna') }}" class="btn btn-warning">Kembali</a>
+                <a href="{{ url('/jenisPelatihan') }}" class="btn btn-warning">Kembali</a>
             </div>
         </div>
     </div>
 @else
-    <form action="{{ url('/jenisPengguna/' . $jenisPengguna->id_jenis_pengguna . '/update_ajax') }}" method="POST"
+    <form action="{{ url('/jenisPelatihan/' . $jenisPelatihan->id_jenis_pelatihan . '/update_ajax') }}" method="POST"
         id="form-edit">
         @csrf
         @method('PUT')
         <div id="modal-master" class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit Data Jenis Pengguna</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Data Jenis Pelatihan</h5>
                     <button type="button" class="close" data-dismiss="modal" arialabel="Close"><span
                             aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Kode Jenis Pengguna</label>
-                        <input value="" type="text" name="kode_jenis_pengguna" id="kode_jenis_pengguna" class="form-control"
-                            required>
-                        <small id="error-level_kode" class="error-text form-text text-danger"></small>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-1 control-label col-form-label">Jenis Pengguna</label>
+                        <label class="col-1 control-label col-form-label">Jenis Pelatihan</label>
                         <div class="col-11">
-                            <input type="text" class="form-control" id="nama_jenis_pengguna" name="nama_jenis_pengguna"
+                            <input type="text" class="form-control" id="jenis_pelatihan" name="jenis_pelatihan"
                                 value="" required>
                         </div>
-                        <small id="error-nama_jenis_pengguna" class="error-text form-text text-danger"></small>
+                        <small id="error-jenis_pelatihan" class="error-text form-text text-danger"></small>
                     </div>
                     <div class="modal-footer">
                         <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
                 </div>
+                
             </div>
     </form>
     <script>
         $(document).ready(function () {
             $("#form-edit").validate({
                 rules: {
-                    kode_jenis_pengguna: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 20
-                    },
-                    nama_jenis_pengguna: {
+                    jenis_pelatihan: {
                         required: true,
                         minlength: 3,
                         maxlength: 20

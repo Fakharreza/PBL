@@ -75,32 +75,3 @@
     </div>
 </div>
 @endsection
-
-@push('css')
-<style>
-    .bg-primary {
-        background-color: #7797CD; /* Warna biru header */
-        color: white;
-        font-weight: bold;
-    }
-
-    .form-group label {
-        font-size: 14px;
-        color: #555;
-    }
-
-    .form-control {
-        border-radius: 5px;
-    }
-
-    .btn-primary {
-        background-color: #2d85e2;
-        border: none;
-    }
-
-    .btn-secondary {
-        background-color: #d1d1d1;
-        border: none;
-    }
-</style>
-@endpush
