@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VendorPelatihanController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\vendorSertifController;
 
 
 
@@ -112,5 +113,23 @@ Route::middleware('auth')->group(function () {
         Route::post('/import_ajax', [VendorPelatihanController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [VendorPelatihanController::class, 'export_excel']);      // export excel
         Route::get('/export_pdf',[VendorPelatihanController::class,'export_pdf']); // export pdf
+    });
+
+    Route::group(['prefix' => 'vendorSertif','middleware' => ['authorize:ADM']] , function(){
+        Route::get('/', [vendorSertifController::class, 'index']);  // Menampilkan halaman awal Stok
+        Route::post('/list', [vendorSertifController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
+        Route::get('/create', [vendorSertifController::class, 'create']);  // Menampilkan form tambah Stok
+        Route::post('/', [vendorSertifController::class, 'store']);  // Menyimpan data Stok
+        Route::get('/create_ajax', [vendorSertifController::class, 'create_ajax']);  // Menampilkan form tambah supplier ajax
+        Route::post('/ajax', [vendorSertifController::class, 'store_ajax']);  // Menyimpan data supplier baru ajax
+        Route::get('/{id}/edit_ajax', [vendorSertifController::class, 'edit_ajax']);  // Menampilkan form edit supplier ajax
+        Route::put('/{id}/update_ajax', [vendorSertifController::class, 'update_ajax']);  // Menyimpan perubahan data barang ajax
+        Route::get('/{id}/delete_ajax', [vendorSertifController::class, 'confirm_ajax']);  // Menampilkan form konfirmasi delete supplier ajax
+        Route::delete('/{id}/delete_ajax', [vendorSertifController::class, 'delete_ajax']);  // Menghapus data supplier ajax
+        Route::get('/{id}/show_ajax', [vendorSertifController::class, 'show_ajax']);  // Menampilkan detail supplier
+        Route::get('/import', [vendorSertifController::class, 'import']);  // Ajax form upload excel
+        Route::post('/import_ajax', [vendorSertifController::class, 'import_ajax']);  // Ajax import excel
+        Route::get('/export_excel', [vendorSertifController::class, 'export_excel']);      // export excel
+        Route::get('/export_pdf',[vendorSertifController::class,'export_pdf']); // export pdf
     });
 });
