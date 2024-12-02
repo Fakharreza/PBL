@@ -5,7 +5,7 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-            <!-- <button onclick="modalAction('{{ url('/jenisPengguna/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah</button> -->
+            <button onclick="modalAction('{{ url('/vendorPelatihan/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah</button>
 
             </div>
         </div>
@@ -17,12 +17,13 @@
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
             
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_jenisPengguna">
+            <table class="table table-bordered table-striped table-hover table-sm" id="table_vendorPelatihan">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Kode Jenis Pengguna</th>
-                        <th>Nama Jenis Pengguna</th>
+                        <th>Nama Vendor Pelatihan</th>
+                        <th>Alamat</th>
+                        <th>Alamat Web</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -44,10 +45,10 @@
         }
         var dataJenis;
         $(document).ready(function() {
-            dataJenis = $('#table_jenisPengguna').DataTable({
+            dataJenis = $('#table_vendorPelatihan').DataTable({
                 serverSide: true,
                 ajax: {
-                    "url": "{{ url('jenisPengguna/list') }}",
+                    "url": "{{ url('vendorPelatihan/list') }}",
                     "dataType": "json",
                     "type": "POST" , 
                     "data": function(d) {
@@ -61,13 +62,19 @@
                         searchable: false
                     },
                     {
-                        data: "kode_jenis_pengguna",
+                        data: "nama_vendor",
                         className: "",
                         orderable: false,
                         searchable: true
                     },
                     {
-                        data: "nama_jenis_pengguna",
+                        data: "alamat",
+                        className: "",
+                        orderable: false,
+                        searchable: true
+                    },
+                    {
+                        data: "alamat_web",
                         className: "",
                         orderable: false,
                         searchable: true

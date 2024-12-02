@@ -2,41 +2,40 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\jenisPenggunaModel;
+use App\Models\VendorPelatihanModel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
-class jenisPenggunaController extends Controller
+class VendorPelatihanController extends Controller
 {
     public function index()
     {
         $breadcrumb = (object) [
-            'title' => 'Daftar Jenis Pengguna',
-            'list' => ['Home', 'jenisPengguna']
+            'title' => 'Daftar Vendor Pelatihan',
+            'list' => ['Home', 'vendorPelatihan']
         ];
 
         $page = (object) [
-            'title' => 'Daftar Jenis Pengguna yang terdaftar dalam sistem'
+            'title' => 'Daftar Vendor Pelatihan yang terdaftar dalam sistem'
         ];
 
-        $activeMenu = 'jenisPengguna'; // set menu yang sedang aktif
+        $activeMenu = 'vendorPelatihan'; // set menu yang sedang aktif
 
         // $level = LevelModel::all(); // ambil data level untuk filter level
-        return view('jenisPengguna.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
+        return view('vendorPelatihan.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
     }
 
     // Ambil data level dalam bentuk json untuk datatables
     public function list(Request $request)
     {
-        $jenisPengguna = jenisPenggunaModel::select('id_jenis_pengguna','kode_jenis_pengguna', 'nama_jenis_pengguna');
-        return DataTables::of($jenisPengguna)
+        $vendorPelatihan = VendorPelatihanModel::select('id_vendor_pelatihan','nama_vendor', 'alamat','kota','no_telp','alamat_web');
+        return DataTables::of($vendorPelatihan)
             ->addIndexColumn() // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex) 
-            ->addColumn('aksi', function ($jenisPengguna) { // menambahkan kojenisPenggunaom aksi 
-                $btn  = '<button onclick="modalAction(\'' . url('/jenisPengguna/' . $jenisPengguna->id_jenis_pengguna . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
-                // $btn .= '<button onclick="modalAction(\'' . url('/jenisPengguna/' . $jenisPengguna->id_jenis_pengguna . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
-                // $btn .= '<button onclick="modalAction(\'' . url('/jenisPengguna/' . $jenisPengguna->id_jenis_pengguna . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+            ->addColumn('aksi', function ($vendorPelatihan) { // menambahkan kojenisPenggunaom aksi 
+                $btn  = '<button onclick="modalAction(\'' . url('/vendorPelatihan/' . $vendorPelatihan->id_vendor_pelatihan . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                $btn .= '<button onclick="modalAction(\'' . url('/vendorPelatihan/' . $vendorPelatihan->id_vendor_pelatihan . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+                $btn .= '<button onclick="modalAction(\'' . url('/vendorPelatihan/' . $vendorPelatihan->id_vendor_pelatihan . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
                 return $btn;
             })
             ->rawColumns(['aksi']) // memberitahu bahwa kolom aksi adalah html 
@@ -44,7 +43,7 @@ class jenisPenggunaController extends Controller
     }
     public function create_ajax()
     {
-        return view('jenisPengguna.create_ajax');
+        return view('vendorPelatihan.create_ajax');
     }
 
     public function store_ajax(Request $request)
@@ -52,8 +51,11 @@ class jenisPenggunaController extends Controller
         // cek apakah request berupa ajax
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'kode_jenis_pengguna'    => 'required|string|min:3|unique:jenis_pengguna,kode_jenis_pengguna',
-                'nama_jenis_pengguna'    => 'required|string|max:100',
+                'nama_vendor'    => 'required|string|max:100',
+                'alamat'         =>'required|string|max:100',
+                'kota'           =>'required|string|max:100',
+                'no_telp'        =>'required|string|max:100',
+                'alamat_web'     =>'required|string|max:100',
             ];
             // use Illuminate\Support\Facades\Validator;
             $validator = Validator::make($request->all(), $rules);
@@ -65,32 +67,35 @@ class jenisPenggunaController extends Controller
                     'msgField'  => $validator->errors(), // pesan error validasi
                 ]);
             }
-            jenisPenggunaModel::create($request->all());
+            VendorPelatihanModel::create($request->all());
             return response()->json([
                 'status'    => true,
-                'message'   => 'Data level berhasil disimpan'
+                'message'   => 'Data Vendor berhasil disimpan'
             ]);
         }
         redirect('/');
     }
     public function show_ajax(string $id)
     {
-        $jenisPengguna = jenisPenggunaModel::find($id);
-        return view('jenisPengguna.show_ajax', ['jenisPengguna' => $jenisPengguna]);
+        $vendorPelatihan = VendorPelatihanModel::find($id);
+        return view('vendorPelatihan.show_ajax', ['vendorPelatihan' => $vendorPelatihan]);
     }
     public function edit_ajax(string $id)
     {
-        $jenisPengguna = jenisPenggunaModel::find($id);
+        $vendorPelatihan = VendorPelatihanModel::find($id);
 
-        return view('jenisPengguna.edit_ajax', ['jenisPengguna' => $jenisPengguna ]);
+        return view('vendorPelatihan.edit_ajax', ['vendorPelatihan' => $vendorPelatihan ]);
     }
     public function update_ajax(Request $request, $id)
     {
         // cek apakah request dari ajax
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-               'kode_jenis_pengguna'    => 'required|string|min:3|unique:jenis_pengguna,kode_jenis_pengguna',
-               'nama_jenis_pengguna'    => 'required|string|max:100',
+               'nama_vendor'    => 'required|string|max:100',
+                'alamat'         =>'required|string|max:100',
+                'kota'           =>'required|string|max:100',
+                'no_telp'        =>'required|string|max:100',
+                'alamat_web'     =>'required|string|max:100',
             ];
             // use Illuminate\Support\Facades\Validator;
             $validator = Validator::make($request->all(), $rules);
@@ -101,7 +106,7 @@ class jenisPenggunaController extends Controller
                     'msgField' => $validator->errors() // menunjukkan field mana yang error
                 ]);
             }
-            $check = jenisPenggunaModel::find($id);
+            $check = VendorPelatihanModel::find($id);
             if ($check) {
                 $check->update($request->all());
                 return response()->json([
@@ -118,18 +123,18 @@ class jenisPenggunaController extends Controller
         return redirect('/');
     }
     public function confirm_ajax(String $id){
-        $jenisPengguna = jenisPenggunaModel::find($id);
+        $vendorPelatihan = VendorPelatihanModel::find($id);
 
-        return view('jenisPengguna.confirm_ajax', ['jenisPengguna' => $jenisPengguna]);
+        return view('vendorPelatihan.confirm_ajax', ['vendorPelatihan' => $vendorPelatihan]);
     }
 
     public function delete_ajax(Request $request, $id)
     {
         //cek apakah request dari ajax
         if($request->ajax() || $request->wantsJson()){
-            $jenisPengguna = jenisPenggunaModel::find($id);
-            if($jenisPengguna){
-                $jenisPengguna->delete();
+            $vendorPelatihan = VendorPelatihanModel::find($id);
+            if($vendorPelatihan){
+                $vendorPelatihan->delete();
                 return response()->json([
                     'status' => true,
                     'message' => 'Data berhasil dihapus'

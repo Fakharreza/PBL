@@ -108,15 +108,9 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ url('/vendorPelatihan') }}" class="nav-link {{ request()->is('vendor') ? 'active' : '' }}">
+                        <a href="{{ url('/vendor') }}" class="nav-link {{ request()->is('vendor') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-building"></i>
-                            <p>Kelola Vendor Pelatihan</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ url('/vendorSertif') }}" class="nav-link {{ request()->is('vendor') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-building"></i>
-                            <p>Kelola Vendor Sertifikasi</p>
+                            <p>Kelola Vendor</p>
                         </a>
                     </li>
                 </ul>
