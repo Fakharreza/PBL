@@ -6,6 +6,7 @@ use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\dataPelatihanController;
 
 
 
@@ -93,6 +94,24 @@ Route::middleware('auth')->group(function () {
         Route::post('/import_ajax', [JenisPelatihanController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [JenisPelatihanController::class, 'export_excel']);      // export excel
         Route::get('/export_pdf',[JenisPelatihanController::class,'export_pdf']); // export pdf
+    });
+
+    Route::group(['prefix' => 'dataPelatihan', 'middleware' => ['authorize:DSN']], function () {
+        Route::get('/', [dataPelatihanController::class, 'index']); // Menampilkan halaman awal data pelatihan dan sertifikasi
+        Route::post('/list', [dataPelatihanController::class, 'list']); // Menampilkan data dalam bentuk JSON untuk DataTables
+        Route::get('/create', [dataPelatihanController::class, 'create']); // Menampilkan form tambah data
+        Route::post('/', [dataPelatihanController::class, 'store']); // Menyimpan data baru
+        Route::get('/create_ajax', [dataPelatihanController::class, 'create_ajax']); // Menampilkan form tambah data via AJAX
+        Route::post('/ajax', [dataPelatihanController::class, 'store_ajax']); // Menyimpan data baru via AJAX
+        Route::get('/{id}/edit_ajax', [dataPelatihanController::class, 'edit_ajax']); // Menampilkan form edit data via AJAX
+        Route::put('/{id}/update_ajax', [dataPelatihanController::class, 'update_ajax']); // Menyimpan perubahan data via AJAX
+        Route::get('/{id}/delete_ajax', [dataPelatihanController::class, 'confirm_ajax']); // Menampilkan konfirmasi hapus data via AJAX
+        Route::delete('/{id}/delete_ajax', [dataPelatihanController::class, 'delete_ajax']); // Menghapus data via AJAX
+        Route::get('/{id}/show_ajax', [dataPelatihanController::class, 'show_ajax']); // Menampilkan detail data via AJAX
+        Route::get('/import', [dataPelatihanController::class, 'import']); // Menampilkan form upload file untuk import
+        Route::post('/import_ajax', [dataPelatihanController::class, 'import_ajax']); // Mengimpor data dari file Excel via AJAX
+        Route::get('/export_excel', [dataPelatihanController::class, 'export_excel']); // Mengekspor data ke Excel
+        Route::get('/export_pdf', [dataPelatihanController::class, 'export_pdf']); // Mengekspor data ke PDF
     });
     
 });
