@@ -5,8 +5,7 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-            <!-- <button onclick="modalAction('{{ url('/jenisPengguna/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah</button> -->
-
+                <button onclick="modalAction('{{ url('/vendorSertif/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah</button>
             </div>
         </div>
         <div class="card-body">
@@ -17,12 +16,15 @@
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
             
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_jenisPengguna">
+            <table class="table table-bordered table-striped table-hover table-sm" id="table_vendorSertif">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Kode Jenis Pengguna</th>
-                        <th>Nama Jenis Pengguna</th>
+                        <th>ID Vendor Sertifikasi</th>
+                        <th>Nama Vendor</th>
+                        <th>Alamat</th>
+                        <th>Kota</th>
+                        <th>No Telp</th>
+                        <th>Alamat Web</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -44,32 +46,51 @@
         }
         var dataJenis;
         $(document).ready(function() {
-            dataJenis = $('#table_jenisPengguna').DataTable({
+            dataJenis = $('#table_vendorSertif').DataTable({
                 serverSide: true,
                 ajax: {
-                    "url": "{{ url('jenisPengguna/list') }}",
+                    "url": "{{ url('vendorSertif/list') }}",
                     "dataType": "json",
-                    "type": "POST" , 
+                    "type": "POST",
                     "data": function(d) {
-
+                        // Bisa tambahkan parameter tambahan jika diperlukan
                     }
                 },
-                columns: [{
-                        data: "DT_RowIndex",
+                columns: [
+                    {
+                        data: "id_vendor_sertifikasi",
                         className: "text-center",
                         orderable: false,
                         searchable: false
                     },
                     {
-                        data: "kode_jenis_pengguna",
+                        data: "nama_vendor",
                         className: "",
-                        orderable: false,
+                        orderable: true,
                         searchable: true
                     },
                     {
-                        data: "nama_jenis_pengguna",
+                        data: "alamat",
                         className: "",
-                        orderable: false,
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: "kota",
+                        className: "",
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: "no_telp",
+                        className: "",
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: "alamat_web",
+                        className: "",
+                        orderable: true,
                         searchable: true
                     },
                     {

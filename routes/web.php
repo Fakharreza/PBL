@@ -4,9 +4,13 @@ use App\Http\Controllers\jenisPenggunaController;
 use App\Http\Controllers\JenisPelatihanController;
 use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BidangMinatController;
+use App\Http\Controllers\VendorPelatihanController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\dataPelatihanController;
+use App\Http\Controllers\vendorSertifController;
+
 
 
 
@@ -72,7 +76,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/export_pdf',[jenisPenggunaController::class,'export_pdf']); // export pdf
     });
 
-    Route::group(['prefix' => 'profile', 'middleware' => ['authorize:SADM,ADM,DSN']], function () {
+    Route::group(['prefix' => 'profile', 'middleware' => ['authorize:SADM,ADM,DSN,PMN']], function () {
         Route::get('/', [ProfileController::class, 'index']);
         Route::get('/{id}/edit', [ProfileController::class, 'edit']);
         Route::put('/{id}', [ProfileController::class, 'update']);
@@ -114,4 +118,57 @@ Route::middleware('auth')->group(function () {
         Route::get('/export_pdf', [dataPelatihanController::class, 'export_pdf']); // Mengekspor data ke PDF
     });
     
+    Route::group(['prefix' => 'vendorPelatihan','middleware' => ['authorize:ADM']] , function(){
+        Route::get('/', [VendorPelatihanController::class, 'index']);  // Menampilkan halaman awal Stok
+        Route::post('/list', [VendorPelatihanController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
+        Route::get('/create', [VendorPelatihanController::class, 'create']);  // Menampilkan form tambah Stok
+        Route::post('/', [VendorPelatihanController::class, 'store']);  // Menyimpan data Stok
+        Route::get('/create_ajax', [VendorPelatihanController::class, 'create_ajax']);  // Menampilkan form tambah supplier ajax
+        Route::post('/ajax', [VendorPelatihanController::class, 'store_ajax']);  // Menyimpan data supplier baru ajax
+        Route::get('/{id}/edit_ajax', [VendorPelatihanController::class, 'edit_ajax']);  // Menampilkan form edit supplier ajax
+        Route::put('/{id}/update_ajax', [VendorPelatihanController::class, 'update_ajax']);  // Menyimpan perubahan data barang ajax
+        Route::get('/{id}/delete_ajax', [VendorPelatihanController::class, 'confirm_ajax']);  // Menampilkan form konfirmasi delete supplier ajax
+        Route::delete('/{id}/delete_ajax', [VendorPelatihanController::class, 'delete_ajax']);  // Menghapus data supplier ajax
+        Route::get('/{id}/show_ajax', [VendorPelatihanController::class, 'show_ajax']);  // Menampilkan detail supplier
+        Route::get('/import', [VendorPelatihanController::class, 'import']);  // Ajax form upload excel
+        Route::post('/import_ajax', [VendorPelatihanController::class, 'import_ajax']);  // Ajax import excel
+        Route::get('/export_excel', [VendorPelatihanController::class, 'export_excel']);      // export excel
+        Route::get('/export_pdf',[VendorPelatihanController::class,'export_pdf']); // export pdf
+    });
+
+    Route::group(['prefix' => 'vendorSertif','middleware' => ['authorize:ADM']] , function(){
+        Route::get('/', [vendorSertifController::class, 'index']);  // Menampilkan halaman awal Stok
+        Route::post('/list', [vendorSertifController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
+        Route::get('/create', [vendorSertifController::class, 'create']);  // Menampilkan form tambah Stok
+        Route::post('/', [vendorSertifController::class, 'store']);  // Menyimpan data Stok
+        Route::get('/create_ajax', [vendorSertifController::class, 'create_ajax']);  // Menampilkan form tambah supplier ajax
+        Route::post('/ajax', [vendorSertifController::class, 'store_ajax']);  // Menyimpan data supplier baru ajax
+        Route::get('/{id}/edit_ajax', [vendorSertifController::class, 'edit_ajax']);  // Menampilkan form edit supplier ajax
+        Route::put('/{id}/update_ajax', [vendorSertifController::class, 'update_ajax']);  // Menyimpan perubahan data barang ajax
+        Route::get('/{id}/delete_ajax', [vendorSertifController::class, 'confirm_ajax']);  // Menampilkan form konfirmasi delete supplier ajax
+        Route::delete('/{id}/delete_ajax', [vendorSertifController::class, 'delete_ajax']);  // Menghapus data supplier ajax
+        Route::get('/{id}/show_ajax', [vendorSertifController::class, 'show_ajax']);  // Menampilkan detail supplier
+        Route::get('/import', [vendorSertifController::class, 'import']);  // Ajax form upload excel
+        Route::post('/import_ajax', [vendorSertifController::class, 'import_ajax']);  // Ajax import excel
+        Route::get('/export_excel', [vendorSertifController::class, 'export_excel']);      // export excel
+        Route::get('/export_pdf',[vendorSertifController::class,'export_pdf']); // export pdf
+    });
+
+    Route::group(['prefix' => 'bidangMinat','middleware' => ['authorize:ADM']] , function(){
+        Route::get('/', [BidangMinatController::class, 'index']);  // Menampilkan halaman awal Stok
+        Route::post('/list', [BidangMinatController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
+        Route::get('/create', [BidangMinatController::class, 'create']);  // Menampilkan form tambah Stok
+        Route::post('/', [BidangMinatController::class, 'store']);  // Menyimpan data Stok
+        Route::get('/create_ajax', [BidangMinatController::class, 'create_ajax']);  // Menampilkan form tambah supplier ajax
+        Route::post('/ajax', [BidangMinatController::class, 'store_ajax']);  // Menyimpan data supplier baru ajax
+        Route::get('/{id}/edit_ajax', [BidangMinatController::class, 'edit_ajax']);  // Menampilkan form edit supplier ajax
+        Route::put('/{id}/update_ajax', [BidangMinatController::class, 'update_ajax']);  // Menyimpan perubahan data barang ajax
+        Route::get('/{id}/delete_ajax', [BidangMinatController::class, 'confirm_ajax']);  // Menampilkan form konfirmasi delete supplier ajax
+        Route::delete('/{id}/delete_ajax', [BidangMinatController::class, 'delete_ajax']);  // Menghapus data supplier ajax
+        Route::get('/{id}/show_ajax', [BidangMinatController::class, 'show_ajax']);  // Menampilkan detail supplier
+        Route::get('/import', [BidangMinatController::class, 'import']);  // Ajax form upload excel
+        Route::post('/import_ajax', [BidangMinatController::class, 'import_ajax']);  // Ajax import excel
+        Route::get('/export_excel', [BidangMinatController::class, 'export_excel']);      // export excel
+        Route::get('/export_pdf',[BidangMinatController::class,'export_pdf']); // export pdf
+    });
 });

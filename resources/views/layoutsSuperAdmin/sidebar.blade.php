@@ -114,7 +114,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ url('/vendorSertifikasi') }}" class="nav-link {{ request()->is('vendor') ? 'active' : '' }}">
+                        <a href="{{ url('/vendorSertif') }}" class="nav-link {{ request()->is('vendor') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-building"></i>
                             <p>Kelola Vendor Sertifikasi</p>
                         </a>
