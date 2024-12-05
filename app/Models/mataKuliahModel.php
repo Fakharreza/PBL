@@ -12,6 +12,4 @@ class mataKuliahModel extends Model
     protected $table = 'mata_kuliah';
     protected $primaryKey = 'id_mata_kuliah';
     protected $fillable = ['nama_mata_kuliah'];
-
-
 }

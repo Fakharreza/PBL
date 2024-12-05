@@ -112,7 +112,7 @@ class MataKuliahController extends Controller
         // cek apakah request dari ajax
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'nama_mata_kuliah'    => 'required|string|max:100',
+                'nama_mata_kuliah' => 'required|string|max:100',
             ];
             // use Illuminate\Support\Facades\Validator;
             $validator = Validator::make($request->all(), $rules);

@@ -29,7 +29,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Nama Matkul</label>
-                        <input value="{{ old('nama_mata_kuliah', $mataKuliah->nama_mata_kuliah) }}" type="text" name="alamat" id="alamat" class="form-control" required>
+                        <input value="{{ old('nama_mata_kuliah', $mataKuliah->nama_mata_kuliah) }}" type="text" name="nama_mata_kuliah" id="nama_mata_kuliah" class="form-control" required>
                         <small id="error-nama_mata_kuliah" class="error-text form-text text-danger"></small>
                     </div>
                 </div>
