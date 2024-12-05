@@ -114,7 +114,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ url('/vendorSertifikasi') }}" class="nav-link {{ request()->is('vendor') ? 'active' : '' }}">
+                        <a href="{{ url('/vendorSertif') }}" class="nav-link {{ request()->is('vendor') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-building"></i>
                             <p>Kelola Vendor Sertifikasi</p>
                         </a>
@@ -132,18 +132,35 @@
                     <p>Daftar Pelatihan Sertifikasi</p>
                 </a>
             </li>
+            <!-- Data Sertifikasi Pelatihan -->
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-database"></i>
+                    <p>
+                        Data Dosen
+                        <i class="right fas fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ url('/dataPelatihan') }}" class="nav-link {{ request()->is('dataPelatihan') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-chalkboard-teacher"></i>
+                            <p>Data Pelatihan</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('/dataSertifikasi') }}" class="nav-link {{ request()->is('dataSertifikasi') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-certificate"></i>
+                            <p>Data Sertifikasi</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
             <!-- surat tugas -->
             <li class="nav-item">
                 <a href="{{ url('/draftSuratTugas') }}" class="nav-link {{ request()->is('draftSuratTugas') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-file-alt"></i>
                     <p>Draft Surat Tugas</p>
-                </a>
-            </li>
-            <!-- Data Pelatihan Sertifikasi -->
-            <li class="nav-item">
-                <a href="{{ url('/dataPelatihan') }}" class="nav-link {{ request()->is('dataPelatihan') ? 'active' : '' }}">
-                    <i class="nav-icon fas fa-database"></i>
-                    <p>Data Pelatihan Sertifikasi</p>
                 </a>
             </li>
             @endif
