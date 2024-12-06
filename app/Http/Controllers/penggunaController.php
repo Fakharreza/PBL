@@ -59,8 +59,9 @@ class penggunaController extends Controller
             $rules = [
                 'id_jenis_pengguna'    => 'required|integer',
                 'nama_pengguna'    => 'required|string|max:100',
+                'nama'    => 'required|string|max:100',
                 'email'    => 'required|string|max:100',
-                'nip'    => 'required|integer',
+                'nip'    => 'required|integer|min:3|unique:pengguna,nip',
                 'password'    => 'required|min:5',
             ];
             // use Illuminate\Support\Facades\Validator;
@@ -101,8 +102,9 @@ class penggunaController extends Controller
             $rules = [
                 'id_jenis_pengguna'    => 'required|integer',
                 'nama_pengguna'    => 'required|string|max:100',
+                'nama'    => 'required|string|max:100',
                 'email'    => 'required|string|max:100',
-                'nip'    => 'required|integer',
+                'nip'    => 'required|integer|min:3|unique:pengguna,nip,'.$id.'id_pengguna',
                 'password'    => 'required|min:5',
             ];
             // use Illuminate\Support\Facades\Validator;

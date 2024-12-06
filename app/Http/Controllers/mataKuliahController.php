@@ -7,7 +7,7 @@ use App\Models\mataKuliahModel;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
-class MataKuliahController extends Controller
+class mataKuliahController extends Controller
 {
 
     public function index()

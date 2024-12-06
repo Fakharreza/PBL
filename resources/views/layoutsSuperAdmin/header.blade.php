@@ -5,7 +5,7 @@
       
       <!-- Right section with user role (Administrator) -->
       <span class="navbar-text text-white font-weight-bold">
-          ADMINISTRATOR
+        {{ Auth::user()->jenisPengguna->nama_jenis_pengguna ?? 'Guest' }}
       </span>
   </div>
 </nav>
