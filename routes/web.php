@@ -169,6 +169,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/import_ajax', [MataKuliahController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [MataKuliahController::class, 'export_excel']);      // export excel
         Route::get('/export_pdf',[MataKuliahController::class,'export_pdf']); // export pdf
+    });
 
     Route::group(['prefix' => 'bidangMinat','middleware' => ['authorize:ADM']] , function(){
         Route::get('/', [BidangMinatController::class, 'index']);  // Menampilkan halaman awal Stok
