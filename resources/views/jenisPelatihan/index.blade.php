@@ -60,7 +60,7 @@
                         searchable: false
                     },
                     {
-                        data: "jenis_pelatihan",
+                        data: "nama_jenis_pelatihan",
                         className: "",
                         orderable: false,
                         searchable: true
