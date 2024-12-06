@@ -9,6 +9,7 @@ use App\Http\Controllers\VendorPelatihanController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\dataPelatihanController;
+use App\Http\Controllers\PeriodeController;
 use App\Http\Controllers\vendorSertifController;
 
 
@@ -170,5 +171,23 @@ Route::middleware('auth')->group(function () {
         Route::post('/import_ajax', [BidangMinatController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [BidangMinatController::class, 'export_excel']);      // export excel
         Route::get('/export_pdf',[BidangMinatController::class,'export_pdf']); // export pdf
+    });
+
+    Route::group(['prefix' => 'periode','middleware' => ['authorize:ADM']] , function(){
+        Route::get('/', [PeriodeController::class, 'index']);  // Menampilkan halaman awal Stok
+        Route::post('/list', [PeriodeController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
+        Route::get('/create', [PeriodeController::class, 'create']);  // Menampilkan form tambah Stok
+        Route::post('/', [PeriodeController::class, 'store']);  // Menyimpan data Stok
+        Route::get('/create_ajax', [PeriodeController::class, 'create_ajax']);  // Menampilkan form tambah supplier ajax
+        Route::post('/ajax', [PeriodeController::class, 'store_ajax']);  // Menyimpan data supplier baru ajax
+        Route::get('/{id}/edit_ajax', [PeriodeController::class, 'edit_ajax']);  // Menampilkan form edit supplier ajax
+        Route::put('/{id}/update_ajax', [PeriodeController::class, 'update_ajax']);  // Menyimpan perubahan data barang ajax
+        Route::get('/{id}/delete_ajax', [PeriodeController::class, 'confirm_ajax']);  // Menampilkan form konfirmasi delete supplier ajax
+        Route::delete('/{id}/delete_ajax', [PeriodeController::class, 'delete_ajax']);  // Menghapus data supplier ajax
+        Route::get('/{id}/show_ajax', [PeriodeController::class, 'show_ajax']);  // Menampilkan detail supplier
+        Route::get('/import', [PeriodeController::class, 'import']);  // Ajax form upload excel
+        Route::post('/import_ajax', [PeriodeController::class, 'import_ajax']);  // Ajax import excel
+        Route::get('/export_excel', [PeriodeController::class, 'export_excel']);      // export excel
+        Route::get('/export_pdf',[PeriodeController::class,'export_pdf']); // export pdf
     });
 });
