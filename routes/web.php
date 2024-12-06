@@ -11,10 +11,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\dataPelatihanController;
 use App\Http\Controllers\PeriodeController;
 use App\Http\Controllers\vendorSertifController;
-
-
-
-
+use App\Http\Controllers\MataKuliahController;
+use App\Models\MataKuliahModel;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -154,6 +152,23 @@ Route::middleware('auth')->group(function () {
         Route::get('/export_excel', [vendorSertifController::class, 'export_excel']);      // export excel
         Route::get('/export_pdf',[vendorSertifController::class,'export_pdf']); // export pdf
     });
+  
+    Route::group(['prefix' => 'mataKuliah','middleware' => ['authorize:ADM']] , function(){
+        Route::get('/', [MataKuliahController::class, 'index']);  // Menampilkan halaman awal Stok
+        Route::post('/list', [MataKuliahController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
+        Route::get('/create', [MataKuliahController::class, 'create']);  // Menampilkan form tambah Stok
+        Route::post('/', [MataKuliahController::class, 'store']);  // Menyimpan data Stok
+        Route::get('/create_ajax', [MataKuliahController::class, 'create_ajax']);  // Menampilkan form tambah supplier ajax
+        Route::post('/ajax', [MataKuliahController::class, 'store_ajax']);  // Menyimpan data supplier baru ajax
+        Route::get('/{id}/edit_ajax', [MataKuliahController::class, 'edit_ajax']);  // Menampilkan form edit supplier ajax
+        Route::put('/{id}/update_ajax', [MataKuliahController::class, 'update_ajax']);  // Menyimpan perubahan data barang ajax
+        Route::get('/{id}/delete_ajax', [MataKuliahController::class, 'confirm_ajax']);  // Menampilkan form konfirmasi delete supplier ajax
+        Route::delete('/{id}/delete_ajax', [MataKuliahController::class, 'delete_ajax']);  // Menghapus data supplier ajax
+        Route::get('/{id}/show_ajax', [MataKuliahController::class, 'show_ajax']);  // Menampilkan detail supplier
+        Route::get('/import', [MataKuliahController::class, 'import']);  // Ajax form upload excel
+        Route::post('/import_ajax', [MataKuliahController::class, 'import_ajax']);  // Ajax import excel
+        Route::get('/export_excel', [MataKuliahController::class, 'export_excel']);      // export excel
+        Route::get('/export_pdf',[MataKuliahController::class,'export_pdf']); // export pdf
 
     Route::group(['prefix' => 'bidangMinat','middleware' => ['authorize:ADM']] , function(){
         Route::get('/', [BidangMinatController::class, 'index']);  // Menampilkan halaman awal Stok
