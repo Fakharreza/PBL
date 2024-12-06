@@ -38,9 +38,14 @@
                     <small id="error-level_id" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
+                    <label>Nama</label>
+                    <input value="{{ old('nama', $pengguna->nama) }}" type="text" name="nama" id="nama" class="form-control" required>
+                    <small id="error-nama" class="error-text form-text text-danger"></small>
+                </div>
+                <div class="form-group">
                     <label>email</label>
                     <input value="{{ old('email', $pengguna->email) }}" type="text" name="email" id="email" class="form-control" required>
-                    <small id="error-nama" class="error-text form-text text-danger"></small>
+                    <small id="error-email" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
                     <label>Nip</label>

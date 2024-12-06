@@ -8,7 +8,7 @@ use App\Models\JenisPelatihanModel;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
-class DataPelatihanController extends Controller
+class dataPelatihanController extends Controller
 {
     public function index()
     {
