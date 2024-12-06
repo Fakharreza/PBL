@@ -10,6 +10,6 @@ class JenisPelatihanModel extends Model
     use HasFactory;
     protected $table = 'jenis_pelatihan';
     protected $primaryKey = 'id_jenis_pelatihan';
-    protected $fillable = ['id_jenis_pelatihan','jenis_pelatihan'];
+    protected $fillable = ['id_jenis_pelatihan','nama_jenis_pelatihan'];
 
 }

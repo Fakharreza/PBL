@@ -11,7 +11,7 @@
                 <div class="form-group">
                 <label class="col-1 control-label col-form-label">Jenis Pelatihan</label>
                 <div class="col-11">
-                    <input type="text" class="form-control" id="jenis_pelatihan" name="jenis_pelatihan" value="" required>
+                    <input type="text" class="form-control" id="nama_jenis_pelatihan" name="nama_jenis_pelatihan" value="" required>
                 </div>
                     <small id="error-nama_jenis_pelatihan" class="error-text form-text text-danger"></small>
                 </div>
@@ -27,7 +27,7 @@
     $(document).ready(function() {
         $("#form-tambah").validate({
             rules: {
-                jenis_pelatihan: {
+                nama_jenis_pelatihan: {
                     required: true,
                     minlength: 3,
                     maxlength: 20

@@ -22,8 +22,6 @@
                         <th>ID Vendor Sertifikasi</th>
                         <th>Nama Vendor</th>
                         <th>Alamat</th>
-                        <th>Kota</th>
-                        <th>No Telp</th>
                         <th>Alamat Web</th>
                         <th>Aksi</th>
                     </tr>
@@ -71,18 +69,6 @@
                     },
                     {
                         data: "alamat",
-                        className: "",
-                        orderable: true,
-                        searchable: true
-                    },
-                    {
-                        data: "kota",
-                        className: "",
-                        orderable: true,
-                        searchable: true
-                    },
-                    {
-                        data: "no_telp",
                         className: "",
                         orderable: true,
                         searchable: true

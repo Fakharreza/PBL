@@ -26,7 +26,7 @@ class JenisPelatihanController extends Controller
     }
     public function list(Request $request)
     {
-        $jenisPelatihan = JenisPelatihanModel::select('id_jenis_pelatihan','jenis_pelatihan');
+        $jenisPelatihan = JenisPelatihanModel::select('id_jenis_pelatihan','nama_jenis_pelatihan');
         return DataTables::of($jenisPelatihan)
             ->addIndexColumn() // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex) 
             ->addColumn('aksi', function ($jenisPelatihan) { // menambahkan kojenisPelatihanom aksi 
@@ -48,7 +48,7 @@ class JenisPelatihanController extends Controller
         // cek apakah request berupa ajax
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'jenis_pelatihan'    => 'required|string|max:100',
+                'nama_jenis_pelatihan'    => 'required|string|max:100',
             ];
             // use Illuminate\Support\Facades\Validator;
             $validator = Validator::make($request->all(), $rules);
@@ -84,7 +84,7 @@ class JenisPelatihanController extends Controller
         // cek apakah request dari ajax
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'jenis_pelatihan'    => 'required|string|max:100',
+                'nama_jenis_pelatihan'    => 'required|string|max:100',
             ];
             // use Illuminate\Support\Facades\Validator;
             $validator = Validator::make($request->all(), $rules);

@@ -38,7 +38,7 @@
                     </tr>
                     <tr>
                         <th>Nama Jenis Pelatihan</th>
-                        <td>{{ $jenisPelatihan->jenis_pelatihan }}</td>
+                        <td>{{ $jenisPelatihan->nama_jenis_pelatihan }}</td>
                     </tr>
                     </table>
                 </div>
