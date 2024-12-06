@@ -11,7 +11,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\dataPelatihanController;
 use App\Http\Controllers\vendorSertifController;
 use App\Http\Controllers\MataKuliahController;
-use App\Models\MataKuliahModel;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -168,7 +167,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/import_ajax', [MataKuliahController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [MataKuliahController::class, 'export_excel']);      // export excel
         Route::get('/export_pdf',[MataKuliahController::class,'export_pdf']); // export pdf
-
+    });
     Route::group(['prefix' => 'bidangMinat','middleware' => ['authorize:ADM']] , function(){
         Route::get('/', [BidangMinatController::class, 'index']);  // Menampilkan halaman awal Stok
         Route::post('/list', [BidangMinatController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
