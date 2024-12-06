@@ -19,17 +19,22 @@
                     <small id="error-level_id" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
+                    <label>nama</label>
+                    <input value="" type="text" name="nama" id="nama" class="form-control" required>
+                    <small id="error-nama" class="error-text form-text text-danger"></small>
+                </div>
+                <div class="form-group">
                     <label>email</label>
                     <input value="" type="text" name="email" id="email" class="form-control" required>
-                    <small id="error-nama" class="error-text form-text text-danger"></small>
+                    <small id="error-email" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
                     <label>Nip</label>
                     <input value="" type="text" name="nip" id="nip" class="form-control" required>
-                    <small id="error-username" class="error-text form-text text-danger"></small>
+                    <small id="error-nip" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
-                    <label>Nama Pengguna</label>
+                    <label>Username</label>
                     <input value="" type="text" name="nama_pengguna" id="nama_pengguna" class="form-control" required>
                     <small id="error-username" class="error-text form-text text-danger"></small>
                 </div>
@@ -55,6 +60,11 @@
                         number: true
                     },
                     nama_pengguna: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 20
+                    },
+                    nama: {
                         required: true,
                         minlength: 3,
                         maxlength: 20

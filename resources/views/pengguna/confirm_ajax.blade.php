@@ -37,8 +37,8 @@
                         <td>{{ $pengguna->id_pengguna }}</td>
                     </tr>
                     <tr>
-                        <th>Nama Pengguna</th>
-                        <td>{{ $pengguna->nama_pengguna}}</td>
+                        <th>Nama</th>
+                        <td>{{ $pengguna->nama}}</td>
                     </tr>
                     <tr>
                         <th>Email</th>
@@ -47,6 +47,10 @@
                     <tr>
                         <th>Nip</th>
                         <td>{{ $pengguna->nip }}</td>
+                    </tr>
+                    <tr>
+                        <th>Username</th>
+                        <td>{{ $pengguna->nama_pengguna}}</td>
                     </tr>
                     <tr>
                         <th>Password</th>
