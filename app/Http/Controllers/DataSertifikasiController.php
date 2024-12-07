@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\dataPelatihanModel;
 use App\Models\DataSertifikasiModel;
 use App\Models\penggunaModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Log;
+
 
 class DataSertifikasiController extends Controller
 {
@@ -28,7 +31,7 @@ class DataSertifikasiController extends Controller
     }
     public function list(Request $request)
     {
-        $dataSertifikasi = DataSertifikasiModel::select('id_pengguna', 'nama_sertifikasi', 'no_sertifikat', 'lokasi_sertifikasi', 'waktu_sertifikasi', 'bukti_sertifikasi', 'masa_berlaku')
+        $dataSertifikasi = DataSertifikasiModel::select('id_input_sertifikasi', 'id_pengguna', 'nama_sertifikasi', 'no_sertifikat', 'lokasi_sertifikasi', 'waktu_sertifikasi', 'bukti_sertifikasi', 'masa_berlaku')
             ->with('pengguna');
 
         return DataTables::of($dataSertifikasi)
@@ -103,15 +106,14 @@ class DataSertifikasiController extends Controller
             ]);
         }
 
-        return redirect('/');
+        redirect('/');
     }
 
 
     public function show_ajax(string $id)
     {
         $dataSertifikasi = DataSertifikasiModel::find($id);
-        $pengguna = penggunaModel::find($dataSertifikasi->id_pengguna);
-        return view('dataSertifikasi.show_ajax', ['dataSertifikasi' => $dataSertifikasi, 'pengguna' => $pengguna]);
+        return view('dataSertifikasi.show_ajax', ['dataSertifikasi' => $dataSertifikasi]);
     }
     public function edit_ajax(string $id)
     {
@@ -122,55 +124,83 @@ class DataSertifikasiController extends Controller
     }
     public function update_ajax(Request $request, $id)
     {
-        // cek apakah request dari ajax
+        Log::info('Update Request Received: ' . $id);
+    
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'id_jenis_pengguna'    => 'required|integer',
-                'nama_pengguna'    => 'required|string|max:100',
-                'nama'    => 'required|string|max:100',
-                'email'    => 'required|string|max:100',
-                'nip'    => 'required|integer|min:3|unique:pengguna,nip,' . $id . 'id_pengguna',
-                'password'    => 'required|min:5',
+                'nama_sertifikasi'     => 'required|string|max:40',
+                'no_sertifikat'        => 'required|integer',
+                'lokasi_sertifikasi'   => 'required|string|max:50',
+                'waktu_sertifikasi'    => 'required|date',
+                'masa_berlaku'         => 'required|date',
+                'bukti_sertifikasi'    => 'nullable|file|mimes:pdf|max:2048',
             ];
-            // use Illuminate\Support\Facades\Validator;
+    
             $validator = Validator::make($request->all(), $rules);
+    
             if ($validator->fails()) {
+                Log::error('Validation failed: ' . json_encode($validator->errors()));
                 return response()->json([
-                    'status' => false, // respon json, true: berhasil, false: gagal
+                    'status' => false,
                     'message' => 'Validasi gagal.',
-                    'msgField' => $validator->errors() // menunjukkan field mana yang error
+                    'msgField' => $validator->errors()
                 ]);
             }
-            $check = penggunaModel::find($id);
-            if ($check) {
-                $check->update($request->all());
+    
+            // Cari data sertifikasi berdasarkan ID
+            $dataSertifikasi = DataSertifikasiModel::find($id);
+            if ($dataSertifikasi) {
+                Log::info('Data Sertifikasi Found: ' . json_encode($dataSertifikasi));
+    
+                // Update data selain bukti_sertifikasi terlebih dahulu
+                $dataSertifikasi->update($request->except('bukti_sertifikasi'));
+    
+                // Cek apakah ada file bukti_sertifikasi
+                if ($request->hasFile('bukti_sertifikasi')) {
+                    // Hapus file lama jika ada
+                    if ($dataSertifikasi->bukti_sertifikasi && file_exists(storage_path('public/sertifikasi/' . $dataSertifikasi->bukti_sertifikasi))) {
+                        unlink(storage_path('public/sertifikasi/' . $dataSertifikasi->bukti_sertifikasi));
+                    }
+    
+                    // Upload file baru
+                    $file = $request->file('bukti_sertifikasi');
+                    $filename = time() . '_' . $file->getClientOriginalName();
+                    $file->storeAs('public/sertifikasi', $filename);
+    
+                    // Update nama file pada database
+                    $dataSertifikasi->update(['bukti_sertifikasi' => $filename]);
+                }
+    
                 return response()->json([
                     'status' => true,
                     'message' => 'Data berhasil diupdate'
                 ]);
             } else {
+                Log::error('Data Sertifikasi Not Found: ' . $id);
                 return response()->json([
                     'status' => false,
                     'message' => 'Data tidak ditemukan'
                 ]);
             }
         }
+    
         return redirect('/');
     }
+
     public function confirm_ajax(String $id)
     {
-        $pengguna = penggunaModel::find($id);
+        $dataSertifikasi = DataSertifikasiModel::find($id);
 
-        return view('pengguna.confirm_ajax', ['pengguna' => $pengguna]);
+        return view('dataSertifikasi.confirm_ajax', ['dataSertifikasi' => $dataSertifikasi]);
     }
 
     public function delete_ajax(Request $request, $id)
     {
         //cek apakah request dari ajax
         if ($request->ajax() || $request->wantsJson()) {
-            $pengguna = penggunaModel::find($id);
-            if ($pengguna) {
-                $pengguna->delete();
+            $dataSertifikasi = DataSertifikasiModel::find($id);
+            if ($dataSertifikasi) {
+                $dataSertifikasi->delete();
                 return response()->json([
                     'status' => true,
                     'message' => 'Data berhasil dihapus'

@@ -28,7 +28,7 @@
             <div class="modal-body">
                 <table class="table table-bordered table-striped table-hover table-sm">
                     <tr>
-                        <th>ID Input Sertifikasi</th>
+                        <th>ID Sertifikasi</th>
                         <td>{{ $dataSertifikasi->id_input_sertifikasi }}</td>
                     </tr>
                     <tr>
@@ -51,7 +51,7 @@
                         <th>Bukti Sertifikasi</th>
                         <td>
                             @if($dataSertifikasi->bukti_sertifikasi)
-                                <a href="{{ asset('storage/' . $dataSertifikasi->bukti_sertifikasi) }}" target="_blank" class="btn btn-success btn-sm">Lihat Bukti</a>
+                                <a href="{{ asset('storage/sertifikasi/' . $dataSertifikasi->bukti_sertifikasi) }}" target="_blank" class="btn btn-success btn-sm">Lihat Bukti</a>
                             @else
                                 <span class="text-danger">Belum diunggah</span>
                             @endif
