@@ -17,7 +17,8 @@
     </div>
 </div>
 @else
-<form action="{{ url('/dataPelatihan/' . $dataPelatihan->id_pelatihan . '/update_ajax') }}" method="POST" id="form-edit" enctype="multipart/form-data">
+<form action="{{ url('/dataPelatihan/' . $dataPelatihan->id_input_pelatihan . '/update_ajax') }}" method="POST" id="form-edit" enctype="multipart/form-data">
+
     @csrf
     @method('PUT')
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
@@ -29,9 +30,10 @@
                 </button>
             </div>
             <div class="modal-body">
+                
                 <div class="form-group">
                     <label for="nama_pelatihan">Nama Pelatihan</label>
-                    <input type="text" class="form-control" id="nama_pelatihan" name="nama_pelatihan" value="{{ $dataPelatihan->nama_pelatihan }}" required>
+                    <input value="{{ old('nama_pelatihan', $dataPelatihan->nama_pelatihan) }}" type="text" name="nama_pelatihan" id="nama_pelatihan" class="form-control" required>
                     <small id="error-nama_pelatihan" class="error-text form-text text-danger"></small>
                 </div>
 
@@ -40,37 +42,41 @@
                     <select name="id_jenis_pelatihan" id="id_jenis_pelatihan" class="form-control" required>
                         <option value="">- Pilih Jenis Pelatihan -</option>
                         @foreach ($jenisPelatihan as $jenis)
-                            <option value="{{ $jenis->id_jenis_pelatihan }}" {{ $jenis->id_jenis_pelatihan == $dataPelatihan->id_jenis_pelatihan ? 'selected' : '' }}>
-                                {{ $jenis->jenis_pelatihan }}
+                            <option value="{{ $jenis->id_jenis_pelatihan }}" 
+                                {{ old('id_jenis_pelatihan', $dataPelatihan->id_jenis_pelatihan) == $jenis->id_jenis_pelatihan ? 'selected' : '' }}>
+                                {{ $jenis->nama_jenis_pelatihan }}
                             </option>
                         @endforeach
                     </select>
-                    <small id="error-jenis_pelatihan" class="error-text form-text text-danger"></small>
+                    <small id="error-nama_jenis_pelatihan" class="error-text form-text text-danger"></small>
                 </div>
 
                 <div class="form-group">
                     <label for="waktu_pelatihan">Waktu Pelatihan</label>
-                    <input type="date" class="form-control" id="waktu_pelatihan" name="waktu_pelatihan" value="{{ $dataPelatihan->waktu_pelatihan }}" required>
+                    <input value="{{ old('waktu_pelatihan', \Carbon\Carbon::parse($dataPelatihan->waktu_pelatihan)->format('Y-m-d')) }}" 
+                        type="date" class="form-control" id="waktu_pelatihan" name="waktu_pelatihan" required>
                     <small id="error-waktu_pelatihan" class="error-text form-text text-danger"></small>
                 </div>
 
                 <div class="form-group">
-                    <label for="biaya">Biaya</label>
-                    <input type="number" class="form-control" id="biaya" name="biaya" value="{{ $dataPelatihan->biaya }}" required>
-                    <small id="error-biaya" class="error-text form-text text-danger"></small>
-                </div>
-
-                <div class="form-group">
                     <label for="lokasi_pelatihan">Lokasi Pelatihan</label>
-                    <input type="text" class="form-control" id="lokasi_pelatihan" name="lokasi_pelatihan" value="{{ $dataPelatihan->lokasi_pelatihan }}" required>
+                    <input value="{{ old('lokasi_pelatihan', $dataPelatihan->lokasi_pelatihan) }}" type="text" class="form-control" id="lokasi_pelatihan" name="lokasi_pelatihan" required>
                     <small id="error-lokasi_pelatihan" class="error-text form-text text-danger"></small>
                 </div>
 
                 <div class="form-group">
                     <label for="bukti_pelatihan">Bukti Pelatihan (PDF)</label>
+                    @if($dataPelatihan->bukti_pelatihan)
+                        <p>File yang diunggah: 
+                            <a href="{{ asset('storage/bukti_pelatihan/' . $dataPelatihan->bukti_pelatihan) }}" target="_blank">
+                                {{ $dataPelatihan->bukti_pelatihan }}
+                            </a>
+                        </p>
+                    @endif
                     <input type="file" class="form-control" id="bukti_pelatihan" name="bukti_pelatihan" accept="application/pdf">
                     <small id="error-bukti_pelatihan" class="error-text form-text text-danger"></small>
                 </div>
+
             </div>
 
             <div class="modal-footer">
@@ -80,85 +86,4 @@
         </div>
     </div>
 </form>
-
-<script>
-    $(document).ready(function () {
-        $("#form-edit").validate({
-            rules: {
-                nama_pelatihan: {
-                    required: true,
-                    maxlength: 150
-                },
-                jenis_pelatihan: {
-                    required: true
-                },
-                waktu_pelatihan: {
-                    required: true,
-                    date: true
-                },
-                biaya: {
-                    required: true,
-                    number: true
-                },
-                lokasi_pelatihan: {
-                    required: true,
-                    maxlength: 200
-                },
-                bukti_pelatihan: {
-                    extension: "pdf",
-                    filesize: 2048 // In KB
-                }
-            },
-            messages: {
-                bukti_pelatihan: {
-                    extension: "File harus berupa PDF",
-                    filesize: "Ukuran file maksimal 2 MB"
-                }
-            },
-            submitHandler: function (form) {
-                var formData = new FormData(form);
-                $.ajax({
-                    url: form.action,
-                    type: form.method,
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (response) {
-                        if (response.status) {
-                            $('#myModal').modal('hide');
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil',
-                                text: response.message
-                            });
-                            dataPelatihan.ajax.reload();
-                        } else {
-                            $('.error-text').text('');
-                            $.each(response.msgField, function (prefix, val) {
-                                $('#error-' + prefix).text(val[0]);
-                            });
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Terjadi Kesalahan',
-                                text: response.message
-                            });
-                        }
-                    }
-                });
-                return false;
-            },
-            errorElement: 'span',
-            errorPlacement: function (error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-group').append(error);
-            },
-            highlight: function (element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function (element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            }
-        });
-    });
-</script>
 @endempty

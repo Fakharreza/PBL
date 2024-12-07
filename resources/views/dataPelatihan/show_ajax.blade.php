@@ -1,4 +1,4 @@
-@empty($dataPelatihan)
+@empty($dataPelatihan) 
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -29,7 +29,7 @@
                 <table class="table table-bordered table-striped table-hover table-sm">
                     <tr>
                         <th>ID Pelatihan</th>
-                        <td>{{ $dataPelatihan->id_pelatihan }}</td>
+                        <td>{{ $dataPelatihan->id_input_pelatihan }}</td>
                     </tr>
                     <tr>
                         <th>Nama Pelatihan</th>
@@ -44,10 +44,6 @@
                         <td>{{ $dataPelatihan->waktu_pelatihan }}</td>
                     </tr>
                     <tr>
-                        <th>Biaya</th>
-                        <td>{{ number_format($dataPelatihan->biaya, 0, ',', '.') }}</td>
-                    </tr>
-                    <tr>
                         <th>Lokasi Pelatihan</th>
                         <td>{{ $dataPelatihan->lokasi_pelatihan }}</td>
                     </tr>
@@ -55,7 +51,7 @@
                         <th>Bukti Pelatihan</th>
                         <td>
                             @if($dataPelatihan->bukti_pelatihan)
-                                <a href="{{ asset('storage/' . $dataPelatihan->bukti_pelatihan) }}" target="_blank" class="btn btn-success btn-sm">Lihat Bukti</a>
+                                <a href="{{ asset('storage/bukti_pelatihan/' . $dataPelatihan->bukti_pelatihan) }}" target="_blank" class="btn btn-success btn-sm">Lihat Bukti</a>
                             @else
                                 <span class="text-danger">Belum diunggah</span>
                             @endif
