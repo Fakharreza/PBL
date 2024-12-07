@@ -26,6 +26,9 @@ class penggunaModel extends Authenticatable
     public function jenisPengguna(): BelongsTo{
         return $this->belongsTo(jenisPenggunaModel::class, 'id_jenis_pengguna', 'id_jenis_pengguna');
     }
+    public function dataSertifikasi(): HasMany{
+        return $this->hasMany(DataSertifikasiModel::class, 'id_pengguna', 'id_pengguna');
+    }
     
     public function getRoleName(): string
     {

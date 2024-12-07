@@ -9,6 +9,7 @@ use App\Http\Controllers\VendorPelatihanController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\dataPelatihanController;
+use App\Http\Controllers\DataSertifikasiController;
 use App\Http\Controllers\PeriodeController;
 use App\Http\Controllers\vendorSertifController;
 use App\Http\Controllers\MataKuliahController;
@@ -203,5 +204,23 @@ Route::middleware('auth')->group(function () {
         Route::post('/import_ajax', [PeriodeController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [PeriodeController::class, 'export_excel']);      // export excel
         Route::get('/export_pdf',[PeriodeController::class,'export_pdf']); // export pdf
+    });
+
+    Route::group(['prefix' => 'dataSertifikasi','middleware' => ['authorize:DSN']] , function(){
+        Route::get('/', [DataSertifikasiController::class, 'index']);  // Menampilkan halaman awal Stok
+        Route::post('/list', [DataSertifikasiController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
+        Route::get('/create', [DataSertifikasiController::class, 'create']);  // Menampilkan form tambah Stok
+        Route::post('/', [DataSertifikasiController::class, 'store']);  // Menyimpan data Stok
+        Route::get('/create_ajax', [DataSertifikasiController::class, 'create_ajax']);  // Menampilkan form tambah supplier ajax
+        Route::post('/ajax', [DataSertifikasiController::class, 'store_ajax']);  // Menyimpan data supplier baru ajax
+        Route::get('/{id}/edit_ajax', [DataSertifikasiController::class, 'edit_ajax']);  // Menampilkan form edit supplier ajax
+        Route::put('/{id}/update_ajax', [DataSertifikasiController::class, 'update_ajax']);  // Menyimpan perubahan data barang ajax
+        Route::get('/{id}/delete_ajax', [DataSertifikasiController::class, 'confirm_ajax']);  // Menampilkan form konfirmasi delete supplier ajax
+        Route::delete('/{id}/delete_ajax', [DataSertifikasiController::class, 'delete_ajax']);  // Menghapus data supplier ajax
+        Route::get('/{id}/show_ajax', [DataSertifikasiController::class, 'show_ajax']);  // Menampilkan detail supplier
+        Route::get('/import', [DataSertifikasiController::class, 'import']);  // Ajax form upload excel
+        Route::post('/import_ajax', [DataSertifikasiController::class, 'import_ajax']);  // Ajax import excel
+        Route::get('/export_excel', [DataSertifikasiController::class, 'export_excel']);      // export excel
+        Route::get('/export_pdf',[DataSertifikasiController::class,'export_pdf']); // export pdf
     });
 });
