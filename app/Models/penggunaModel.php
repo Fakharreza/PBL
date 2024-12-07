@@ -29,6 +29,9 @@ class penggunaModel extends Authenticatable
     public function pesertaPelatihan(): BelongsTo{
         return $this->belongsTo(pesertaPelatihanModel::class, 'id_pengguna', 'id_pengguna');
     }
+    public function dataSertifikasi(): HasMany{
+        return $this->hasMany(DataSertifikasiModel::class, 'id_pengguna', 'id_pengguna');
+    }
     
     public function getRoleName(): string
     {

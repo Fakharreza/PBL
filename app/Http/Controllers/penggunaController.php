@@ -104,7 +104,7 @@ class penggunaController extends Controller
                 'nama_pengguna'    => 'required|string|max:100',
                 'nama'    => 'required|string|max:100',
                 'email'    => 'required|string|max:100',
-                'nip'    => 'required|integer|min:3|unique:pengguna,nip,'.$id.'id_pengguna',
+                'nip'    => 'required|integer|min:3',
                 'password'    => 'required|min:5',
             ];
             // use Illuminate\Support\Facades\Validator;
