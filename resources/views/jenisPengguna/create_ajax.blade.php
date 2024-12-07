@@ -17,7 +17,6 @@
                 <label class="col-1 control-label col-form-label">Jenis Pengguna</label>
                 <div class="col-11">
                     <input type="text" class="form-control" id="nama_jenis_pengguna" name="nama_jenis_pengguna" value="" required>
-                </div>
                     <small id="error-nama_jenis_pengguna" class="error-text form-text text-danger"></small>
                 </div>
             </div>

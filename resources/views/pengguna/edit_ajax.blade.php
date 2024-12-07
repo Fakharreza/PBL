@@ -3,8 +3,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Kesalahan</h5>
-                <button type="button" class="close" data-dismiss="modal" arialabel="Close"><span
-                        aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="alert alert-danger">
@@ -23,52 +24,61 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Edit Data Pengguna</h5>
-                    <button type="button" class="close" data-dismiss="modal" arialabel="Close"><span
-                            aria-hidden="true">&times;</span></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
-                <div class="form-group">
-                <label>jenis Pengguna</label>
-                    <select name="id_jenis_pengguna" id="id_jenis_pengguna" class="form-control" required>
-                        <option value="">- Pilih Jenis Pengguna -</option>
-                        @foreach ($jenisPengguna as $l)
-                            <option value="{{ $l->id_jenis_pengguna }}">{{ $l->nama_jenis_pengguna }}</option>
-                        @endforeach
-                    </select>
-                    <small id="error-level_id" class="error-text form-text text-danger"></small>
-                </div>
-                <div class="form-group">
-                    <label>Nama</label>
-                    <input value="{{ old('nama', $pengguna->nama) }}" type="text" name="nama" id="nama" class="form-control" required>
-                    <small id="error-nama" class="error-text form-text text-danger"></small>
-                </div>
-                <div class="form-group">
-                    <label>email</label>
-                    <input value="{{ old('email', $pengguna->email) }}" type="text" name="email" id="email" class="form-control" required>
-                    <small id="error-email" class="error-text form-text text-danger"></small>
-                </div>
-                <div class="form-group">
-                    <label>Nip</label>
-                    <input value="{{ old('nip', $pengguna->nip) }}" type="text" name="nip" id="nip" class="form-control" required>
-                    <small id="error-username" class="error-text form-text text-danger"></small>
-                </div>
-                <div class="form-group">
-                    <label>Username</label>
-                    <input value="{{ old('nama_pengguna', $pengguna->nama_pengguna) }}" type="text" name="nama_pengguna" id="nama_pengguna" class="form-control" required>
-                    <small id="error-username" class="error-text form-text text-danger"></small>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input value="" type="password" name="password" id="password" class="form-control" required>
-                    <small id="error-password" class="error-text form-text text-danger"></small>
-                </div>
-            </div>
-                    <div class="modal-footer">
-                        <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    <div class="form-group">
+                        <label>Jenis Pengguna</label>
+                        <select name="id_jenis_pengguna" id="id_jenis_pengguna" class="form-control" required>
+                            <option value="">- Pilih Jenis Pengguna -</option>
+                            @foreach ($jenisPengguna as $l)
+                                <option value="{{ $l->id_jenis_pengguna }}" 
+                                    {{ $pengguna->id_jenis_pengguna == $l->id_jenis_pengguna ? 'selected' : '' }}>
+                                    {{ $l->nama_jenis_pengguna }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small id="error-level_id" class="error-text form-text text-danger"></small>
+                    </div>
+                    <div class="form-group">
+                        <label>Nama</label>
+                        <input value="{{ old('nama', $pengguna->nama) }}" type="text" name="nama" id="nama" class="form-control" required>
+                        <small id="error-nama" class="error-text form-text text-danger"></small>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input value="{{ old('email', $pengguna->email) }}" type="text" name="email" id="email" class="form-control" required>
+                        <small id="error-email" class="error-text form-text text-danger"></small>
+                    </div>
+                    <div class="form-group">
+                        <label>NIP</label>
+                        <input value="{{ old('nip', $pengguna->nip) }}" type="text" name="nip" id="nip" class="form-control" required>
+                        <small id="error-nip" class="error-text form-text text-danger"></small>
+                    </div>
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input value="{{ old('nama_pengguna', $pengguna->nama_pengguna) }}" type="text" name="nama_pengguna" id="nama_pengguna" class="form-control" required>
+                        <small id="error-username" class="error-text form-text text-danger"></small>
+                    </div>
+                    <div class="form-group">
+                        <label>Password Lama</label>
+                        <input type="password" class="form-control" value="********" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Password Baru</label>
+                        <input value="" type="password" name="password" id="password" class="form-control">
+                        <small class="form-text text-muted">Kosongkan jika tidak ingin mengganti password.</small>
+                        <small id="error-password" class="error-text form-text text-danger"></small>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
             </div>
+        </div>
     </form>
     <script>
         $(document).ready(function () {
@@ -85,7 +95,7 @@
                         required: true,
                     },
                     password: {
-                        required: true,
+                        minlength: 6
                     }
                 },
                 submitHandler: function (form) {
@@ -94,7 +104,7 @@
                         url: form.action,
                         type: form.method,
                         data: formData,
-                        processData: false, // setting processData dan contentType ke false, untuk menghandle file 
+                        processData: false,
                         contentType: false,
                         success: function (response) {
                             if (response.status) {

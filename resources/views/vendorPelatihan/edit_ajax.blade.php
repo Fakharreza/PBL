@@ -30,27 +30,27 @@
                 <div class="modal-body">
                 <div class="form-group">
                     <label class="col-form-label">Nama Vendor</label>
-                    <input type="text" class="form-control" id="nama_vendor" name="nama_vendor" required>
+                    <input value="{{ old('nama_vendor', $vendorPelatihan->nama_vendor) }}" type="text" class="form-control" id="nama_vendor" name="nama_vendor" required>
                     <small id="error-nama_vendor" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
                     <label class="col-form-label">Alamat</label>
-                    <input type="text" class="form-control" id="alamat" name="alamat" required>
+                    <input value="{{ old('alamat', $vendorPelatihan->alamat) }}" type="text" class="form-control" id="alamat" name="alamat" required>
                     <small id="error-alamat" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
                     <label class="col-form-label">Kota</label>
-                    <input type="text" class="form-control" id="kota" name="kota" required>
+                    <input value="{{ old('kota', $vendorPelatihan->kota) }}" type="text" class="form-control" id="kota" name="kota" required>
                     <small id="error-kota" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
                     <label class="col-form-label">Nomor Telepon</label>
-                    <input type="text" class="form-control" id="no_telp" name="no_telp" required>
+                    <input value="{{ old('no_telp', $vendorPelatihan->no_telp) }}" type="text" class="form-control" id="no_telp" name="no_telp" required>
                     <small id="error-no_telp" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
                     <label class="col-form-label">Alamat Website</label>
-                    <input type="url" class="form-control" id="alamat_web" name="alamat_web" required>
+                    <input value="{{ old('alamat_web', $vendorPelatihan->alamat_web) }}" type="url" class="form-control" id="alamat_web" name="alamat_web" required>
                     <small id="error-alamat_web" class="error-text form-text text-danger"></small>
                 </div>
                     <div class="modal-footer">
