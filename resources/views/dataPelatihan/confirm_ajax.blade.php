@@ -16,7 +16,7 @@
         </div>
     </div>
 @else
-    <form action="{{ url('/dataPelatihan/' . $dataPelatihan->id_pelatihan . '/delete_ajax') }}" method="POST" id="form-delete">
+    <form action="{{ url('/dataPelatihan/' . $dataPelatihan->id_input_pelatihan . '/delete_ajax') }}" method="POST" id="form-delete">
         @csrf
         @method('DELETE')
         <div id="modal-master" class="modal-dialog modal-lg" role="document">
@@ -34,7 +34,7 @@
                     <table class="table table-sm table-bordered table-striped">
                         <tr>
                             <th>ID Pelatihan</th>
-                            <td>{{ $dataPelatihan->id_pelatihan }}</td>
+                            <td>{{ $dataPelatihan->id_input_pelatihan }}</td>
                         </tr>
                         <tr>
                             <th>Nama Pelatihan</th>
@@ -42,33 +42,30 @@
                         </tr>
                         <tr>
                             <th>Jenis Pelatihan</th>
-                            <td>{{ $dataPelatihan->jenisPelatihan->jenis_pelatihan }}</td>
+                            <td>{{ $dataPelatihan->jenisPelatihan->nama_jenis_pelatihan }}</td>
                         </tr>
                         <tr>
                             <th>Waktu Pelatihan</th>
                             <td>{{ $dataPelatihan->waktu_pelatihan }}</td>
                         </tr>
                         <tr>
-                            <th>Biaya</th>
-                            <td>{{ $dataPelatihan->biaya }}</td>
-                        </tr>
-                        <tr>
                             <th>Lokasi Pelatihan</th>
-                            <td>{{ $dataPelatihan->lokasi }}</td>
+                            <td>{{ $dataPelatihan->lokasi_pelatihan}}</td>
                         </tr>
                         <tr>
                             <th>Bukti Pelatihan</th>
-                            <td>{{ $dataPelatihan->bukti_pelatihan }}</td>
+                            <td>{{ $dataPelatihan->bukti_pelatihan}}</td>
                         </tr>
                     </table>
                 </div>
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
-                    <button type="submit" class="btn btn-primary">Ya, Hapus</button>
+                    <button type="submit" class="btn btn-danger">Ya, Hapus</button>
                 </div>
             </div>
         </div>
     </form>
+
     <script>
         $(document).ready(function() {
             $("#form-delete").validate({
@@ -86,7 +83,8 @@
                                     title: 'Berhasil',
                                     text: response.message
                                 });
-                                dataPelatihanTable.ajax.reload();
+                                // Reload the DataTable after successful deletion
+                                $('#table_dataPelatihan').DataTable().ajax.reload();
                             } else {
                                 Swal.fire({
                                     icon: 'error',
