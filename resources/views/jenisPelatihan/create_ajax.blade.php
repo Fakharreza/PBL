@@ -12,7 +12,6 @@
                 <label class="col-1 control-label col-form-label">Jenis Pelatihan</label>
                 <div class="col-11">
                     <input type="text" class="form-control" id="nama_jenis_pelatihan" name="nama_jenis_pelatihan" value="" required>
-                </div>
                     <small id="error-nama_jenis_pelatihan" class="error-text form-text text-danger"></small>
                 </div>
             </div>

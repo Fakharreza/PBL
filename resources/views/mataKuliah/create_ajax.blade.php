@@ -12,7 +12,6 @@
                     <label class="col-1 control-label col-form-label">Nama Mata Kuliah</label>
                     <div class="col-11">
                         <input type="text" class="form-control" id="nama_mata_kuliah" name="nama_mata_kuliah" value="" required >
-                    </div>
                     <small id="error-nama_mata_kuliah" class="error-text form-text text-danger"></small>
                 </div>
             </div>
