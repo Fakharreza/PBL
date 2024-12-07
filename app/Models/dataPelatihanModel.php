@@ -4,30 +4,57 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class dataPelatihanModel extends Model
 {
     use HasFactory;
 
     // Nama tabel di database
-    protected $table = 'pelatihan';
+    protected $table = 'input_pelatihan';
 
     // Primary key dari tabel
-    protected $primaryKey = 'id_pelatihan';
+    protected $primaryKey = 'id_input_pelatihan';
 
     // Kolom yang dapat diisi menggunakan mass assignment
     protected $fillable = [
+        'id_jenis_pelatihan',
+        'id_pengguna',
         'nama_pelatihan',
-        'jenis_pelatihan',
-        'waktu_pelatihan',
-        'biaya',
         'lokasi_pelatihan',
+        'waktu_pelatihan',
         'bukti_pelatihan', // Menyimpan nama file PDF
     ];
 
-    // Menambahkan atribut tambahan atau casting jika diperlukan
+    // Casting waktu_pelatihan menjadi format datetime
     protected $casts = [
         'waktu_pelatihan' => 'datetime',
-        'biaya' => 'decimal:2',
     ];
+
+    /**
+     * Relasi dengan model JenisPelatihanModel
+     * Menghubungkan input_pelatihan.id_jenis_pelatihan ke jenis_pelatihan.id_jenis_pelatihan
+     */
+    public function jenisPelatihan(): BelongsTo
+    {
+        return $this->belongsTo(JenisPelatihanModel::class, 'id_jenis_pelatihan', 'id_jenis_pelatihan');
+    }
+
+    /**
+     * Relasi dengan model penggunaModel
+     * Menghubungkan input_pelatihan.id_pengguna ke pengguna.id_pengguna
+     */
+    public function pengguna(): BelongsTo
+    {
+        return $this->belongsTo(penggunaModel::class, 'id_pengguna', 'id_pengguna');
+    }
+
+    /**
+     * Mengambil nama pengguna dari relasi pengguna
+     * Untuk mempermudah akses data nama pengguna tanpa harus query ulang
+     */
+    public function getNamaPenggunaAttribute(): string
+    {
+        return $this->pengguna ? $this->pengguna->nama_pengguna : '-';
+    }
 }
