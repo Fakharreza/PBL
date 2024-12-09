@@ -71,6 +71,14 @@
                         <input type="text" class="form-control" id="nama_pelatihan" name="nama_pelatihan" value="{{ old('nama_pelatihan', $infoPelatihan->nama_pelatihan) }}" required>
                     </div>
                     <div class="form-group">
+                        <label>Level Pelatihan</label>
+                        <select name="level_pelatihan" id="level_pelatihan" class="form-control" required>
+                            <option value="{{ old('level_pelatiham', $infoPelatihan->level_pelatihan) }}">- Pilih Level Pelatihan -</option>
+                            <option value="Internasional" {{ $infoPelatihan->level_pelatihan == 'Internasional' ? 'selected' : '' }}>Internasional</option>
+                            <option value="Nasional" {{ $infoPelatihan->level_pelatihan == 'Nasional' ? 'selected' : '' }}>Nasional</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label>Tanggal Mulai</label>
                         <input type="date" class="form-control" id="tanggal_mulai" name="tanggal_mulai" value="{{ old('tanggal_mulai', $infoPelatihan->tanggal_mulai) }}" required>
                     </div>
@@ -86,31 +94,6 @@
                         <label>Biaya</label>
                         <input type="number" class="form-control" id="biaya" name="biaya" step="0.01" value="{{ old('biaya', $infoPelatihan->biaya) }}" required>
                     </div>
-                        <div class="form-group">
-                            <label for="dosen">Anggota Peserta</label>
-                            <div class="card">
-                                <div class="card-header bg-success text-white">
-                                    Rekomendasi
-                                </div>
-                                <div class="card-body">
-                                    @foreach ($dosen as $d)
-                                        <div class="form-check">
-                                            <input 
-                                                type="checkbox" 
-                                                name="id_pengguna[]" 
-                                                id="dosen_{{ $d->id_pengguna }}" 
-                                                class="form-check-input" 
-                                                value="{{ $d->id_pengguna }}" 
-                                                {{ in_array($d->id_pengguna, $peserta) ? 'checked' : '' }}
-                                            >
-                                            <label for="dosen_{{ $d->id_pengguna }}" class="form-check-label">
-                                                {{ $d->nama_pengguna }}
-                                            </label>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
@@ -127,6 +110,9 @@
                         required: true,
                         maxlength: 100
                     },
+                    level_pelatihan: {
+                        required: true
+                    }
                     lokasi_pelatihan: {
                         required: true,
                         maxlength: 100
@@ -138,8 +124,8 @@
                     biaya: {
                         required: true,
                         number: true
-                    }
-                },
+                    },
+                }
                 submitHandler: function(form) {
                     var formData = new FormData(form);
                     $.ajax({

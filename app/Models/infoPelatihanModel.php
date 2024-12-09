@@ -13,7 +13,7 @@ class infoPelatihanModel extends Model
 
     protected $table = 'info_pelatihan';
     protected $primaryKey = 'id_info_pelatihan';
-    protected $fillable = ['id_info_pelatihan','id_vendor_pelatihan','id_jenis_pelatihan','id_periode','lokasi_pelatihan','nama_pelatihan','tanggal_mulai','tanggal_selesai','kuota_peserta','biaya'];
+    protected $fillable = ['id_info_pelatihan','id_vendor_pelatihan','id_jenis_pelatihan','id_periode','lokasi_pelatihan','nama_pelatihan','level_pelatihan','tanggal_mulai','tanggal_selesai','kuota_peserta','biaya'];
 
     public function vendorPelatihan():BelongsTo{
         return $this->belongsTo(VendorPelatihanModel::class, 'id_vendor_pelatihan', 'id_vendor_pelatihan');

@@ -212,6 +212,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [infoPelatihanController::class, 'create']);  // Menampilkan form tambah Stok
         Route::post('/', [infoPelatihanController::class, 'store']);  // Menyimpan data Stok
         Route::get('/create_ajax', [infoPelatihanController::class, 'create_ajax']);  // Menampilkan form tambah supplier ajax
+        Route::get('/{id}/tambah_peserta', [infoPelatihanController::class, 'tambah_peserta']);
+        Route::post('/{id}/store_peserta', [infoPelatihanController::class, 'store_peserta']);
+        Route::delete('/{id}/hapus_peserta', [infoPelatihanController::class, 'hapus_peserta']);
         Route::post('/ajax', [infoPelatihanController::class, 'store_ajax']);  // Menyimpan data supplier baru ajax
         Route::get('/{id}/edit_ajax', [infoPelatihanController::class, 'edit_ajax']);  // Menampilkan form edit supplier ajax
         Route::put('/{id}/update_ajax', [infoPelatihanController::class, 'update_ajax']);  // Menyimpan perubahan data barang ajax

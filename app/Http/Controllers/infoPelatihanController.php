@@ -30,19 +30,33 @@ class infoPelatihanController extends Controller
         return view('infoPelatihan.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
     }
     public function list(Request $request)
-    {
-        $infoPelatihan = infoPelatihanModel::select('id_info_pelatihan','id_vendor_pelatihan','id_jenis_pelatihan','id_periode','lokasi_pelatihan','nama_pelatihan','tanggal_mulai','tanggal_selesai','kuota_peserta','biaya');
-        return DataTables::of($infoPelatihan)
-            ->addIndexColumn() // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex) 
-            ->addColumn('aksi', function ($infoPelatihan) { // menambahkan kojenisPelatihanom aksi 
-                $btn  = '<button onclick="modalAction(\'' . url('/infoPelatihan/' . $infoPelatihan->id_info_pelatihan . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/infoPelatihan/' . $infoPelatihan->id_info_pelatihan . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/infoPelatihan/' . $infoPelatihan->id_info_pelatihan . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
-                return $btn;
-            })
-            ->rawColumns(['aksi']) // memberitahu bahwa kolom aksi adalah html 
-            ->make(true);
-    }
+{
+    $infoPelatihan = infoPelatihanModel::select(
+        'id_info_pelatihan',
+        'id_vendor_pelatihan',
+        'id_jenis_pelatihan',
+        'id_periode',
+        'lokasi_pelatihan',
+        'nama_pelatihan',
+        'level_pelatihan',
+        'tanggal_mulai',
+        'tanggal_selesai',
+        'kuota_peserta',
+        'biaya'
+    );
+
+    return DataTables::of($infoPelatihan)
+        ->addIndexColumn()
+        ->addColumn('aksi', function ($infoPelatihan) {
+            $btn  = '<button onclick="modalAction(\'' . url('/infoPelatihan/' . $infoPelatihan->id_info_pelatihan . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+            $btn .= '<button onclick="modalAction(\'' . url('/infoPelatihan/' . $infoPelatihan->id_info_pelatihan . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+            $btn .= '<button onclick="modalAction(\'' . url('/infoPelatihan/' . $infoPelatihan->id_info_pelatihan . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+            $btn .= '<button onclick="modalAction(\'' . url('/infoPelatihan/' . $infoPelatihan->id_info_pelatihan . '/tambah_peserta') . '\')" class="btn btn-success btn-sm">Tambah Peserta</button>';
+            return $btn;
+        })
+        ->rawColumns(['aksi'])
+        ->make(true);
+}
     public function create_ajax()
     {
         $vendorPelatihan = VendorPelatihanModel::all();
@@ -54,6 +68,24 @@ class infoPelatihanController extends Controller
         ->with('periode',$periode);
         
     }
+    public function tambah_peserta(string $id)
+    {
+        $id_info= $id;
+        $infoPelatihan = infoPelatihanModel::find($id);
+        $dosen = penggunaModel::where('id_jenis_pengguna', 3)->get();
+        
+        $peserta = pesertaPelatihanModel::where('id_info_pelatihan', $id)
+            ->pluck('id_pengguna')
+            ->toArray();
+
+        return view('infoPelatihan.tambah_peserta', [
+            'info' => $id_info,
+            'infoPelatihan' => $infoPelatihan,
+            'dosen' => $dosen,
+            'peserta' => $peserta,
+        ]);
+    }
+
 
     public function store_ajax(Request $request)
     {
@@ -65,6 +97,7 @@ class infoPelatihanController extends Controller
                 'id_periode'       => 'required|integer',
                 'lokasi_pelatihan'    => 'required|string|max:100',
                 'nama_pelatihan'    => 'required|string|max:100',
+                'level_pelatihan'    => 'required|string|max:100',
                 'tanggal_mulai'    => 'required|date',
                 'tanggal_selesai'    => 'required|date',
                 'kuota_peserta'    => 'required|integer',
@@ -89,6 +122,28 @@ class infoPelatihanController extends Controller
         }
         redirect('/');
     }
+    public function store_peserta(Request $request, string $id)
+    {
+        // Hapus peserta lama
+         pesertaPelatihanModel::where('id_info_pelatihan', $id)->delete();
+
+        $request->validate([
+            'id_pengguna' => 'required|array',
+        ]);
+
+        foreach ($request->id_pengguna as $idPengguna) {
+            pesertaPelatihanModel::create([
+                'id_info_pelatihan' => $id,
+                'id_pengguna'       => $idPengguna,
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Peserta berhasil ditambahkan.'
+        ]);
+    }
+
     public function show_ajax(string $id)
     {
         $infoPelatihan = infoPelatihanModel::find($id);
@@ -103,21 +158,12 @@ class infoPelatihanController extends Controller
         $vendorPelatihan = VendorPelatihanModel::all();
         $jenisPelatihan = JenisPelatihanModel::all();
         $periode = PeriodeModel::all();
-        
-        // Ambil pengguna yang memiliki id_jenis_pengguna = 3 (dosen)
-        $dosen = penggunaModel::where('id_jenis_pengguna', 3)->get();
-        
-        $peserta = pesertaPelatihanModel::where('id_info_pelatihan', $id)
-            ->pluck('id_pengguna')
-            ->toArray();
     
         return view('infoPelatihan.edit_ajax', [
             'infoPelatihan' => $infoPelatihan,
             'vendorPelatihan' => $vendorPelatihan,
             'jenisPelatihan' => $jenisPelatihan,
             'periode' => $periode,
-            'dosen' => $dosen,
-            'peserta' => $peserta,
         ]);
     }
     
@@ -130,9 +176,9 @@ public function update_ajax(Request $request, string $id)
         'id_vendor_pelatihan' => 'required|integer',
         'id_jenis_pelatihan'  => 'required|integer',
         'id_periode'          => 'required|integer',
-        'id_pengguna'         => 'required|array', // Validasi array pengguna
         'lokasi_pelatihan'    => 'required|string|max:100',
         'nama_pelatihan'      => 'required|string|max:100',
+        'level_pelatihan'    => 'required|string|max:100',
         'tanggal_mulai'       => 'required|date',
         'tanggal_selesai'     => 'required|date',
         'kuota_peserta'       => 'required|integer',
@@ -147,31 +193,12 @@ public function update_ajax(Request $request, string $id)
         'id_periode'          => $request->id_periode,
         'lokasi_pelatihan'    => $request->lokasi_pelatihan,
         'nama_pelatihan'      => $request->nama_pelatihan,
+        'level_pelatihan'     => $request->level_pelatihan,
         'tanggal_mulai'       => $request->tanggal_mulai,
         'tanggal_selesai'     => $request->tanggal_selesai,
         'kuota_peserta'       => $request->kuota_peserta,
         'biaya'               => $request->biaya,
     ]);
-
-    // Hapus peserta lama
-    pesertaPelatihanModel::where('id_info_pelatihan', $id)->delete();
-
-    // Tambahkan peserta baru
-    $idPenggunaList = $request->id_pengguna;
-    foreach ($idPenggunaList as $idPengguna) {
-        // Pastikan pengguna adalah dosen (id_jenis_pengguna = 3)
-        $pengguna = penggunaModel::where('id_pengguna', $idPengguna)
-            ->where('id_jenis_pengguna', 3)
-            ->first();
-
-        if ($pengguna) {
-            pesertaPelatihanModel::create([
-                'id_info_pelatihan' => $id,
-                'id_pengguna'       => $idPengguna,
-            ]);
-        }
-    }
-
     return response()->json([
         'success' => true,
         'message' => 'Data berhasil diperbarui dan peserta pelatihan disimpan.'
@@ -206,4 +233,22 @@ public function update_ajax(Request $request, string $id)
         }
         return redirect('/');
     }
+
+    public function hapus_peserta($id)
+{
+    try {
+        pesertaPelatihanModel::where('id_info_pelatihan', $id)->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Semua peserta berhasil dihapus.'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal menghapus peserta. ' . $e->getMessage()
+        ]);
+    }
+}
+
 }
