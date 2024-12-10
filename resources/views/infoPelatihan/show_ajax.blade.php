@@ -60,6 +60,11 @@
                         <td>{{ $infoPelatihan->nama_pelatihan }}</td>
                     </tr>
                     <tr>
+                        <th>Level Pelatihan</th>
+                        <td>{{ $infoPelatihan->level_pelatihan }}</td>
+                    </tr>
+
+                    <tr>
                         <th>Tanggal Mulai</th>
                         <td>{{ $infoPelatihan->tanggal_mulai }}</td>
                     </tr>
