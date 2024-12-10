@@ -49,6 +49,15 @@
                     <small id="error-nama_pelatihan" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
+                    <label>Level Pelatihan</label>
+                    <select name="level_pelatihan" id="level_pelatihan" class="form-control" required>
+                        <option value="">- Pilih Level Pelatihan -</option>
+                        <option value="Internasional">Internasional</option>
+                        <option value="Nasional">Nasional</option>
+                    </select>
+                    <small id="error-level_pelatihan" class="error-text form-text text-danger"></small>
+                </div>
+                <div class="form-group">
                     <label>Tanggal Mulai</label>
                     <input type="date" class="form-control" id="tanggal_mulai" name="tanggal_mulai" required>
                     <small id="error-tanggal_mulai" class="error-text form-text text-danger"></small>
@@ -97,6 +106,10 @@
                     maxlength: 100
                 },
                 nama_pelatihan: {
+                    required: true,
+                    maxlength: 100
+                },
+                level_pelatihan: {
                     required: true,
                     maxlength: 100
                 },
