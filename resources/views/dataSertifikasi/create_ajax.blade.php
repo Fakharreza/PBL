@@ -15,6 +15,16 @@
                     <small id="error-nama_sertifikasi" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
+                    <label>Jenis Sertifikasi</label>
+                    <select name="id_jenis_pelatihan_sertifikasi" id="id_jenis_pelatihan_sertifikasi" class="form-control" required>
+                        <option value="">- Pilih Jenis Pelatihan -</option>
+                        @foreach ($jenisPelatihan as $jenis)
+                            <option value="{{ $jenis->id_jenis_pelatihan_sertifikasi }}">{{ $jenis->nama_jenis_pelatihan_sertifikasi }}</option>
+                        @endforeach
+                    </select>
+                    <small id="error-id_jenis_pelatihan_sertifikasi" class="error-text form-text text-danger"></small>
+                </div>
+                <div class="form-group">
                     <label>No Sertifikat</label>
                     <input type="text" name="no_sertifikat" id="no_sertifikat" class="form-control" required>
                     <small id="error-no_sertifikat" class="error-text form-text text-danger"></small>
@@ -53,7 +63,10 @@
             rules: {
                 nama_sertifikasi: {
                     required: true,
-                    maxlength: 40
+                    maxlength: 100
+                },
+                id_jenis_pelatihan_sertifikasi: {
+                    required: true
                 },
                 no_sertifikat: {
                     required: true,

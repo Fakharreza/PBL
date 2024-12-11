@@ -39,16 +39,16 @@
 
                 <div class="form-group">
                     <label>Jenis Pelatihan</label>
-                    <select name="id_jenis_pelatihan" id="id_jenis_pelatihan" class="form-control" required>
+                    <select name="id_jenis_pelatihan_sertifikasi" id="id_jenis_pelatihan_sertifikasi" class="form-control" required>
                         <option value="">- Pilih Jenis Pelatihan -</option>
                         @foreach ($jenisPelatihan as $jenis)
-                            <option value="{{ $jenis->id_jenis_pelatihan }}" 
-                                {{ old('id_jenis_pelatihan', $dataPelatihan->id_jenis_pelatihan) == $jenis->id_jenis_pelatihan ? 'selected' : '' }}>
-                                {{ $jenis->nama_jenis_pelatihan }}
+                            <option value="{{ $jenis->id_jenis_pelatihan_sertifikasi }}" 
+                                {{ old('id_jenis_pelatihan_sertifikasi', $dataPelatihan->id_jenis_pelatihan_sertifikasi) == $jenis->id_jenis_pelatihan_sertifikasi ? 'selected' : '' }}>
+                                {{ $jenis->nama_jenis_pelatihan_sertifikasi }}
                             </option>
                         @endforeach
                     </select>
-                    <small id="error-nama_jenis_pelatihan" class="error-text form-text text-danger"></small>
+                    <small id="error-nama_jenis_pelatihan_sertifikasi" class="error-text form-text text-danger"></small>
                 </div>
 
                 <div class="form-group">

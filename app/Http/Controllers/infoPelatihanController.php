@@ -103,7 +103,7 @@ class infoPelatihanController extends Controller
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
                 'id_vendor_pelatihan'       => 'required|integer',
-                'id_jenis_pelatihan_sertifikasi' => 'required|integer',
+                'id_jenis_pelatihan'       => 'required|integer',
                 'id_periode'       => 'required|integer',
                 'lokasi_pelatihan'    => 'required|string|max:100',
                 'nama_pelatihan'    => 'required|string|max:100',

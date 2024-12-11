@@ -41,6 +41,10 @@
                             <td>{{ $dataSertifikasi->nama_sertifikasi }}</td>
                         </tr>
                         <tr>
+                            <th>Jenis Sertifikasi</th>
+                            <td>{{ $dataSertifikasi->jenisPelatihan->nama_jenis_pelatihan_sertifikasi }}</td>
+                        </tr>
+                        <tr>
                             <th>No Sertifikat</th>
                             <td>{{ $dataSertifikasi->no_sertifikat }}</td>
                         </tr>
