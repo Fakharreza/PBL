@@ -42,7 +42,7 @@
                         </tr>
                         <tr>
                             <th>Jenis Pelatihan</th>
-                            <td>{{ $dataPelatihan->jenisPelatihan->nama_jenis_pelatihan }}</td>
+                            <td>{{ $dataPelatihan->jenisPelatihan->nama_jenis_pelatihan_sertifikasi }}</td>
                         </tr>
                         <tr>
                             <th>Waktu Pelatihan</th>

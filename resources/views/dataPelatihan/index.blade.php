@@ -58,7 +58,7 @@
                 columns: [
                     { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
                     { data: "nama_pelatihan", orderable: true, searchable: true },
-                    { data: "jenis_pelatihan", orderable: true, searchable: true },
+                    { data: "jenis_pelatihan_sertifikasi", orderable: true, searchable: true },
                     { data: "waktu_pelatihan", orderable: true, searchable: true },
                     { data: "lokasi_pelatihan", orderable: true, searchable: true },
                     { data: "bukti_pelatihan", className: "text-center", orderable: false, searchable: false },

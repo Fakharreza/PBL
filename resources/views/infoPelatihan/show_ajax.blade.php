@@ -37,11 +37,11 @@
                     </tr>
                     <tr>
                         <th>ID Jenis Pelatihan</th>
-                        <td>{{ $infoPelatihan->id_jenis_pelatihan }}</td>
+                        <td>{{ $infoPelatihan->id_jenis_pelatihan_sertifikasi }}</td>
                     </tr>
                     <tr>
                         <th>Nama Jenis Pelatihan</th>
-                        <td>{{ $infoPelatihan->jenisPelatihan->nama_jenis_pelatihan }}</td>
+                        <td>{{ $infoPelatihan->jenisPelatihan->nama_jenis_pelatihan_sertifikasi }}</td>
                     </tr>
                     <tr>
                         <th>ID Periode</th>

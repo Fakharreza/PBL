@@ -7,6 +7,7 @@ use App\Models\dataPelatihanModel;
 use App\Models\JenisPelatihanModel;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Auth;
 
 class DataPelatihanController extends Controller
 {
@@ -32,13 +33,20 @@ class DataPelatihanController extends Controller
 
     public function list(Request $request)
     {
+
         $dataPelatihan = dataPelatihanModel::with('jenisPelatihan', 'pengguna')
-            ->select('id_input_pelatihan', 'nama_pelatihan', 'id_jenis_pelatihan', 'waktu_pelatihan', 'lokasi_pelatihan', 'bukti_pelatihan');
+            ->select('id_input_pelatihan', 'nama_pelatihan', 'id_jenis_pelatihan_sertifikasi', 'waktu_pelatihan', 'lokasi_pelatihan', 'bukti_pelatihan');
+        $user = Auth::user(); // Mengambil data user yang login
+
+        // Ambil hanya data yang sesuai dengan ID pengguna yang login
+        $dataPelatihan = dataPelatihanModel::where('id_pengguna', $user->id_pengguna)
+            ->with('jenisPelatihan')
+            ->get();
 
         return DataTables::of($dataPelatihan)
             ->addIndexColumn()
-            ->addColumn('jenis_pelatihan', function ($dataPelatihan) {
-                return $dataPelatihan->jenisPelatihan->nama_jenis_pelatihan ?? '-';
+            ->addColumn('jenis_pelatihan_sertifikasi', function ($dataPelatihan) {
+                return $dataPelatihan->jenisPelatihan->nama_jenis_pelatihan_sertifikasi ?? '-';
             })
             ->addColumn('nama_pengguna', function ($dataPelatihan) {
                 return $dataPelatihan->pengguna->nama_pengguna ?? '-';
@@ -70,7 +78,7 @@ class DataPelatihanController extends Controller
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
                 'nama_pelatihan'    => 'required|string|max:150',
-                'id_jenis_pelatihan' => 'required|exists:jenis_pelatihan,id_jenis_pelatihan',
+                'id_jenis_pelatihan_sertifikasi' => 'required|exists:jenis_pelatihan_sertifikasi,id_jenis_pelatihan_sertifikasi',
                 'waktu_pelatihan'   => 'required|date',
                 'lokasi_pelatihan'  => 'required|string|max:200',
                 'bukti_pelatihan'   => 'nullable|mimes:pdf|max:2048',
@@ -86,7 +94,7 @@ class DataPelatihanController extends Controller
                 ]);
             }
 
-            $data = $request->only(['nama_pelatihan', 'id_jenis_pelatihan', 'waktu_pelatihan', 'lokasi_pelatihan']);
+            $data = $request->only(['nama_pelatihan', 'id_jenis_pelatihan_sertifikasi', 'waktu_pelatihan', 'lokasi_pelatihan']);
             $data['id_pengguna'] = auth()->id();
 
             if ($request->hasFile('bukti_pelatihan')) {
@@ -125,55 +133,55 @@ class DataPelatihanController extends Controller
     }
 
     public function update_ajax(Request $request, $id)
-{
-    if ($request->ajax() || $request->wantsJson()) {
-        $rules = [
-            'nama_pelatihan'    => 'required|string|max:150',
-            'id_jenis_pelatihan' => 'required|exists:jenis_pelatihan,id_jenis_pelatihan',
-            'waktu_pelatihan'   => 'required|date',
-            'lokasi_pelatihan'  => 'required|string|max:200',
-            'bukti_pelatihan'   => 'nullable|mimes:pdf|max:2048',
-        ];
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'nama_pelatihan'    => 'required|string|max:150',
+                'id_jenis_pelatihan_sertifikasi' => 'required|exists:jenis_pelatihan_sertifikasi,id_jenis_pelatihan_sertifikasi',
+                'waktu_pelatihan'   => 'required|date',
+                'lokasi_pelatihan'  => 'required|string|max:200',
+                'bukti_pelatihan'   => 'nullable|mimes:pdf|max:2048',
+            ];
 
-        $validator = Validator::make($request->all(), $rules);
+            $validator = Validator::make($request->all(), $rules);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Validasi gagal.',
-                'msgField' => $validator->errors()
-            ]);
-        }
-
-        $dataPelatihan = dataPelatihanModel::find($id);
-
-        if ($dataPelatihan) {
-            $data = $request->only(['nama_pelatihan', 'id_jenis_pelatihan', 'waktu_pelatihan', 'lokasi_pelatihan']);
-
-            // Jika ada file bukti_pelatihan, simpan file tersebut
-            if ($request->hasFile('bukti_pelatihan')) {
-                $file = $request->file('bukti_pelatihan');
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $file->storeAs('public/bukti_pelatihan', $filename);
-                $data['bukti_pelatihan'] = $filename;
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi gagal.',
+                    'msgField' => $validator->errors()
+                ]);
             }
 
-            $dataPelatihan->update($data);
+            $dataPelatihan = dataPelatihanModel::find($id);
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Data berhasil diupdate'
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => 'Data tidak ditemukan'
-            ]);
+            if ($dataPelatihan) {
+                $data = $request->only(['nama_pelatihan', 'id_jenis_pelatihan_sertifikasi', 'waktu_pelatihan', 'lokasi_pelatihan']);
+
+                // Jika ada file bukti_pelatihan, simpan file tersebut
+                if ($request->hasFile('bukti_pelatihan')) {
+                    $file = $request->file('bukti_pelatihan');
+                    $filename = time() . '_' . $file->getClientOriginalName();
+                    $file->storeAs('public/bukti_pelatihan', $filename);
+                    $data['bukti_pelatihan'] = $filename;
+                }
+
+                $dataPelatihan->update($data);
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Data berhasil diupdate'
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Data tidak ditemukan'
+                ]);
+            }
         }
-    }
 
-    return redirect('/');
-}
+        return redirect('/');
+    }
 
     public function confirm_ajax(string $id)
     {

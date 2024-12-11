@@ -37,6 +37,20 @@
                         <small id="error-nama_sertifikasi" class="error-text form-text text-danger"></small>
                     </div>
                     <div class="form-group">
+                        <label>Jenis Sertifikasi</label>
+                        <select name="id_jenis_pelatihan_sertifikasi" id="id_jenis_pelatihan_sertifikasi" class="form-control" required>
+                            <option value="">- Pilih Jenis Pelatihan -</option>
+                            @foreach ($jenisPelatihan as $jenis)
+                                <option value="{{ $jenis->id_jenis_pelatihan_sertifikasi }}" 
+                                    {{ old('id_jenis_pelatihan_sertifikasi', $dataSertifikasi->id_jenis_pelatihan_sertifikasi) == $jenis->id_jenis_pelatihan_sertifikasi ? 'selected' : '' }}>
+                                    {{ $jenis->nama_jenis_pelatihan_sertifikasi }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small id="error-nama_jenis_pelatihan_sertifikasi" class="error-text form-text text-danger"></small>
+                    </div>
+    
+                    <div class="form-group">
                         <label for="no_sertifikat">No Sertifikat</label>
                         <input value="{{ old('no_sertifikat', $dataSertifikasi->no_sertifikat) }}" type="text"
                             name="no_sertifikat" id="no_sertifikat" class="form-control" required>

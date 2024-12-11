@@ -20,13 +20,13 @@
                 </div>
                 <div class="form-group">
                     <label>Jenis Pelatihan</label>
-                    <select name="id_jenis_pelatihan" id="id_jenis_pelatihan" class="form-control" required>
+                    <select name="id_jenis_pelatihan_sertifikasi" id="id_jenis_pelatihan_sertifikasi" class="form-control" required>
                         <option value="">- Pilih Jenis Pelatihan -</option>
                         @foreach ($jenisPelatihan as $j)
-                            <option value="{{ $j->id_jenis_pelatihan }}">{{ $j->nama_jenis_pelatihan }}</option>
+                            <option value="{{ $j->id_jenis_pelatihan_sertifikasi }}">{{ $j->nama_jenis_pelatihan_sertifikasi }}</option>
                         @endforeach
                     </select>
-                    <small id="error-id_jenis_pelatihan" class="error-text form-text text-danger"></small>
+                    <small id="error-id_jenis_pelatihan_sertifikasi" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
                     <label>Periode Pelatihan</label>
@@ -93,7 +93,7 @@
                     required: true,
                     digits: true
                 },
-                id_jenis_pelatihan: {
+                id_jenis_pelatihan_sertifikasi: {
                     required: true,
                     digits: true
                 },

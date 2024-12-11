@@ -18,7 +18,7 @@ class dataPelatihanModel extends Model
 
     // Kolom yang dapat diisi menggunakan mass assignment
     protected $fillable = [
-        'id_jenis_pelatihan',
+        'id_jenis_pelatihan_sertifikasi',
         'id_pengguna',
         'nama_pelatihan',
         'lokasi_pelatihan',
@@ -37,8 +37,8 @@ class dataPelatihanModel extends Model
      */
     public function jenisPelatihan(): BelongsTo
     {
-        return $this->belongsTo(JenisPelatihanModel::class, 'id_jenis_pelatihan', 'id_jenis_pelatihan');
-    }
+        return $this->belongsTo(JenisPelatihanModel::class, 'id_jenis_pelatihan_sertifikasi', 'id_jenis_pelatihan_sertifikasi');
+    }    
 
     /**
      * Relasi dengan model penggunaModel

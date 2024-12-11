@@ -60,7 +60,7 @@
                         searchable: false
                     },
                     {
-                        data: "nama_jenis_pelatihan",
+                        data: "nama_jenis_pelatihan_sertifikasi",
                         className: "",
                         orderable: false,
                         searchable: true

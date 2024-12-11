@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\dataPelatihanModel;
 use App\Models\DataSertifikasiModel;
+use App\Models\JenisPelatihanModel;
 use App\Models\penggunaModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Auth;
 
 class DataSertifikasiController extends Controller
 {
@@ -31,11 +30,20 @@ class DataSertifikasiController extends Controller
     }
     public function list(Request $request)
     {
-        $dataSertifikasi = DataSertifikasiModel::select('id_input_sertifikasi', 'id_pengguna', 'nama_sertifikasi', 'no_sertifikat', 'lokasi_sertifikasi', 'waktu_sertifikasi', 'bukti_sertifikasi', 'masa_berlaku')
+        $dataSertifikasi = DataSertifikasiModel::select('id_input_sertifikasi', 'id_jenis_pelatihan_sertifikasi', 'id_pengguna', 'nama_sertifikasi', 'no_sertifikat', 'lokasi_sertifikasi', 'waktu_sertifikasi', 'bukti_sertifikasi', 'masa_berlaku')
             ->with('pengguna');
+        $user = Auth::user(); // Mengambil data user yang login
+
+        // Ambil hanya data yang sesuai dengan ID pengguna yang login
+        $dataSertifikasi = DataSertifikasiModel::where('id_pengguna', $user->id_pengguna)
+            ->with('jenisPelatihan')
+            ->get();
 
         return DataTables::of($dataSertifikasi)
             ->addIndexColumn() // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex) 
+            ->addColumn('jenis_pelatihan_sertifikasi', function ($dataSertifikasi) {
+                return $dataSertifikasi->jenisPelatihan->nama_jenis_pelatihan_sertifikasi ?? '-';
+            })
             ->addColumn('bukti_sertifikasi', function ($dataSertifikasi) {
                 if ($dataSertifikasi->bukti_sertifikasi) {
                     // Membuat link untuk menampilkan PDF
@@ -56,10 +64,10 @@ class DataSertifikasiController extends Controller
     public function create_ajax()
     {
         $pengguna = penggunaModel::all();
+        $jenisPelatihan = JenisPelatihanModel::all();
         $dataSertifikasi = DataSertifikasiModel::all();
-        return view('dataSertifikasi.create_ajax')
-            ->with('dataSertifikasi', $dataSertifikasi)
-            ->with('pengguna', $pengguna);
+
+        return view('dataSertifikasi.create_ajax', compact('dataSertifikasi', 'pengguna', 'jenisPelatihan'));
     }
 
     public function store_ajax(Request $request)
@@ -67,7 +75,8 @@ class DataSertifikasiController extends Controller
         // cek apakah request berupa ajax
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'nama_sertifikasi'     => 'required|string|max:40',
+                'nama_sertifikasi'     => 'required|string|max:100',
+                'id_jenis_pelatihan_sertifikasi' => 'required|exists:jenis_pelatihan_sertifikasi,id_jenis_pelatihan_sertifikasi',
                 'no_sertifikat'        => 'required|integer',
                 'lokasi_sertifikasi'   => 'required|string|max:50',
                 'waktu_sertifikasi'    => 'required|date',
@@ -86,7 +95,7 @@ class DataSertifikasiController extends Controller
                 ]);
             }
 
-            $data = $request->only(['nama_sertifikasi', 'no_sertifikat', 'lokasi_sertifikasi', 'waktu_sertifikasi', 'masa_berlaku', 'bukti_sertifikasi']);
+            $data = $request->only(['nama_sertifikasi', 'id_jenis_pelatihan_sertifikasi', 'no_sertifikat', 'lokasi_sertifikasi', 'waktu_sertifikasi', 'masa_berlaku', 'bukti_sertifikasi']);
             $data['id_pengguna'] = auth()->id();
 
             if ($request->hasFile('bukti_sertifikasi')) {
@@ -119,71 +128,60 @@ class DataSertifikasiController extends Controller
     {
         $dataSertifikasi = DataSertifikasiModel::find($id);
         $pengguna = penggunaModel::all();
+        $jenisPelatihan = JenisPelatihanModel::all();
 
-        return view('dataSertifikasi.edit_ajax', ['dataSertifikasi' => $dataSertifikasi, 'pengguna' => $pengguna]);
+        return view('dataSertifikasi.edit_ajax', compact('dataSertifikasi', 'pengguna', 'jenisPelatihan'));
     }
     public function update_ajax(Request $request, $id)
     {
-        Log::info('Update Request Received: ' . $id);
-    
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'nama_sertifikasi'     => 'required|string|max:40',
+                'nama_sertifikasi'     => 'required|string|max:100',
+                'id_jenis_pelatihan_sertifikasi' => 'required|exists:jenis_pelatihan_sertifikasi,id_jenis_pelatihan_sertifikasi',
                 'no_sertifikat'        => 'required|integer',
                 'lokasi_sertifikasi'   => 'required|string|max:50',
                 'waktu_sertifikasi'    => 'required|date',
                 'masa_berlaku'         => 'required|date',
                 'bukti_sertifikasi'    => 'nullable|file|mimes:pdf|max:2048',
             ];
-    
+
             $validator = Validator::make($request->all(), $rules);
-    
+
             if ($validator->fails()) {
-                Log::error('Validation failed: ' . json_encode($validator->errors()));
                 return response()->json([
                     'status' => false,
                     'message' => 'Validasi gagal.',
                     'msgField' => $validator->errors()
                 ]);
             }
-    
+
             // Cari data sertifikasi berdasarkan ID
             $dataSertifikasi = DataSertifikasiModel::find($id);
             if ($dataSertifikasi) {
-                Log::info('Data Sertifikasi Found: ' . json_encode($dataSertifikasi));
-    
-                // Update data selain bukti_sertifikasi terlebih dahulu
-                $dataSertifikasi->update($request->except('bukti_sertifikasi'));
-    
-                // Cek apakah ada file bukti_sertifikasi
+                $data = $request->only(['nama_sertifikasi', 'id_jenis_pelatihan_sertifikasi', 'no_sertifikat', 'lokasi_sertifikasi', 'waktu_sertifikasi', 'masa_berlaku', 'bukti_sertifikasi']);
+
+                // Jika ada file bukti_pelatihan, simpan file tersebut
                 if ($request->hasFile('bukti_sertifikasi')) {
-                    // Hapus file lama jika ada
-                    if ($dataSertifikasi->bukti_sertifikasi && file_exists(storage_path('public/sertifikasi/' . $dataSertifikasi->bukti_sertifikasi))) {
-                        unlink(storage_path('public/sertifikasi/' . $dataSertifikasi->bukti_sertifikasi));
-                    }
-    
-                    // Upload file baru
                     $file = $request->file('bukti_sertifikasi');
                     $filename = time() . '_' . $file->getClientOriginalName();
                     $file->storeAs('public/sertifikasi', $filename);
-    
-                    // Update nama file pada database
-                    $dataSertifikasi->update(['bukti_sertifikasi' => $filename]);
+                    $data['bukti_sertifikasi'] = $filename;
                 }
-    
+
+                $dataSertifikasi->update($data);
+
                 return response()->json([
                     'status' => true,
                     'message' => 'Data berhasil diupdate'
                 ]);
             } else {
-                Log::error('Data Sertifikasi Not Found: ' . $id);
                 return response()->json([
                     'status' => false,
                     'message' => 'Data tidak ditemukan'
                 ]);
             }
         }
-    
+
         return redirect('/');
     }
 
