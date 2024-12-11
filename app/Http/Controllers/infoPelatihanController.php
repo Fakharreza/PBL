@@ -70,10 +70,19 @@ class infoPelatihanController extends Controller
     }
     public function tambah_peserta(string $id)
     {
-        $id_info= $id;
+        $id_info = $id;
         $infoPelatihan = infoPelatihanModel::find($id);
-        $dosen = penggunaModel::where('id_jenis_pengguna', 3)->get();
-        
+
+        // Menghitung jumlah pelatihan dari tabel input_pelatihan
+        $dosen = penggunaModel::select('pengguna.*')
+            ->leftJoin('input_pelatihan', 'pengguna.id_pengguna', '=', 'input_pelatihan.id_pengguna')
+            ->where('pengguna.id_jenis_pengguna', 3) // Filter untuk hanya dosen
+            ->selectRaw('COUNT(input_pelatihan.id_pengguna) as jumlah_pelatihan')
+            ->groupBy('pengguna.id_pengguna', 'pengguna.nama_pengguna') // Sesuaikan dengan kolom yang digunakan
+            ->orderBy('jumlah_pelatihan', 'asc') // Urutkan dari dosen paling sedikit pelatihan ke paling banyak
+            ->get();
+
+        // Mendapatkan peserta yang sudah terdaftar untuk pelatihan ini
         $peserta = pesertaPelatihanModel::where('id_info_pelatihan', $id)
             ->pluck('id_pengguna')
             ->toArray();
@@ -87,13 +96,14 @@ class infoPelatihanController extends Controller
     }
 
 
+
     public function store_ajax(Request $request)
     {
         // cek apakah request berupa ajax
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
                 'id_vendor_pelatihan'       => 'required|integer',
-                'id_jenis_pelatihan_sertifikasi'       => 'required|integer',
+                'id_jenis_pelatihan'       => 'required|integer',
                 'id_periode'       => 'required|integer',
                 'lokasi_pelatihan'    => 'required|string|max:100',
                 'nama_pelatihan'    => 'required|string|max:100',
@@ -169,41 +179,48 @@ class infoPelatihanController extends Controller
     
 
 
-public function update_ajax(Request $request, string $id)
-{
-    // Validasi data input
-    $request->validate([
-        'id_vendor_pelatihan' => 'required|integer',
-        'id_jenis_pelatihan_sertifikasi'  => 'required|integer',
-        'id_periode'          => 'required|integer',
-        'lokasi_pelatihan'    => 'required|string|max:100',
-        'nama_pelatihan'      => 'required|string|max:100',
-        'level_pelatihan'    => 'required|string|max:100',
-        'tanggal_mulai'       => 'required|date',
-        'tanggal_selesai'     => 'required|date',
-        'kuota_peserta'       => 'required|integer',
-        'biaya'               => 'required|numeric',
-    ]);
-
-    // Update info pelatihan
-    $infoPelatihan = infoPelatihanModel::find($id);
-    $infoPelatihan->update([
-        'id_vendor_pelatihan' => $request->id_vendor_pelatihan,
-        'id_jenis_pelatihan_sertifikasi'  => $request->id_jenis_pelatihan_sertifikasi,
-        'id_periode'          => $request->id_periode,
-        'lokasi_pelatihan'    => $request->lokasi_pelatihan,
-        'nama_pelatihan'      => $request->nama_pelatihan,
-        'level_pelatihan'     => $request->level_pelatihan,
-        'tanggal_mulai'       => $request->tanggal_mulai,
-        'tanggal_selesai'     => $request->tanggal_selesai,
-        'kuota_peserta'       => $request->kuota_peserta,
-        'biaya'               => $request->biaya,
-    ]);
-    return response()->json([
-        'success' => true,
-        'message' => 'Data berhasil diperbarui dan peserta pelatihan disimpan.'
-    ]);
-}
+    public function update_ajax(Request $request, string $id)
+    {
+        // Validasi data input
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'id_vendor_pelatihan' => 'required|integer',
+                'id_jenis_pelatihan_sertifikasi'  => 'required|integer',
+                'id_periode'          => 'required|integer',
+                'lokasi_pelatihan'    => 'required|string|max:100',
+                'nama_pelatihan'      => 'required|string|max:100',
+                'level_pelatihan'    => 'required|string|max:100',
+                'tanggal_mulai'       => 'required|date',
+                'tanggal_selesai'     => 'required|date',
+                'kuota_peserta'       => 'required|integer',
+                'biaya'               => 'required|numeric',
+            ];
+            // use Illuminate\Support\Facades\Validator;
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, // respon json, true: berhasil, false: gagal
+                    'message' => 'Validasi gagal.',
+                    'msgField' => $validator->errors() // menunjukkan field mana yang error
+                ]);
+            }
+            $check = infoPelatihanModel::find($id);
+            if ($check) {
+                $check->update($request->all());
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Data berhasil diupdate'
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Data tidak ditemukan'
+                ]);
+            }
+        }
+        return redirect('/');
+    }   
+    
 
 
     
@@ -235,20 +252,20 @@ public function update_ajax(Request $request, string $id)
     }
 
     public function hapus_peserta($id)
-{
-    try {
-        pesertaPelatihanModel::where('id_info_pelatihan', $id)->delete();
+    {
+        try {
+            pesertaPelatihanModel::where('id_info_pelatihan', $id)->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Semua peserta berhasil dihapus.'
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Gagal menghapus peserta. ' . $e->getMessage()
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Semua peserta berhasil dihapus.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus peserta. ' . $e->getMessage()
+            ]);
+        }
     }
-}
 
 }
