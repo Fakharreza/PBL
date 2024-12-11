@@ -1,9 +1,9 @@
-@empty($jenisPelatihan)
+@empty($infoSertifikasi)
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Kesalahan</h5>
-                <button type="button" class="close" data-dismiss="modal" arialabel="Close"><span
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
@@ -11,19 +11,19 @@
                     <h5><i class="icon fas fa-ban"></i> Kesalahan!!!</h5>
                     Data yang anda cari tidak ditemukan
                 </div>
-                <a href="{{ url('/jenisPelatihan') }}" class="btn btn-warning">Kembali</a>
+                <a href="{{ url('/infoSertifikasi') }}" class="btn btn-warning">Kembali</a>
             </div>
         </div>
     </div>
 @else
-    <form action="{{ url('/jenisPelatihan/' . $jenisPelatihan->id_jenis_pelatihan_sertifikasi . '/delete_ajax') }}" method="POST" id="form-delete">
+    <form action="{{ url('/infoSertifikasi/' . $infoSertifikasi->id_info_sertifikasi . '/delete_ajax') }}" method="POST" id="form-delete">
         @csrf
         @method('DELETE')
         <div id="modal-master" class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Hapus Data Jenis Pelatihan</h5>
-                    <button type="button" class="close" data-dismiss="modal" arialabel="Close"><span
+                    <h5 class="modal-title" id="exampleModalLabel">Hapus Data Sertifikasi</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                             aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
@@ -32,14 +32,34 @@
                         Apakah Anda ingin menghapus data seperti di bawah ini?
                     </div>
                     <table class="table table-sm table-bordered table-striped">
-                    <tr>
-                        <th>ID</th>
-                        <td>{{ $jenisPelatihan->id_jenis_pelatihan_sertifikasi}}</td>
-                    </tr>
-                    <tr>
-                        <th>Nama Jenis Pelatihan</th>
-                        <td>{{ $jenisPelatihan->nama_jenis_pelatihan_sertifikasi }}</td>
-                    </tr>
+                        <tr>
+                            <th>Nama Sertifikasi</th>
+                            <td>{{ $infoSertifikasi->nama_sertifikasi }}</td>
+                        </tr>
+                        <tr>
+                            <th>Level Sertifikasi</th>
+                            <td>{{ $infoSertifikasi->level_sertifikasi }}</td>
+                        </tr>
+                        <tr>
+                            <th>Vendor Sertifikasi</th>
+                            <td>{{ $infoSertifikasi->vendorSertifikasi->nama_vendor}}</td>
+                        </tr>
+                        <tr>
+                            <th>Periode</th>
+                            <td>{{ $infoSertifikasi->periode->tahun_periode }}</td>
+                        </tr>
+                        <tr>
+                            <th>Tanggal Mulai</th>
+                            <td>{{ $infoSertifikasi->tanggal_mulai }}</td>
+                        </tr>
+                        <tr>
+                            <th>Tanggal Selesai</th>
+                            <td>{{ $infoSertifikasi->tanggal_selesai }}</td>
+                        </tr>
+                        <tr>
+                            <th>Masa Berlaku</th>
+                            <td>{{ $infoSertifikasi->masa_berlaku }}</td>
+                        </tr>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -66,7 +86,7 @@
                                     title: 'Berhasil',
                                     text: response.message
                                 });
-                                dataUser.ajax.reload();
+                                dataSertifikasi.ajax.reload();
                             } else {
                                 $('.error-text').text('');
                                 $.each(response.msgField, function(prefix, val) {

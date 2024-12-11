@@ -16,7 +16,7 @@
         </div>
     </div>
 @else
-    <form action="{{ url('/jenisPelatihan/' . $jenisPelatihan->id_jenis_pelatihan . '/update_ajax') }}" method="POST"
+    <form action="{{ url('/jenisPelatihan/' . $jenisPelatihan->id_jenis_pelatihan_sertifikasi . '/update_ajax') }}" method="POST"
         id="form-edit">
         @csrf
         @method('PUT')
@@ -31,9 +31,9 @@
                     <div class="form-group">
                         <label>Jenis Pelatihan</label>
                         <div class="col-11">
-                            <input value="{{ old('nama_jenis_pelatihan', $jenisPelatihan->nama_jenis_pelatihan) }}"type="text" class="form-control" id="nama_jenis_pelatihan" name="nama_jenis_pelatihan" required>
+                            <input value="{{ old('nama_jenis_pelatihan_sertifikasi', $jenisPelatihan->nama_jenis_pelatihan_sertifikasi) }}"type="text" class="form-control" id="nama_jenis_pelatihan_sertifikasi" name="nama_jenis_pelatihan_sertifikasi" required>
                         </div>
-                        <small id="error-nama_jenis_pelatihan" class="error-text form-text text-danger"></small>
+                        <small id="error-nama_jenis_pelatihan_sertifikasi" class="error-text form-text text-danger"></small>
                     </div>
                     <div class="modal-footer">
                         <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
@@ -47,7 +47,7 @@
         $(document).ready(function () {
             $("#form-edit").validate({
                 rules: {
-                    nama_jenis_pelatihan: {
+                    nama_jenis_pelatihan_sertifikasi: {
                         required: true,
                         minlength: 3,
                         maxlength: 20

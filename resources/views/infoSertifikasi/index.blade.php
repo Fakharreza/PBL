@@ -5,8 +5,7 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-            <button onclick="modalAction('{{ url('/jenisPelatihan/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah</button>
-
+                <button onclick="modalAction('{{ url('/infoSertifikasi/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah</button>
             </div>
         </div>
         <div class="card-body">
@@ -17,18 +16,21 @@
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
             
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_jenisPelatihan">
+            <table class="table table-bordered table-striped table-hover table-sm" id="table_infoSertifikasi">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Nama Jenis Pelatihan</th>
+                        <th>Nama Sertifikasi</th>
+                        <th>Level Sertifikasi</th>
+                        <th>Tanggal Mulai</th>
+                        <th>Tanggal Selesai</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
             </table>
         </div>
     </div>
-    <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" databackdrop="static" data-keyboard="false" data-width="75%" aria-hidden="true"></div>
+    <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-width="75%" aria-hidden="true"></div>
 @endsection
 
 @push('css')
@@ -41,33 +43,53 @@
                 $('#myModal').modal('show');
             });
         }
-        var dataJenis;
+
+        var dataSertifikasi;
         $(document).ready(function() {
-            dataJenis = $('#table_jenisPelatihan').DataTable({
+            dataSertifikasi = $('#table_infoSertifikasi').DataTable({
                 serverSide: true,
                 ajax: {
-                    "url": "{{ url('jenisPelatihan/list') }}",
+                    "url": "{{ url('infoSertifikasi/list') }}",
                     "dataType": "json",
-                    "type": "POST" , 
+                    "type": "POST",
                     "data": function(d) {
-
+                        // Tambahkan parameter jika diperlukan
                     }
                 },
-                columns: [{
+                columns: [
+                    {
                         data: "DT_RowIndex",
                         className: "text-center",
                         orderable: false,
                         searchable: false
                     },
                     {
-                        data: "nama_jenis_pelatihan_sertifikasi",
+                        data: "nama_sertifikasi",
                         className: "",
-                        orderable: false,
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: "level_sertifikasi",
+                        className: "",
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: "tanggal_mulai",
+                        className: "",
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: "tanggal_selesai",
+                        className: "",
+                        orderable: true,
                         searchable: true
                     },
                     {
                         data: "aksi",
-                        className: "",
+                        className: "text-center",
                         orderable: false,
                         searchable: false
                     }

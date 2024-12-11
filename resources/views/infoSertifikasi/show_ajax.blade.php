@@ -1,4 +1,4 @@
-@empty($infoPelatihan)
+@empty($infoSertifikasi)
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -12,7 +12,7 @@
                     <h5><i class="icon fas fa-ban"></i> Kesalahan!!!</h5>
                     Data yang anda cari tidak ditemukan.
                 </div>
-                <a href="{{ url('/infoPelatihan') }}" class="btn btn-warning">Kembali</a>
+                <a href="{{ url('/infoSertifikasi') }}" class="btn btn-warning">Kembali</a>
             </div>
         </div>
     </div>
@@ -20,7 +20,7 @@
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Detail Data Info Pelatihan</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Detail Data Sertifikasi</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -28,57 +28,36 @@
             <div class="modal-body">
                 <table class="table table-bordered table-striped table-hover table-sm">
                     <tr>
-                        <th>ID Vendor Pelatihan</th>
-                        <td>{{ $infoPelatihan->id_vendor_pelatihan }}</td>
+                        <th>ID Vendor Sertifikasi</th>
+                        <td>{{ $infoSertifikasi->id_vendor_sertifikasi }}</td>
                     </tr>
                     <tr>
                         <th>Nama Vendor</th>
-                        <td>{{ $infoPelatihan->vendorPelatihan->nama_vendor }}</td>
+                        <td>{{ $infoSertifikasi->vendorSertifikasi->nama_vendor }}</td>
                     </tr>
                     <tr>
-                        <th>ID Jenis Pelatihan</th>
-                        <td>{{ $infoPelatihan->id_jenis_pelatihan_sertifikasi }}</td>
+                        <th>Periode Sertifikasi</th>
+                        <td>{{ $infoSertifikasi->periode->tahun_periode }}</td>
                     </tr>
                     <tr>
-                        <th>Nama Jenis Pelatihan</th>
-                        <td>{{ $infoPelatihan->jenisPelatihan->nama_jenis_pelatihan_sertifikasi }}</td>
+                        <th>Nama Sertifikasi</th>
+                        <td>{{ $infoSertifikasi->nama_sertifikasi }}</td>
                     </tr>
                     <tr>
-                        <th>ID Periode</th>
-                        <td>{{ $infoPelatihan->id_periode }}</td>
+                        <th>Level Sertifikasi</th>
+                        <td>{{ $infoSertifikasi->level_sertifikasi }}</td>
                     </tr>
-                    <tr>
-                        <th>Periode Pelatihan</th>
-                        <td>{{ $infoPelatihan->periode->tahun_periode }}</td>
-                    </tr>
-                    <tr>
-                        <th>Lokasi Pelatihan</th>
-                        <td>{{ $infoPelatihan->lokasi_pelatihan }}</td>
-                    </tr>
-                    <tr>
-                        <th>Nama Pelatihan</th>
-                        <td>{{ $infoPelatihan->nama_pelatihan }}</td>
-                    </tr>
-                    <tr>
-                        <th>Level Pelatihan</th>
-                        <td>{{ $infoPelatihan->level_pelatihan }}</td>
-                    </tr>
-
                     <tr>
                         <th>Tanggal Mulai</th>
-                        <td>{{ $infoPelatihan->tanggal_mulai }}</td>
+                        <td>{{ $infoSertifikasi->tanggal_mulai }}</td>
                     </tr>
                     <tr>
                         <th>Tanggal Selesai</th>
-                        <td>{{ $infoPelatihan->tanggal_selesai }}</td>
+                        <td>{{ $infoSertifikasi->tanggal_selesai }}</td>
                     </tr>
                     <tr>
-                        <th>Kuota Peserta</th>
-                        <td>{{ $infoPelatihan->kuota_peserta }}</td>
-                    </tr>
-                    <tr>
-                        <th>Biaya</th>
-                        <td>{{ number_format($infoPelatihan->biaya, 2, ',', '.') }}</td>
+                        <th>Masa Berlaku</th>
+                        <td>{{ $infoSertifikasi->masa_berlaku }}</td>
                     </tr>
                 </table>
             </div>

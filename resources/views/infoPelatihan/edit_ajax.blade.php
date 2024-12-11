@@ -42,11 +42,11 @@
                     </div>
                     <div class="form-group">
                         <label>Jenis Pelatihan</label>
-                        <select name="id_jenis_pelatihan" id="id_jenis_pelatihan" class="form-control" required>
+                        <select name="id_jenis_pelatihan_sertifikasi" id="id_jenis_pelatihan_sertifikasi" class="form-control" required>
                             <option value="">- Pilih Jenis Pelatihan -</option>
                             @foreach ($jenisPelatihan as $j)
-                                <option value="{{ $j->id_jenis_pelatihan }}" {{ $infoPelatihan->id_jenis_pelatihan == $j->id_jenis_pelatihan ? 'selected' : '' }}>
-                                    {{ $j->nama_jenis_pelatihan }}
+                                <option value="{{ $j->id_jenis_pelatihan_sertifikasi }}" {{ $infoPelatihan->id_jenis_pelatihan_sertifikasi == $j->id_jenis_pelatihan_sertifikasi ? 'selected' : '' }}>
+                                    {{ $j->nama_jenis_pelatihan_sertifikasi }}
                                 </option>
                             @endforeach
                         </select>
@@ -73,7 +73,7 @@
                     <div class="form-group">
                         <label>Level Pelatihan</label>
                         <select name="level_pelatihan" id="level_pelatihan" class="form-control" required>
-                            <option value="{{ old('level_pelatiham', $infoPelatihan->level_pelatihan) }}">- Pilih Level Pelatihan -</option>
+                            <option value="{{ old('level_pelatihan', $infoPelatihan->level_pelatihan) }}">- Pilih Level Pelatihan -</option>
                             <option value="Internasional" {{ $infoPelatihan->level_pelatihan == 'Internasional' ? 'selected' : '' }}>Internasional</option>
                             <option value="Nasional" {{ $infoPelatihan->level_pelatihan == 'Nasional' ? 'selected' : '' }}>Nasional</option>
                         </select>
@@ -106,25 +106,47 @@
         $(document).ready(function() {
             $("#form-edit").validate({
                 rules: {
+                    id_vendor_pelatihan: {
+                    required: true,
+                    digits: true
+                    },
+                    id_jenis_pelatihan_sertifikasi: {
+                        required: true,
+                        digits: true
+                    },
+                    id_periode: {
+                        required: true,
+                        digits: true
+                    },
+                    lokasi_pelatihan: {
+                        required: true,
+                        maxlength: 100
+                    },
                     nama_pelatihan: {
                         required: true,
                         maxlength: 100
                     },
                     level_pelatihan: {
-                        required: true
-                    }
-                    lokasi_pelatihan: {
                         required: true,
                         maxlength: 100
                     },
+                    tanggal_mulai: {
+                        required: true,
+                        date: true
+                    },
+                    tanggal_selesai: {
+                        required: true,
+                        date: true
+                    },
                     kuota_peserta: {
                         required: true,
-                        number: true
+                        digits: true,
+                        min: 1
                     },
                     biaya: {
                         required: true,
                         number: true
-                    },
+                    }
                 }
                 submitHandler: function(form) {
                     var formData = new FormData(form);
@@ -135,6 +157,7 @@
                         processData: false,
                         contentType: false,
                         success: function(response) {
+                            console.log(response); // Tambahkan ini untuk memeriksa respon dari server
                             if (response.status) {
                                 $('#myModal').modal('hide');
                                 Swal.fire({
@@ -150,6 +173,14 @@
                                     text: response.message
                                 });
                             }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(xhr.responseText); // Tambahkan ini untuk memeriksa error dari server
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Terjadi kesalahan pada server.'
+                            });
                         }
                     });
                     return false;

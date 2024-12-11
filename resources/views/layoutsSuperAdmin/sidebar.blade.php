@@ -86,7 +86,13 @@
                     <li class="nav-item">
                         <a href="{{ url('/infoPelatihan') }}" class="nav-link {{ request()->is('infoPelatihan') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-certificate"></i>
-                            <p>Kelola Pelatihan Sertifikasi</p>
+                            <p>Kelola Pelatihan</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('/infoSertifikasi') }}" class="nav-link {{ request()->is('infoPelatihan') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-certificate"></i>
+                            <p>Kelola Sertifikasi</p>
                         </a>
                     </li>
                     <li class="nav-item">
