@@ -27,11 +27,11 @@
                 <table class="table table-bordered table-striped table-hover table-sm">
                     <tr>
                         <th>ID</th>
-                        <td>{{ $jenisPelatihan->id_jenis_pelatihan}}</td>
+                        <td>{{ $jenisPelatihan->id_jenis_pelatihan_sertifikasi}}</td>
                     </tr>
                     <tr>
                         <th>Nama Jenis Pelatihan</th>
-                        <td>{{ $jenisPelatihan->nama_jenis_pelatihan }}</td>
+                        <td>{{ $jenisPelatihan->nama_jenis_pelatihan_sertifikasi }}</td>
                     </tr>
                 </table>
             </div>

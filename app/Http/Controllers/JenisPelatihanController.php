@@ -26,13 +26,13 @@ class JenisPelatihanController extends Controller
     }
     public function list(Request $request)
     {
-        $jenisPelatihan = JenisPelatihanModel::select('id_jenis_pelatihan','nama_jenis_pelatihan');
+        $jenisPelatihan = JenisPelatihanModel::select('id_jenis_pelatihan_sertifikasi','nama_jenis_pelatihan_sertifikasi');
         return DataTables::of($jenisPelatihan)
             ->addIndexColumn() // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex) 
             ->addColumn('aksi', function ($jenisPelatihan) { // menambahkan kojenisPelatihanom aksi 
-                $btn  = '<button onclick="modalAction(\'' . url('/jenisPelatihan/' . $jenisPelatihan->id_jenis_pelatihan . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/jenisPelatihan/' . $jenisPelatihan->id_jenis_pelatihan . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/jenisPelatihan/' . $jenisPelatihan->id_jenis_pelatihan . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+                $btn  = '<button onclick="modalAction(\'' . url('/jenisPelatihan/' . $jenisPelatihan->id_jenis_pelatihan_sertifikasi . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                $btn .= '<button onclick="modalAction(\'' . url('/jenisPelatihan/' . $jenisPelatihan->id_jenis_pelatihan_sertifikasi . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+                $btn .= '<button onclick="modalAction(\'' . url('/jenisPelatihan/' . $jenisPelatihan->id_jenis_pelatihan_sertifikasi . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
                 return $btn;
             })
             ->rawColumns(['aksi']) // memberitahu bahwa kolom aksi adalah html 
@@ -48,7 +48,7 @@ class JenisPelatihanController extends Controller
         // cek apakah request berupa ajax
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'nama_jenis_pelatihan'    => 'required|string|max:100',
+                'nama_jenis_pelatihan_sertifikasi'    => 'required|string|max:100',
             ];
             // use Illuminate\Support\Facades\Validator;
             $validator = Validator::make($request->all(), $rules);
@@ -84,7 +84,7 @@ class JenisPelatihanController extends Controller
         // cek apakah request dari ajax
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'nama_jenis_pelatihan'    => 'required|string|max:100',
+                'nama_jenis_pelatihan_sertifikasi'    => 'required|string|max:100',
             ];
             // use Illuminate\Support\Facades\Validator;
             $validator = Validator::make($request->all(), $rules);

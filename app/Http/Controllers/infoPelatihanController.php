@@ -34,7 +34,7 @@ class infoPelatihanController extends Controller
     $infoPelatihan = infoPelatihanModel::select(
         'id_info_pelatihan',
         'id_vendor_pelatihan',
-        'id_jenis_pelatihan',
+        'id_jenis_pelatihan_sertifikasi',
         'id_periode',
         'lokasi_pelatihan',
         'nama_pelatihan',
@@ -93,7 +93,7 @@ class infoPelatihanController extends Controller
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
                 'id_vendor_pelatihan'       => 'required|integer',
-                'id_jenis_pelatihan'       => 'required|integer',
+                'id_jenis_pelatihan_sertifikasi'       => 'required|integer',
                 'id_periode'       => 'required|integer',
                 'lokasi_pelatihan'    => 'required|string|max:100',
                 'nama_pelatihan'    => 'required|string|max:100',
@@ -148,7 +148,7 @@ class infoPelatihanController extends Controller
     {
         $infoPelatihan = infoPelatihanModel::find($id);
         $vendorPelatihan = VendorPelatihanModel::find($infoPelatihan->id_vendor_pelatihan);
-        $jenisPelatihan = JenisPelatihanModel::find($infoPelatihan->id_jenis_pelatihan);
+        $jenisPelatihan = JenisPelatihanModel::find($infoPelatihan->id_jenis_pelatihan_sertifikasi);
         $periode = PeriodeModel::find($infoPelatihan->id_periode);
         return view('infoPelatihan.show_ajax', ['infoPelatihan' => $infoPelatihan , 'vendorPelatihan' =>$vendorPelatihan , 'jenisPelatihan' => $jenisPelatihan , 'periode' => $periode]);
     }
@@ -174,7 +174,7 @@ public function update_ajax(Request $request, string $id)
     // Validasi data input
     $request->validate([
         'id_vendor_pelatihan' => 'required|integer',
-        'id_jenis_pelatihan'  => 'required|integer',
+        'id_jenis_pelatihan_sertifikasi'  => 'required|integer',
         'id_periode'          => 'required|integer',
         'lokasi_pelatihan'    => 'required|string|max:100',
         'nama_pelatihan'      => 'required|string|max:100',
@@ -189,7 +189,7 @@ public function update_ajax(Request $request, string $id)
     $infoPelatihan = infoPelatihanModel::find($id);
     $infoPelatihan->update([
         'id_vendor_pelatihan' => $request->id_vendor_pelatihan,
-        'id_jenis_pelatihan'  => $request->id_jenis_pelatihan,
+        'id_jenis_pelatihan_sertifikasi'  => $request->id_jenis_pelatihan_sertifikasi,
         'id_periode'          => $request->id_periode,
         'lokasi_pelatihan'    => $request->lokasi_pelatihan,
         'nama_pelatihan'      => $request->nama_pelatihan,

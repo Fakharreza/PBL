@@ -21,6 +21,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Nama Sertifikasi</th>
+                        <th>Jenis Sertifikasi</th>
                         <th>Lokasi</th>
                         <th>Masa Berlaku</th>
                         <th>Bukti Sertifikasi</th>
@@ -68,6 +69,11 @@
                         className: "",
                         orderable: true,
                         searchable: true
+                    },
+                    { 
+                        data: "jenis_pelatihan_sertifikasi", 
+                        orderable: true, 
+                        searchable: true 
                     },
                     {
                         data: "lokasi_sertifikasi",

@@ -42,11 +42,11 @@
                     </div>
                     <div class="form-group">
                         <label>Jenis Pelatihan</label>
-                        <select name="id_jenis_pelatihan" id="id_jenis_pelatihan" class="form-control" required>
+                        <select name="id_jenis_pelatihan_sertifikasi" id="id_jenis_pelatihan_sertifikasi" class="form-control" required>
                             <option value="">- Pilih Jenis Pelatihan -</option>
                             @foreach ($jenisPelatihan as $j)
-                                <option value="{{ $j->id_jenis_pelatihan }}" {{ $infoPelatihan->id_jenis_pelatihan == $j->id_jenis_pelatihan ? 'selected' : '' }}>
-                                    {{ $j->nama_jenis_pelatihan }}
+                                <option value="{{ $j->id_jenis_pelatihan_sertifikasi }}" {{ $infoPelatihan->id_jenis_pelatihan_sertifikasi == $j->id_jenis_pelatihan_sertifikasi ? 'selected' : '' }}>
+                                    {{ $j->nama_jenis_pelatihan_sertifikasi }}
                                 </option>
                             @endforeach
                         </select>

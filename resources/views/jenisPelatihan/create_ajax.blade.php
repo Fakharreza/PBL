@@ -11,8 +11,8 @@
                 <div class="form-group">
                 <label class="col-1 control-label col-form-label">Jenis Pelatihan</label>
                 <div class="col-11">
-                    <input type="text" class="form-control" id="nama_jenis_pelatihan" name="nama_jenis_pelatihan" value="" required>
-                    <small id="error-nama_jenis_pelatihan" class="error-text form-text text-danger"></small>
+                    <input type="text" class="form-control" id="nama_jenis_pelatihan_sertifikasi" name="nama_jenis_pelatihan_sertifikasi" value="" required>
+                    <small id="error-nama_jenis_pelatihan_sertifikasi" class="error-text form-text text-danger"></small>
                 </div>
             </div>
             <div class="modal-footer">
@@ -26,7 +26,7 @@
     $(document).ready(function() {
         $("#form-tambah").validate({
             rules: {
-                nama_jenis_pelatihan: {
+                nama_jenis_pelatihan_sertifikasi: {
                     required: true,
                     minlength: 3,
                     maxlength: 20
