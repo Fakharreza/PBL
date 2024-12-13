@@ -1,9 +1,9 @@
-<form action="{{ url('/infoPelatihan/' . $info . '/store_peserta') }}" method="POST" id="form-tambah-peserta">
+<form action="{{ url('/infoSertifikasi/' . $info . '/store_peserta') }}" method="POST" id="form-tambah-peserta">
     @csrf
     <div id="modal-tambah-peserta" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalPesertaLabel">Tambah Peserta Pelatihan</h5>
+                <h5 class="modal-title" id="modalPesertaLabel">Tambah Peserta Sertifikasi</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -27,7 +27,7 @@
                                         {{ in_array($d->id_pengguna, $peserta) ? 'checked' : '' }}
                                     >
                                     <label for="dosen_{{ $d->id_pengguna }}" class="form-check-label">
-                                        {{ $d->nama_pengguna }} - Telah mengikuti {{ $d->jumlah_pelatihan ?? 0 }} pelatihan
+                                        {{ $d->nama_pengguna }} - Telah mengikuti {{ $d->jumlah_sertifikasi ?? 0 }} sertifikasi
                                     </label>
                                 </div>
                             @endforeach
@@ -116,7 +116,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '{{ url("/infoPelatihan/" . $info . "/hapus_peserta") }}',
+                        url: '{{ url("/infoSertifikasi/" . $info . "/hapus_peserta") }}',
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'
