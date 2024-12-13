@@ -20,13 +20,13 @@
         <form method="POST" action="{{ url('/profile/'. $pengguna->id_pengguna) }}">
             @csrf
             @method('PUT')
-            
-            <!-- Input Nama Pengguna -->
+
+            <!-- Input Nama -->
             <div class="form-group mb-3">
-                <label for="nama_pengguna" class="font-weight-bold">Nama Pengguna</label>
-                <input type="text" name="nama_pengguna" class="form-control @error('nama_pengguna') is-invalid @enderror" 
-                       value="{{ old('nama_pengguna', $pengguna->nama_pengguna) }}">
-                @error('nama_pengguna')
+                <label for="nama" class="font-weight-bold">Nama</label>
+                <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror" 
+                       value="{{ old('nama', $pengguna->nama) }}">
+                @error('nama')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
@@ -51,6 +51,16 @@
                 @enderror
             </div>
 
+            <!-- Input Username -->
+            <div class="form-group mb-3">
+                <label for="nama_pengguna" class="font-weight-bold">Username</label>
+                <input type="text" name="nama_pengguna" class="form-control @error('nama_pengguna') is-invalid @enderror" 
+                       value="{{ old('nama_pengguna', $pengguna->nama_pengguna) }}">
+                @error('nama_pengguna')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
             <!-- Input Password Baru -->
             <div class="form-group mb-3">
                 <label for="password" class="font-weight-bold">Password Baru (Kosongkan jika tidak ingin mengubah)</label>
@@ -65,6 +75,59 @@
                 <label for="password_confirmation" class="font-weight-bold">Konfirmasi Password Baru</label>
                 <input type="password" name="password_confirmation" class="form-control">
             </div>
+
+            <!-- Tambahkan Form Bidang Minat dan Mata Kuliah untuk Dosen -->
+            @if ($pengguna->jenisPengguna->nama_jenis_pengguna == 'Dosen')
+                <!-- Input Bidang Minat -->
+                <div class="form-group mb-3">
+                    <label for="bidang_minat" class="font-weight-bold">Bidang Minat</label>
+                    <div>
+                        @foreach ($bidangMinat as $minat)
+                            <div class="form-check">
+                                <input 
+                                    type="checkbox" 
+                                    name="bidang_minat[]" 
+                                    value="{{ $minat->id_bidang_minat }}" 
+                                    class="form-check-input"
+                                    id="bidangMinat{{ $minat->id_bidang_minat }}"
+                                    @if($pengguna->bidangMinat->contains('id_bidang_minat', $minat->id_bidang_minat)) checked @endif
+                                >
+                                <label class="form-check-label" for="bidangMinat{{ $minat->id_bidang_minat }}">
+                                    {{ $minat->nama_bidang_minat }}
+                                </label>
+                            </div>
+                        @endforeach
+                    </div>
+                    @error('bidang_minat')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- Input Mata Kuliah -->
+                <div class="form-group mb-3">
+                    <label for="mata_kuliah" class="font-weight-bold">Mata Kuliah</label>
+                    <div>
+                        @foreach ($mataKuliah as $kuliah)
+                            <div class="form-check">
+                                <input 
+                                    type="checkbox" 
+                                    name="mata_kuliah[]" 
+                                    value="{{ $kuliah->id_mata_kuliah }}" 
+                                    class="form-check-input"
+                                    id="mataKuliah{{ $kuliah->id_mata_kuliah }}"
+                                    @if($pengguna->mataKuliah->contains('id_mata_kuliah', $kuliah->id_mata_kuliah)) checked @endif
+                                >
+                                <label class="form-check-label" for="mataKuliah{{ $kuliah->id_mata_kuliah }}">
+                                    {{ $kuliah->nama_mata_kuliah }}
+                                </label>
+                            </div>
+                        @endforeach
+                    </div>
+                    @error('mata_kuliah')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+            @endif
 
             <!-- Tombol Simpan dan Batal -->
             <div class="d-flex justify-content-between mt-4">
