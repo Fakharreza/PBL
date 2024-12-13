@@ -13,8 +13,8 @@
     <div class="p-4">
         <table class="table table-borderless">
             <tr>
-                <th>Nama Pengguna</th>
-                <td>{{ $pengguna->nama_pengguna }}</td>
+                <th>Nama</th>
+                <td>{{ $pengguna->nama }}</td>
             </tr>
             <tr>
                 <th>Email</th>
@@ -29,9 +29,45 @@
                 <td>{{ $pengguna->nip }}</td>
             </tr>
             <tr>
+                <th>Username</th>
+                <td>{{ $pengguna->nama_pengguna }}</td>
+            </tr>
+            <tr>
                 <th>Kata Sandi</th>
                 <td><span class="text-muted">********</span></td>
             </tr>
+
+            <!-- Tampilkan Bidang Minat dan Mata Kuliah Jika Jenis Pengguna adalah Dosen -->
+            @if ($pengguna->jenisPengguna->nama_jenis_pengguna == 'Dosen')
+                <tr>
+                    <th>Bidang Minat</th>
+                    <td>
+                        @if ($pengguna->bidangMinat->isEmpty())
+                            <span class="text-muted">Belum diatur</span>
+                        @else
+                            <ul>
+                                @foreach ($pengguna->bidangMinat as $minat)
+                                    <li>{{ $minat->bidangMinat->nama_bidang_minat }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <th>Mata Kuliah</th>
+                    <td>
+                        @if ($pengguna->mataKuliah->isEmpty())
+                            <span class="text-muted">Belum diatur</span>
+                        @else
+                            <ul>
+                                @foreach ($pengguna->mataKuliah as $kuliah)
+                                    <li>{{ $kuliah->mataKuliah->nama_mata_kuliah }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </td>
+                </tr>
+            @endif
         </table>
 
         <!-- Buttons -->
