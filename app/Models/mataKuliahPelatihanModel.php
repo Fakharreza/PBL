@@ -19,6 +19,6 @@ class mataKuliahPelatihanModel extends Model
 
     }
     public function mataKuliah():BelongsTo{
-        return $this->belongsTo(BidangMinatModel::class, 'id_mata_kuliah ', 'id_mata_kuliah');
+        return $this->belongsTo(mataKuliahModel::class, 'id_mata_kuliah ', 'id_mata_kuliah');
     }
 }
