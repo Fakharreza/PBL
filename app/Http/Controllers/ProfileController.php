@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\jenisPenggunaModel;
 use App\Models\penggunaModel;
+use App\Models\bidangMinatDosenModel;
+use App\Models\mataKuliahDosenModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -26,15 +28,9 @@ class ProfileController extends Controller
         return view('profile.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'level' => $level, 'pengguna' => $pengguna, 'activeMenu' => $activeMenu]);
     }
 
-    // Menampilkan halaman edit profil
-    // public function edit($id)
-    // {
-    //     $pengguna = penggunaModel::findOrFail($id);
-    //     return view('profile.edit', compact('pengguna'));
-    // }
     public function edit(string $id)
     {
-        $pengguna = penggunaModel::find($id);
+        $pengguna = penggunaModel::with(['jenisPengguna', 'bidangMinat', 'mataKuliah'])->find($id);
     
         $breadcrumb = (object) [
             'title' => 'Edit Profile',
@@ -47,13 +43,20 @@ class ProfileController extends Controller
     
         $activeMenu = 'profile';
     
+        // Ambil data bidang minat dan mata kuliah dari tabel referensi
+        $bidangMinat = \App\Models\BidangMinatModel::all(); // Pastikan model ini sudah ada
+        $mataKuliah = \App\Models\mataKuliahModel::all();
+    
         return view('profile.edit', [
-            'breadcrumb' => $breadcrumb, 
-            'page' => $page, 
-            'pengguna' => $pengguna, // Mengganti 'profile' dengan 'pengguna'
-            'activeMenu' => $activeMenu
+            'breadcrumb' => $breadcrumb,
+            'page' => $page,
+            'pengguna' => $pengguna,
+            'activeMenu' => $activeMenu,
+            'bidangMinat' => $bidangMinat, // Kirim data bidang minat ke view
+            'mataKuliah' => $mataKuliah,   // Kirim data mata kuliah ke view
         ]);
     }
+    
     
     public function update(Request $request, string $id)
     {
@@ -61,22 +64,47 @@ class ProfileController extends Controller
     
         $request->validate([
             'nama_pengguna' => 'required|string|max:255',
-            'email' => 'required|email|unique:pengguna,email,'.$pengguna->id_pengguna.',id_pengguna',
-            'nip' => 'required|string|unique:pengguna,nip,'.$pengguna->id_pengguna.',id_pengguna',
-            'password' => 'nullable|confirmed|min:8',
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|unique:pengguna,email,' . $pengguna->id_pengguna . ',id_pengguna',
+            'nip' => 'required|string|unique:pengguna,nip,' . $pengguna->id_pengguna . ',id_pengguna',
+            'password' => 'nullable|confirmed',
+            'bidang_minat' => 'nullable|array',
+            'mata_kuliah' => 'nullable|array',
         ]);
     
         $pengguna->nama_pengguna = $request->nama_pengguna;
         $pengguna->email = $request->email;
         $pengguna->nip = $request->nip;
     
-        // Jika password diisi, maka ubah passwordnya
         if ($request->filled('password')) {
             $pengguna->password = bcrypt($request->password);
         }
     
         $pengguna->save();
     
+        // Simpan bidang minat
+        if ($request->filled('bidang_minat')) {
+            bidangMinatDosenModel::where('id_pengguna', $id)->delete(); // Hapus data lama
+            foreach ($request->bidang_minat as $bidangMinatId) {
+                bidangMinatDosenModel::create([
+                    'id_pengguna' => $id,
+                    'id_bidang_minat' => $bidangMinatId,
+                ]);
+            }
+        }
+    
+        // Simpan mata kuliah
+        if ($request->filled('mata_kuliah')) {
+            mataKuliahDosenModel::where('id_pengguna', $id)->delete(); // Hapus data lama
+            foreach ($request->mata_kuliah as $mataKuliahId) {
+                mataKuliahDosenModel::create([
+                    'id_pengguna' => $id,
+                    'id_mata_kuliah' => $mataKuliahId,
+                ]);
+            }
+        }
+    
         return redirect()->back()->with('success', 'Profil berhasil diperbarui');
     }
+    
 }    

@@ -32,6 +32,15 @@ class penggunaModel extends Authenticatable
     public function dataSertifikasi(): HasMany{
         return $this->hasMany(DataSertifikasiModel::class, 'id_pengguna', 'id_pengguna');
     }
+    public function bidangMinat()
+    {
+        return $this->hasMany(bidangMinatDosenModel::class, 'id_pengguna');
+    }
+
+    public function mataKuliah()
+    {
+        return $this->hasMany(mataKuliahDosenModel::class, 'id_pengguna');
+    }
     
     public function getRoleName(): string
     {
