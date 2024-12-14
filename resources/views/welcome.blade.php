@@ -1,14 +1,365 @@
 @extends('layoutsSuperAdmin.template')
 
 @section('content')
+    @php
+        use Illuminate\Support\Facades\DB;
 
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Halo, apakabar!!!</h3>
-        <div class="card-tools"></div>
-    </div>
-    <div class="card-body">
-        Selamat datang semua, ini adalah halaman utama dari aplikasi ini.
-    </div>
-</div>
+        // Ambil jumlah total pengguna
+        $totalUsers = DB::table('pengguna')->count();
+
+        // Ambil jumlah level pengguna (jenis pengguna)
+        $totalLevels = DB::table('pengguna')->distinct('id_jenis_pengguna')->count('id_jenis_pengguna');
+
+        // Ambil jumlah pengguna berdasarkan role
+        $superAdminCount = DB::table('pengguna')->where('id_jenis_pengguna', 1)->count();
+        $adminCount = DB::table('pengguna')->where('id_jenis_pengguna', 2)->count();
+        $dosenCount = DB::table('pengguna')->where('id_jenis_pengguna', 3)->count();
+        $pimpinanCount = DB::table('pengguna')->where('id_jenis_pengguna', 4)->count();
+
+        // Periksa apakah user yang login adalah superadmin
+        $isSuperAdmin = auth()->user()->id_jenis_pengguna == 1; // 1 = Superadmin
+        $isAdmin = auth()->user()->id_jenis_pengguna == 2; // 2 = Admin
+        $isDosen = auth()->user()->id_jenis_pengguna == 3; // 3 = Dosen
+        $isPimpinan = auth()->user()->id_jenis_pengguna == 4; // 4 = Pimpinan
+
+        $userId = auth()->user()->id;
+
+        // Ambil jumlah data terkait pelatihan dan sertifikasi untuk dosen
+        $inputPelatihanCount = DB::table('input_pelatihan')
+            ->where('id_pengguna', auth()->user()->id)
+            ->count();
+
+        $inputSertifikasiCount = DB::table('input_sertifikasi')
+            ->where('id_pengguna', auth()->user()->id)
+            ->count();
+
+        $totalInputPelatihan = DB::table('input_pelatihan')->count();
+        $totalInputSertifikasi = DB::table('input_sertifikasi')->count();
+
+        $pelatihanPerTahun = DB::table('input_pelatihan')
+            ->select(DB::raw('YEAR(waktu_pelatihan) as tahun'), DB::raw('count(*) as jumlah'))
+            ->groupBy(DB::raw('YEAR(waktu_pelatihan)'))
+            ->orderBy('tahun', 'asc')
+            ->get();
+
+        // Siapkan data untuk chart
+        $tahun = $pelatihanPerTahun->pluck('tahun');
+        $jumlahPelatihan = $pelatihanPerTahun->pluck('jumlah');
+    @endphp
+
+    {{-- Tampilan untuk SuperAdmin --}}
+    @if ($isSuperAdmin)
+        <div class="row">
+            <!-- Box: Total Users -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{ $totalUsers }}</h3>
+                        <p>Jumlah Pengguna</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-person"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+
+            <!-- Box: Total Levels -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{ $totalLevels }}</h3>
+                        <p>Jumlah Jenis Pengguna</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+
+            <!-- Box: Total Dosen -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ $dosenCount }}</h3>
+                        <p>Jumlah Akun Dosen</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-university"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+        </div>
+
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header border-0">
+                    <div class="d-flex justify-content-between">
+                        <h3 class="card-title">Jumlah Pengguna per Role</h3>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex">
+                        <p class="d-flex flex-column">
+                            <span class="text-bold text-lg">{{ $totalUsers }}</span>
+                            <span>Data Pengguna</span>
+                        </p>
+                        <p class="ml-auto d-flex flex-column text-right">
+                            <span class="text-success">
+                                <i class="fas fa-arrow-up"></i> Updated
+                            </span>
+                        </p>
+                    </div>
+                    <!-- /.d-flex -->
+
+                    <div class="position-relative mb-4">
+                        <canvas id="role-chart" height="300"></canvas>
+                    </div>
+
+                    <div class="d-flex flex-row justify-content-end">
+                        <span class="mr-2">
+                            <i class="fas fa-square text-primary"></i> SuperAdmin
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-square text-success"></i> Admin
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-square text-warning"></i> Dosen
+                        </span>
+                        <span>
+                            <i class="fas fa-square text-danger"></i> Pimpinan
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Tampilan untuk Dosen --}}
+    @if ($isDosen)
+        <div class="row">
+            <!-- Box: Jumlah Input Pelatihan -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{ $inputPelatihanCount }}</h3>
+                        <p>Jumlah Input Pelatihan</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-ios-albums"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Box: Jumlah Input Sertifikasi -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{ $inputSertifikasiCount }}</h3>
+                        <p>Jumlah Input Sertifikasi</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-ios-clipboard"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if ($isPimpinan || $isAdmin)
+        <div class="row">
+
+            <div class="col-lg-6 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{ $totalInputPelatihan }}</h3>
+                        <p>Total Dosen Input Pelatihan</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-ios-albums"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+
+            <div class="col-lg-6 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{ $totalInputSertifikasi }}</h3>
+                        <p>Total Dosen Input Sertifikasi</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-ios-clipboard"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <div class="d-flex justify-content-between">
+                            <h3 class="card-title">Jumlah Input Pelatihan per Tahun</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <p class="d-flex flex-column">
+                                <span class="text-bold text-lg">{{ $totalUsers }}</span>
+                                <span>Data Pengguna</span>
+                            </p>
+                            <p class="ml-auto d-flex flex-column text-right">
+                                <span class="text-success">
+                                    <i class="fas fa-arrow-up"></i> Updated
+                                </span>
+                            </p>
+                        </div>
+                        <!-- /.d-flex -->
+
+                        <div class="position-relative mb-4">
+                            <canvas id="pelatihan-chart" height="300"></canvas>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <div class="d-flex justify-content-between">
+                            <h3 class="card-title">Jumlah Pengguna per Role</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <p class="d-flex flex-column">
+                                <span class="text-bold text-lg">{{ $totalUsers }}</span>
+                                <span>Data Pengguna</span>
+                            </p>
+                            <p class="ml-auto d-flex flex-column text-right">
+                                <span class="text-success">
+                                    <i class="fas fa-arrow-up"></i> Updated
+                                </span>
+                            </p>
+                        </div>
+                        <!-- /.d-flex -->
+
+                        <div class="position-relative mb-4">
+                            <canvas id="role-chart" height="300"></canvas>
+                        </div>
+
+                        <div class="d-flex flex-row justify-content-end">
+                            <span class="mr-2">
+                                <i class="fas fa-square text-primary"></i> SuperAdmin
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-square text-success"></i> Admin
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-square text-warning"></i> Dosen
+                            </span>
+                            <span>
+                                <i class="fas fa-square text-danger"></i> Pimpinan
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Log data pengguna per role
+        const superAdminCount = {{ $superAdminCount }};
+        const adminCount = {{ $adminCount }};
+        const dosenCount = {{ $dosenCount }};
+        const pimpinanCount = {{ $pimpinanCount }};
+
+        // console.log([superAdminCount, adminCount, dosenCount, pimpinanCount]); // Log data ke konsol
+
+        const ctx = document.getElementById('role-chart').getContext('2d');
+        const roleChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['SuperAdmin', 'Admin', 'Dosen', 'Pimpinan'],
+                datasets: [{
+                    label: 'Jumlah Pengguna',
+                    data: [superAdminCount, adminCount, dosenCount, pimpinanCount],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.5)', // SuperAdmin
+                        'rgba(75, 192, 192, 0.5)', // Admin
+                        'rgba(255, 206, 86, 0.5)', // Dosen
+                        'rgba(255, 99, 132, 0.5)' // Pimpinan
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)', // SuperAdmin
+                        'rgba(75, 192, 192, 1)', // Admin
+                        'rgba(255, 206, 86, 1)', // Dosen
+                        'rgba(255, 99, 132, 1)' // Pimpinan
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+                const tahun = {{ $tahun }};
+                const jumlahPelatihan = {{ $jumlahPelatihan }};
+                const ctx = document.getElementById('pelatihan-chart').getContext('2d');
+                const pelatihanChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: @json($tahun), // Tahun
+                            datasets: [{
+                                label: 'Jumlah Input Pelatihan',
+                                data: @json($jumlahPelatihan), // Jumlah input pelatihan per tahun
+                                backgroundColor: 'rgba(54, 162, 235, 0.5)', // Warna batang
+                                borderColor: 'rgba(54, 162, 235, 1)', // Border warna
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Jumlah Pelatihan'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Tahun'
+                                    }
+                                }
+                            }
+                        }
+                    })
+                });
+</script>
