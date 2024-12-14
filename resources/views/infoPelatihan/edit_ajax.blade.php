@@ -29,6 +29,18 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                <div class="form-group">
+                        <label>Nama Pelatihan</label>
+                        <input type="text" class="form-control" id="nama_pelatihan" name="nama_pelatihan" value="{{ old('nama_pelatihan', $infoPelatihan->nama_pelatihan) }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Level Pelatihan</label>
+                        <select name="level_pelatihan" id="level_pelatihan" class="form-control" required>
+                            <option value="{{ old('level_pelatihan', $infoPelatihan->level_pelatihan) }}">- Pilih Level Pelatihan -</option>
+                            <option value="Internasional" {{ $infoPelatihan->level_pelatihan == 'Internasional' ? 'selected' : '' }}>Internasional</option>
+                            <option value="Nasional" {{ $infoPelatihan->level_pelatihan == 'Nasional' ? 'selected' : '' }}>Nasional</option>
+                        </select>
+                    </div>
                     <div class="form-group">
                         <label>Vendor Pelatihan</label>
                         <select name="id_vendor_pelatihan" id="id_vendor_pelatihan" class="form-control" required>
@@ -66,18 +78,31 @@
                         <label>Lokasi Pelatihan</label>
                         <input type="text" class="form-control" id="lokasi_pelatihan" name="lokasi_pelatihan" value="{{ old('lokasi_pelatihan', $infoPelatihan->lokasi_pelatihan) }}" required>
                     </div>
+                    
                     <div class="form-group">
-                        <label>Nama Pelatihan</label>
-                        <input type="text" class="form-control" id="nama_pelatihan" name="nama_pelatihan" value="{{ old('nama_pelatihan', $infoPelatihan->nama_pelatihan) }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Level Pelatihan</label>
-                        <select name="level_pelatihan" id="level_pelatihan" class="form-control" required>
-                            <option value="{{ old('level_pelatihan', $infoPelatihan->level_pelatihan) }}">- Pilih Level Pelatihan -</option>
-                            <option value="Internasional" {{ $infoPelatihan->level_pelatihan == 'Internasional' ? 'selected' : '' }}>Internasional</option>
-                            <option value="Nasional" {{ $infoPelatihan->level_pelatihan == 'Nasional' ? 'selected' : '' }}>Nasional</option>
+                        <label>Mata Kuliah</label>
+                        <select name="id_mata_kuliah" id="id_mata_kuliah" class="form-control" required>
+                            <option value="">- Pilih Mata Kuliah -</option>
+                            @foreach ($mataKuliah as $mk)
+                                <option value="{{ $mk->id_mata_kuliah }}" {{ $infoPelatihan->id_mata_kuliah == $mk->id_mata_kuliah ? 'selected' : '' }}>
+                                    {{ $mk->nama_mata_kuliah }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
+
+                    <div class="form-group">
+                        <label>Bidang Minat</label>
+                        <select name="id_bidang_minat" id="id_bidang_minat" class="form-control" required>
+                            <option value="">- Pilih Bidang Minat -</option>
+                            @foreach ($bidangMinat as $bm)
+                                <option value="{{ $bm->id_bidang_minat }}" {{ $infoPelatihan->id_bidang_minat == $bm->id_bidang_minat ? 'selected' : '' }}>
+                                    {{ $bm->nama_bidang_minat }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div class="form-group">
                         <label>Tanggal Mulai</label>
                         <input type="date" class="form-control" id="tanggal_mulai" name="tanggal_mulai" value="{{ old('tanggal_mulai', $infoPelatihan->tanggal_mulai) }}" required>
@@ -107,14 +132,22 @@
             $("#form-edit").validate({
                 rules: {
                     id_vendor_pelatihan: {
-                    required: true,
-                    digits: true
+                        required: true,
+                        digits: true
                     },
                     id_jenis_pelatihan_sertifikasi: {
                         required: true,
                         digits: true
                     },
                     id_periode: {
+                        required: true,
+                        digits: true
+                    },
+                    id_mata_kuliah: {
+                        required: true,
+                        digits: true
+                    },
+                    id_bidang_minat: {
                         required: true,
                         digits: true
                     },
@@ -147,7 +180,7 @@
                         required: true,
                         number: true
                     }
-                }
+                },
                 submitHandler: function(form) {
                     var formData = new FormData(form);
                     $.ajax({

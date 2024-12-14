@@ -8,15 +8,10 @@
                         aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label>Vendor Pelatihan</label>
-                    <select name="id_vendor_pelatihan" id="id_vendor_pelatihan" class="form-control" required>
-                        <option value="">- Pilih Vendor -</option>
-                        @foreach ($vendorPelatihan as $v)
-                            <option value="{{ $v->id_vendor_pelatihan }}">{{ $v->nama_vendor }}</option>
-                        @endforeach
-                    </select>
-                    <small id="error-id_vendor_pelatihan" class="error-text form-text text-danger"></small>
+                 <div class="form-group">
+                    <label>Nama Pelatihan</label>
+                    <input type="text" class="form-control" id="nama_pelatihan" name="nama_pelatihan" maxlength="100" required>
+                    <small id="error-nama_pelatihan" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
                     <label>Jenis Pelatihan</label>
@@ -28,6 +23,17 @@
                     </select>
                     <small id="error-id_jenis_pelatihan_sertifikasi" class="error-text form-text text-danger"></small>
                 </div>
+                <div class="form-group">
+                    <label>Vendor Pelatihan</label>
+                    <select name="id_vendor_pelatihan" id="id_vendor_pelatihan" class="form-control" required>
+                        <option value="">- Pilih Vendor -</option>
+                        @foreach ($vendorPelatihan as $v)
+                            <option value="{{ $v->id_vendor_pelatihan }}">{{ $v->nama_vendor }}</option>
+                        @endforeach
+                    </select>
+                    <small id="error-id_vendor_pelatihan" class="error-text form-text text-danger"></small>
+                </div>
+              
                 <div class="form-group">
                     <label>Periode Pelatihan</label>
                     <select name="id_periode" id="id_periode" class="form-control" required>
@@ -44,11 +50,6 @@
                     <small id="error-lokasi_pelatihan" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
-                    <label>Nama Pelatihan</label>
-                    <input type="text" class="form-control" id="nama_pelatihan" name="nama_pelatihan" maxlength="100" required>
-                    <small id="error-nama_pelatihan" class="error-text form-text text-danger"></small>
-                </div>
-                <div class="form-group">
                     <label>Level Pelatihan</label>
                     <select name="level_pelatihan" id="level_pelatihan" class="form-control" required>
                         <option value="">- Pilih Level Pelatihan -</option>
@@ -57,6 +58,32 @@
                     </select>
                     <small id="error-level_pelatihan" class="error-text form-text text-danger"></small>
                 </div>
+                <div class="form-group">
+                    <label>Mata Kuliah</label>
+                    <div id="mata_kuliah">
+                        @foreach ($mataKuliah as $mk)
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" name="id_mata_kuliah[]" value="{{ $mk->id_mata_kuliah }}" id="mata_kuliah_{{ $mk->id_mata_kuliah }}">
+                                <label class="form-check-label" for="mata_kuliah_{{ $mk->id_mata_kuliah }}">{{ $mk->nama_mata_kuliah }}</label>
+                            </div>
+                        @endforeach
+                    </div>
+                    <small id="error-id_mata_kuliah" class="error-text form-text text-danger"></small>
+                </div>
+
+                <div class="form-group">
+                    <label>Bidang Minat</label>
+                    <div id="bidang_minat">
+                        @foreach ($bidangMinat as $bm)
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" name="id_bidang_minat[]" value="{{ $bm->id_bidang_minat }}" id="bidang_minat_{{ $bm->id_bidang_minat }}">
+                                <label class="form-check-label" for="bidang_minat_{{ $bm->id_bidang_minat }}">{{ $bm->nama_bidang_minat }}</label>
+                            </div>
+                        @endforeach
+                    </div>
+                    <small id="error-id_bidang_minat" class="error-text form-text text-danger"></small>
+                </div>
+
                 <div class="form-group">
                     <label>Tanggal Mulai</label>
                     <input type="date" class="form-control" id="tanggal_mulai" name="tanggal_mulai" required>
@@ -101,6 +128,12 @@
                     required: true,
                     digits: true
                 },
+                "id_mata_kuliah[]": {
+                    required: true
+                },
+                "id_bidang_minat[]": {
+                    required: true
+                },
                 lokasi_pelatihan: {
                     required: true,
                     maxlength: 100
@@ -131,6 +164,7 @@
                     number: true
                 }
             },
+            
             submitHandler: function(form) {
                 $.ajax({
                     url: form.action,

@@ -29,5 +29,11 @@ class infoPelatihanModel extends Model
         return $this->belongsToMany(penggunaModel::class, 'info_pelatihan_pengguna', 'id_info_pelatihan', 'id_pengguna');
     }
 
+    public function bidangMinat():BelongsTo{
+        return $this->belongsTo(bidangMinatPelatihanModel::class, 'id_info_pelatihan ', 'id_info_pelatihan');
+    }
 
+    public function mataKuliah():BelongsTo{
+        return $this->belongsTo(mataKuliahPelatihanModel::class, 'id_info_pelatihan ', 'id_info_pelatihan');
+    }
 }
