@@ -81,55 +81,66 @@ class infoPelatihanController extends Controller
     {
         $id_info = $id;
         $infoPelatihan = infoPelatihanModel::find($id);
-
+    
         // Pastikan info pelatihan ditemukan
         if (!$infoPelatihan) {
             return redirect()->back()->with('error', 'Info pelatihan tidak ditemukan.');
         }
-
-        // Ambil bidang minat dan mata kuliah pelatihan
-        $bidangMinatPelatihan = $infoPelatihan->id_bidang_minat;
-        $mataKuliahPelatihan = $infoPelatihan->id_mata_kuliah;
-
+    
+        // Ambil id_bidang_minat dari tabel bidang_minat_pelatihan
+        $bidangMinatPelatihan = bidangMinatPelatihanModel::where('id_info_pelatihan', $id)
+                                ->pluck('id_bidang_minat')->toArray();
+    
+        // Ambil id_mata_kuliah dari tabel mata_kuliah_pelatihan
+        $mataKuliahPelatihan = mataKuliahPelatihanModel::where('id_info_pelatihan', $id)
+                                 ->pluck('id_mata_kuliah')->toArray();
+    
         // Menghitung jumlah peserta yang sudah terdaftar
         $jumlahPesertaTerdaftar = pesertaPelatihanModel::where('id_info_pelatihan', $id)->count();
-
-        // Cek apakah kuota masih tersedia
-        if ($jumlahPesertaTerdaftar >= $infoPelatihan->kuota_peserta) {
-            return redirect()->back()->with('error', 'Kuota peserta sudah penuh.');
-        }
-
-        // Mengambil dosen yang sesuai dengan bidang minat dan mata kuliah pelatihan
-        $dosen = penggunaModel::select('pengguna.*')
-            ->where('pengguna.id_jenis_pengguna', 3) // Filter untuk hanya dosen
-            ->whereIn('pengguna.id_pengguna', function ($query) use ($bidangMinatPelatihan) {
-                $query->select('id_pengguna')
-                    ->from('bidang_minat_dosen')
-                    ->where('id_bidang_minat', $bidangMinatPelatihan);
-            })
-            ->whereIn('pengguna.id_pengguna', function ($query) use ($mataKuliahPelatihan) {
-                $query->select('id_pengguna')
-                    ->from('mata_kuliah_dosen')
-                    ->where('id_mata_kuliah', $mataKuliahPelatihan);
+    
+        // Mengambil dosen yang sesuai dengan bidang minat ATAU mata kuliah pelatihan
+        $dosen = penggunaModel::select('pengguna.id_pengguna', 'pengguna.nama_pengguna')
+            ->where('pengguna.id_jenis_pengguna', 3) // Filter hanya dosen
+            ->where(function ($query) use ($bidangMinatPelatihan, $mataKuliahPelatihan) {
+                if (!empty($bidangMinatPelatihan)) {
+                    $query->whereIn('pengguna.id_pengguna', function ($subQuery) use ($bidangMinatPelatihan) {
+                        $subQuery->select('id_pengguna')
+                            ->from('bidang_minat_dosen')
+                            ->whereIn('id_bidang_minat', $bidangMinatPelatihan);
+                    });
+                }
+    
+                if (!empty($mataKuliahPelatihan)) {
+                    $query->orWhereIn('pengguna.id_pengguna', function ($subQuery) use ($mataKuliahPelatihan) {
+                        $subQuery->select('id_pengguna')
+                            ->from('mata_kuliah_dosen')
+                            ->whereIn('id_mata_kuliah', $mataKuliahPelatihan);
+                    });
+                }
             })
             ->leftJoin('input_pelatihan', 'pengguna.id_pengguna', '=', 'input_pelatihan.id_pengguna')
-            ->selectRaw('COUNT(input_pelatihan.id_pengguna) as jumlah_pelatihan')
+            ->selectRaw('pengguna.id_pengguna, pengguna.nama_pengguna, COUNT(input_pelatihan.id_pengguna) as jumlah_pelatihan')
             ->groupBy('pengguna.id_pengguna', 'pengguna.nama_pengguna')
-            ->orderBy('jumlah_pelatihan', 'asc') // Urutkan dari dosen paling sedikit pelatihan ke paling banyak
+            ->orderBy('jumlah_pelatihan', 'asc')
             ->get();
-
+    
         // Mendapatkan peserta yang sudah terdaftar untuk pelatihan ini
         $peserta = pesertaPelatihanModel::where('id_info_pelatihan', $id)
             ->pluck('id_pengguna')
             ->toArray();
-
+    
+        // Kirim status kuota penuh ke view
+        $kuotaPenuh = $jumlahPesertaTerdaftar >= $infoPelatihan->kuota_peserta;
+    
         return view('infoPelatihan.tambah_peserta', [
             'info' => $id_info,
             'infoPelatihan' => $infoPelatihan,
             'dosen' => $dosen,
             'peserta' => $peserta,
+            'kuotaPenuh' => $kuotaPenuh, // Tambahkan ini
         ]);
     }
+    
 
 
 
@@ -222,23 +233,30 @@ class infoPelatihanController extends Controller
         return view('infoPelatihan.show_ajax', ['infoPelatihan' => $infoPelatihan , 'vendorPelatihan' =>$vendorPelatihan , 'jenisPelatihan' => $jenisPelatihan , 'periode' => $periode]);
     }
     public function edit_ajax(string $id)
-    {
-        $infoPelatihan = infoPelatihanModel::find($id);
-        $vendorPelatihan = VendorPelatihanModel::all();
-        $jenisPelatihan = JenisPelatihanModel::all();
-        $periode = PeriodeModel::all();
-        $bidangMinat = BidangMinatModel::all();
-        $mataKuliah = mataKuliahModel::all();
+{
+    $infoPelatihan = infoPelatihanModel::find($id);
+    $vendorPelatihan = VendorPelatihanModel::all();
+    $jenisPelatihan = JenisPelatihanModel::all();
+    $periode = PeriodeModel::all();
+    $bidangMinat = BidangMinatModel::all();
+    $mataKuliah = mataKuliahModel::all();
 
-        return view('infoPelatihan.edit_ajax', [
-            'infoPelatihan' => $infoPelatihan,
-            'vendorPelatihan' => $vendorPelatihan,
-            'jenisPelatihan' => $jenisPelatihan,
-            'periode' => $periode,
-            'bidangMinat'=>$bidangMinat,
-            'mataKuliah'=> $mataKuliah , 
-        ]);
-    }
+    // Select the already associated bidang minat and mata kuliah
+    $selectedBidangMinat = bidangMinatPelatihanModel::where('id_info_pelatihan', $id)->pluck('id_bidang_minat')->toArray();
+    $selectedMataKuliah = mataKuliahPelatihanModel::where('id_info_pelatihan', $id)->pluck('id_mata_kuliah')->toArray();
+
+    return view('infoPelatihan.edit_ajax', [
+        'infoPelatihan' => $infoPelatihan,
+        'vendorPelatihan' => $vendorPelatihan,
+        'jenisPelatihan' => $jenisPelatihan,
+        'periode' => $periode,
+        'bidangMinat' => $bidangMinat,
+        'mataKuliah' => $mataKuliah,
+        'selectedBidangMinat' => $selectedBidangMinat,
+        'selectedMataKuliah' => $selectedMataKuliah,
+    ]);
+}
+
     
 
 

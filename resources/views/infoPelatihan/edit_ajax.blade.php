@@ -29,7 +29,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                <div class="form-group">
+                    <div class="form-group">
                         <label>Nama Pelatihan</label>
                         <input type="text" class="form-control" id="nama_pelatihan" name="nama_pelatihan" value="{{ old('nama_pelatihan', $infoPelatihan->nama_pelatihan) }}" required>
                     </div>
@@ -78,31 +78,42 @@
                         <label>Lokasi Pelatihan</label>
                         <input type="text" class="form-control" id="lokasi_pelatihan" name="lokasi_pelatihan" value="{{ old('lokasi_pelatihan', $infoPelatihan->lokasi_pelatihan) }}" required>
                     </div>
-                    
                     <div class="form-group">
                         <label>Mata Kuliah</label>
-                        <select name="id_mata_kuliah" id="id_mata_kuliah" class="form-control" required>
-                            <option value="">- Pilih Mata Kuliah -</option>
+                        <div id="mata_kuliah">
                             @foreach ($mataKuliah as $mk)
-                                <option value="{{ $mk->id_mata_kuliah }}" {{ $infoPelatihan->id_mata_kuliah == $mk->id_mata_kuliah ? 'selected' : '' }}>
-                                    {{ $mk->nama_mata_kuliah }}
-                                </option>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" 
+                                        name="id_mata_kuliah[]" 
+                                        value="{{ $mk->id_mata_kuliah }}" 
+                                        id="mata_kuliah_{{ $mk->id_mata_kuliah }}" 
+                                        {{ in_array($mk->id_mata_kuliah, old('id_mata_kuliah', $selectedMataKuliah)) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="mata_kuliah_{{ $mk->id_mata_kuliah }}">
+                                        {{ $mk->nama_mata_kuliah }}
+                                    </label>
+                                </div>
                             @endforeach
-                        </select>
+                        </div>
+                        <small id="error-id_mata_kuliah" class="error-text form-text text-danger"></small>
                     </div>
-
                     <div class="form-group">
                         <label>Bidang Minat</label>
-                        <select name="id_bidang_minat" id="id_bidang_minat" class="form-control" required>
-                            <option value="">- Pilih Bidang Minat -</option>
+                        <div id="bidang_minat">
                             @foreach ($bidangMinat as $bm)
-                                <option value="{{ $bm->id_bidang_minat }}" {{ $infoPelatihan->id_bidang_minat == $bm->id_bidang_minat ? 'selected' : '' }}>
-                                    {{ $bm->nama_bidang_minat }}
-                                </option>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" 
+                                        name="id_bidang_minat[]" 
+                                        value="{{ $bm->id_bidang_minat }}" 
+                                        id="bidang_minat_{{ $bm->id_bidang_minat }}" 
+                                        {{ in_array($bm->id_bidang_minat, old('id_bidang_minat', $selectedBidangMinat)) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="bidang_minat_{{ $bm->id_bidang_minat }}">
+                                        {{ $bm->nama_bidang_minat }}
+                                    </label>
+                                </div>
                             @endforeach
-                        </select>
+                        </div>
+                        <small id="error-id_bidang_minat" class="error-text form-text text-danger"></small>
                     </div>
-
                     <div class="form-group">
                         <label>Tanggal Mulai</label>
                         <input type="date" class="form-control" id="tanggal_mulai" name="tanggal_mulai" value="{{ old('tanggal_mulai', $infoPelatihan->tanggal_mulai) }}" required>
@@ -122,7 +133,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-success">Simpan</button>
                 </div>
             </div>
         </div>
@@ -143,13 +154,12 @@
                         required: true,
                         digits: true
                     },
-                    id_mata_kuliah: {
-                        required: true,
-                        digits: true
+                    
+                    "id_mata_kuliah[]": {
+                    required: true
                     },
-                    id_bidang_minat: {
-                        required: true,
-                        digits: true
+                    "id_bidang_minat[]": {
+                        required: true
                     },
                     lokasi_pelatihan: {
                         required: true,
