@@ -29,30 +29,23 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <!-- Sertifikasi Name -->
                     <div class="form-group">
                         <label>Nama Sertifikasi</label>
                         <input type="text" class="form-control" id="nama_sertifikasi" name="nama_sertifikasi" value="{{ old('nama_sertifikasi', $infoSertifikasi->nama_sertifikasi) }}" required>
                     </div>
-                    <div class="form-group">
-                        <label>Jenis Sertifikasi</label>
-                        <select name="id_jenis_pelatihan_sertifikasi" id="id_jenis_pelatihan_sertifikasi" class="form-control" required>
-                            <option value="">- Pilih Jenis Pelatihan -</option>
-                            @foreach ($jenisSertifikasi as $j)
-                                <option value="{{ $j->id_jenis_pelatihan_sertifikasi }}" {{ $infoSertifikasi->id_jenis_pelatihan_sertifikasi == $j->id_jenis_pelatihan_sertifikasi ? 'selected' : '' }}>
-                                    {{ $j->nama_jenis_pelatihan_sertifikasi }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                  
+                    <!-- Sertifikasi Level -->
                     <div class="form-group">
                         <label>Level Sertifikasi</label>
                         <select name="level_sertifikasi" id="level_sertifikasi" class="form-control" required>
-                            <option value="{{ old('level_sertifikasi', $infoSertifikasi->level_sertifikasi) }}">- Pilih Level Pelatihan -</option>
+                            <option value="{{ old('level_sertifikasi', $infoSertifikasi->level_sertifikasi) }}">- Pilih Level Sertifikasi -</option>
                             <option value="Profesi" {{ $infoSertifikasi->level_sertifikasi == 'Profesi' ? 'selected' : '' }}>Profesi</option>
                             <option value="Keahlian" {{ $infoSertifikasi->level_sertifikasi == 'Keahlian' ? 'selected' : '' }}>Keahlian</option>
                         </select>
                     </div>
 
+                    <!-- Sertifikasi Vendor -->
                     <div class="form-group">
                         <label>Vendor Sertifikasi</label>
                         <select name="id_vendor_sertifikasi" id="id_vendor_sertifikasi" class="form-control" required>
@@ -64,11 +57,25 @@
                             @endforeach
                         </select>
                     </div>
+                    
+                    <!-- Sertifikasi Type -->
+                    <div class="form-group">
+                        <label>Jenis Sertifikasi</label>
+                        <select name="id_jenis_pelatihan_sertifikasi" id="id_jenis_pelatihan_sertifikasi" class="form-control" required>
+                            <option value="">- Pilih Jenis Sertifikasi -</option>
+                            @foreach ($jenisSertifikasi as $j)
+                                <option value="{{ $j->id_jenis_pelatihan_sertifikasi }}" {{ $infoSertifikasi->id_jenis_pelatihan_sertifikasi == $j->id_jenis_pelatihan_sertifikasi ? 'selected' : '' }}>
+                                    {{ $j->nama_jenis_pelatihan_sertifikasi }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
+                    <!-- Sertifikasi Period -->
                     <div class="form-group">
                         <label>Periode Sertifikasi</label>
                         <select name="id_periode" id="id_periode" class="form-control" required>
-                            <option value="">- Pilih Periode -</option>
+                            <option value="">- Pilih Periode Sertifikasi -</option>
                             @foreach ($periode as $p)
                                 <option value="{{ $p->id_periode }}" {{ $infoSertifikasi->id_periode == $p->id_periode ? 'selected' : '' }}>
                                     {{ $p->tahun_periode }}
@@ -77,16 +84,65 @@
                         </select>
                     </div>
 
+                    <!-- Mata Kuliah -->
+                    <div class="form-group">
+                        <label>Mata Kuliah</label>
+                        <div id="mata_kuliah">
+                            @foreach ($mataKuliah as $mk)
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" 
+                                        name="id_mata_kuliah[]" 
+                                        value="{{ $mk->id_mata_kuliah }}" 
+                                        id="mata_kuliah_{{ $mk->id_mata_kuliah }}" 
+                                        {{ in_array($mk->id_mata_kuliah, old('id_mata_kuliah', $selectedMataKuliah)) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="mata_kuliah_{{ $mk->id_mata_kuliah }}">
+                                        {{ $mk->nama_mata_kuliah }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                        <small id="error-id_mata_kuliah" class="error-text form-text text-danger"></small>
+                    </div>
+
+                    <!-- Bidang Minat -->
+                    <div class="form-group">
+                        <label>Bidang Minat</label>
+                        <div id="bidang_minat">
+                            @foreach ($bidangMinat as $bm)
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" 
+                                        name="id_bidang_minat[]" 
+                                        value="{{ $bm->id_bidang_minat }}" 
+                                        id="bidang_minat_{{ $bm->id_bidang_minat }}" 
+                                        {{ in_array($bm->id_bidang_minat, old('id_bidang_minat', $selectedBidangMinat)) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="bidang_minat_{{ $bm->id_bidang_minat }}">
+                                        {{ $bm->nama_bidang_minat }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                        <small id="error-id_bidang_minat" class="error-text form-text text-danger"></small>
+                    </div>
+                    
+                    <!-- Tanggal Mulai -->
                     <div class="form-group">
                         <label>Tanggal Mulai</label>
                         <input type="date" class="form-control" id="tanggal_mulai" name="tanggal_mulai" value="{{ old('tanggal_mulai', $infoSertifikasi->tanggal_mulai) }}" required>
                     </div>
 
+                    <!-- Tanggal Selesai -->
                     <div class="form-group">
                         <label>Tanggal Selesai</label>
                         <input type="date" class="form-control" id="tanggal_selesai" name="tanggal_selesai" value="{{ old('tanggal_selesai', $infoSertifikasi->tanggal_selesai) }}" required>
                     </div>
 
+                    <!-- Kuota Peserta -->
+                    <div class="form-group">
+                        <label>Kuota Peserta</label>
+                        <input type="number" class="form-control" id="kuota_peserta" name="kuota_peserta" value="{{ old('kuota_peserta', $infoSertifikasi->kuota_peserta) }}" required>
+                    </div>
+
+                    <!-- Masa Berlaku -->
                     <div class="form-group">
                         <label>Masa Berlaku</label>
                         <input type="text" class="form-control" id="masa_berlaku" name="masa_berlaku" value="{{ old('masa_berlaku', $infoSertifikasi->masa_berlaku) }}" required>
@@ -110,9 +166,11 @@
                         required: true,
                         maxlength: 100
                     },
-                    jenis_sertifikasi: {
-                        required: true,
-                        maxlength: 100
+                    "id_mata_kuliah[]": {
+                        required: true
+                    },
+                    "id_bidang_minat[]": {
+                        required: true
                     },
                     level_sertifikasi: {
                         required: true
@@ -131,6 +189,11 @@
                         required: true,
                         date: true
                     },
+                    kuota_peserta: {
+                        required: true,
+                        digits: true,
+                        min: 1
+                    },
                     masa_berlaku: {
                         required: true,
                         maxlength: 50
@@ -145,6 +208,7 @@
                         processData: false,
                         contentType: false,
                         success: function(response) {
+                            console.log(response); // Tambahkan ini untuk memeriksa respon dari server
                             if (response.status) {
                                 $('#myModal').modal('hide');
                                 Swal.fire({
@@ -160,20 +224,17 @@
                                     text: response.message
                                 });
                             }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(xhr.responseText); // Tambahkan ini untuk memeriksa error dari server
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Terjadi kesalahan pada server.'
+                            });
                         }
                     });
                     return false;
-                }
-                errorElement: 'span',
-                errorPlacement: function (error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-group').append(error);
-                },
-                highlight: function (element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function (element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
                 }
             });
         });

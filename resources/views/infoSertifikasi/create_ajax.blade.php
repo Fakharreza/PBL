@@ -14,13 +14,14 @@
                     <small id="error-nama_sertifikasi" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
-                    <label>Level Sertifikasi</label>
-                    <select name="level_sertifikasi" id="level_sertifikasi" class="form-control" required>
-                        <option value="">- Pilih Level Sertifikasi -</option>
-                        <option value="Profesi">Profesi</option>
-                        <option value="Keahlian">Keahlian</option>
+                    <label>Jenis Sertifikasi</label>
+                    <select name="id_jenis_pelatihan_sertifikasi" id="id_jenis_pelatihan_sertifikasi" class="form-control" required>
+                        <option value="">- Pilih Jenis Sertifikasi -</option>
+                        @foreach ($jenisSertifikasi as $j)
+                            <option value="{{ $j->id_jenis_pelatihan_sertifikasi }}">{{ $j->nama_jenis_pelatihan_sertifikasi }}</option>
+                        @endforeach
                     </select>
-                    <small id="error-level_sertifikasi" class="error-text form-text text-danger"></small>
+                    <small id="error-id_jenis_pelatihan_sertifikasi" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
                     <label>Vendor Sertifikasi</label>
@@ -33,14 +34,13 @@
                     <small id="error-id_vendor_sertifikasi" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
-                    <label>Jenis Sertifikasi</label>
-                    <select name="id_jenis_pelatihan_sertifikasi" id="id_jenis_pelatihan_sertifikasi" class="form-control" required>
-                        <option value="">- Pilih Jenis Sertifikasi -</option>
-                        @foreach ($jenisSertifikasi as $j)
-                            <option value="{{ $j->id_jenis_pelatihan_sertifikasi }}">{{ $j->nama_jenis_pelatihan_sertifikasi }}</option>
-                        @endforeach
+                    <label>Level Sertifikasi</label>
+                    <select name="level_sertifikasi" id="level_sertifikasi" class="form-control" required>
+                        <option value="">- Pilih Level Sertifikasi -</option>
+                        <option value="Profesi">Profesi</option>
+                        <option value="Keahlian">Keahlian</option>
                     </select>
-                    <small id="error-id_jenis_pelatihan_sertifikasi" class="error-text form-text text-danger"></small>
+                    <small id="error-level_sertifikasi" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
                     <label>Periode Sertifikasi</label>
@@ -53,6 +53,32 @@
                     <small id="error-id_periode_sertifikasi" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
+                    <label>Mata Kuliah</label>
+                    <div id="mata_kuliah">
+                        @foreach ($mataKuliah as $mk)
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" name="id_mata_kuliah[]" value="{{ $mk->id_mata_kuliah }}" id="mata_kuliah_{{ $mk->id_mata_kuliah }}">
+                                <label class="form-check-label" for="mata_kuliah_{{ $mk->id_mata_kuliah }}">{{ $mk->nama_mata_kuliah }}</label>
+                            </div>
+                        @endforeach
+                    </div>
+                    <small id="error-id_mata_kuliah" class="error-text form-text text-danger"></small>
+                </div>
+
+                <div class="form-group">
+                    <label>Bidang Minat</label>
+                    <div id="bidang_minat">
+                        @foreach ($bidangMinat as $bm)
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" name="id_bidang_minat[]" value="{{ $bm->id_bidang_minat }}" id="bidang_minat_{{ $bm->id_bidang_minat }}">
+                                <label class="form-check-label" for="bidang_minat_{{ $bm->id_bidang_minat }}">{{ $bm->nama_bidang_minat }}</label>
+                            </div>
+                        @endforeach
+                    </div>
+                    <small id="error-id_bidang_minat" class="error-text form-text text-danger"></small>
+                </div>
+
+                <div class="form-group">
                     <label>Tanggal Mulai</label>
                     <input type="date" class="form-control" id="tanggal_mulai" name="tanggal_mulai" required>
                     <small id="error-tanggal_mulai" class="error-text form-text text-danger"></small>
@@ -61,6 +87,11 @@
                     <label>Tanggal Selesai</label>
                     <input type="date" class="form-control" id="tanggal_selesai" name="tanggal_selesai" required>
                     <small id="error-tanggal_selesai" class="error-text form-text text-danger"></small>
+                </div>
+                <div class="form-group">
+                    <label>Kuota Peserta</label>
+                    <input type="number" class="form-control" id="kuota_peserta" name="kuota_peserta" min="1" required>
+                    <small id="error-kuota_peserta" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
                     <label>Masa Berlaku</label>
@@ -86,6 +117,12 @@
                     level_sertifikasi: {
                         required: true
                     },
+                    "id_mata_kuliah[]": {
+                    required: true
+                    },
+                    "id_bidang_minat[]": {
+                        required: true
+                    },
                     id_vendor_sertifikasi: {
                         required: true
                     },
@@ -102,6 +139,11 @@
                     tanggal_selesai: {
                         required: true,
                         date: true
+                    },
+                    kuota_peserta: {
+                    required: true,
+                    digits: true,
+                    min: 1
                     },
                     masa_berlaku: {
                         required: true,

@@ -9,6 +9,12 @@
                 </button>
             </div>
             <div class="modal-body">
+                @if ($kuotaPenuh)
+                    <div class="alert alert-warning" role="alert">
+                        Kuota peserta telah penuh. Anda masih dapat mengganti peserta yang sudah ada.
+                    </div>
+                @endif
+
                 <div class="form-group">
                     <label for="dosen">Anggota Peserta</label>
                     <div class="card">
@@ -22,7 +28,7 @@
                                         type="checkbox" 
                                         name="id_pengguna[]" 
                                         id="dosen_{{ $d->id_pengguna }}" 
-                                        class="form-check-input" 
+                                        class="form-check-input checkbox-peserta" 
                                         value="{{ $d->id_pengguna }}" 
                                         {{ in_array($d->id_pengguna, $peserta) ? 'checked' : '' }}
                                     >
@@ -47,18 +53,37 @@
 
 <script>
     $(document).ready(function() {
-        $("#form-tambah-peserta").validate({
-            rules: {
-                "id_pengguna[]": {
-                    required: true
-                }
-            },
-            messages: {
-                "id_pengguna[]": {
-                    required: "Harap pilih setidaknya satu peserta."
-                }
-            },
-            submitHandler: function(form) {
+        // Hitung kuota dari server
+        const maxKuota = {{ $infoSertifikasi->kuota_peserta }};
+        const terdaftarSaatIni = {{ count($peserta) }};
+
+        // Fungsi validasi kuota peserta
+        function validateCheckboxSelection() {
+            const selectedCheckboxes = $(".checkbox-peserta:checked").length;
+            if (selectedCheckboxes > maxKuota) {
+                alert("Jumlah peserta yang dipilih melebihi kuota maksimal: " + maxKuota);
+                return false;
+            }
+            return true;
+        }
+
+        // Event listener untuk checkbox
+        $(".checkbox-peserta").on("change", function() {
+            const selectedCheckboxes = $(".checkbox-peserta:checked").length;
+
+            if (selectedCheckboxes > maxKuota) {
+                $(this).prop("checked", false); // Batalkan pilihan
+                alert("Jumlah peserta yang dipilih melebihi kuota maksimal: " + maxKuota);
+            }
+        });
+
+        // Submit handler untuk validasi kuota sebelum submit
+        $("#form-tambah-peserta").on("submit", function(e) {
+            if (!validateCheckboxSelection()) {
+                e.preventDefault(); // Batalkan submit jika validasi gagal
+            } else {
+                const form = this;
+
                 $.ajax({
                     url: form.action,
                     type: form.method,
@@ -88,22 +113,12 @@
                         });
                     }
                 });
-                return false;
-            },
-            errorElement: 'span',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-group').append(error);
-            },
-            highlight: function(element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
+
+                return false; // Hindari submit normal
             }
         });
 
-        // Fungsi untuk tombol hapus semua peserta
+        // Tombol hapus semua peserta
         $('#btn-hapus-semua').on('click', function() {
             Swal.fire({
                 title: 'Konfirmasi',
