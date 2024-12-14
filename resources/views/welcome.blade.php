@@ -22,16 +22,17 @@
         $isDosen = auth()->user()->id_jenis_pengguna == 3; // 3 = Dosen
         $isPimpinan = auth()->user()->id_jenis_pengguna == 4; // 4 = Pimpinan
 
-        $userId = auth()->user()->id;
+        // $userId = auth()->user()->id;
 
         // Ambil jumlah data terkait pelatihan dan sertifikasi untuk dosen
         $inputPelatihanCount = DB::table('input_pelatihan')
-            ->where('id_pengguna', auth()->user()->id)
+            ->where('id_pengguna', auth()->user()->id_pengguna)
             ->count();
-
         $inputSertifikasiCount = DB::table('input_sertifikasi')
-            ->where('id_pengguna', auth()->user()->id)
+            ->where('id_pengguna', auth()->user()->id_pengguna)
             ->count();
+        $infoPelatihan = DB::table('info_pelatihan')->count();
+        $infoSertifikasi = DB::table('info_sertifikasi')->count();
 
         $totalInputPelatihan = DB::table('input_pelatihan')->count();
         $totalInputSertifikasi = DB::table('input_sertifikasi')->count();
@@ -42,16 +43,73 @@
             ->orderBy('tahun', 'asc')
             ->get();
 
+        $sertifikasiPerTahun = DB::table('input_sertifikasi')
+            ->select(DB::raw('YEAR(waktu_sertifikasi) as tahun'), DB::raw('count(*) as jumlah'))
+            ->groupBy(DB::raw('YEAR(waktu_sertifikasi)'))
+            ->orderBy('tahun', 'asc')
+            ->get();
+
         // Siapkan data untuk chart
-        $tahun = $pelatihanPerTahun->pluck('tahun');
+        $tahunPelatihan = $pelatihanPerTahun->pluck('tahun');
         $jumlahPelatihan = $pelatihanPerTahun->pluck('jumlah');
+
+        $tahunSertifikasi = $sertifikasiPerTahun->pluck('tahun');
+        $jumlahSertifikasi = $sertifikasiPerTahun->pluck('jumlah');
+
+        // Mendapatkan ID pengguna yang sedang login
+        // $userId = auth()->user()->id;
+
+        // Query untuk mendapatkan jumlah pelatihan per tahun berdasarkan pengguna yang login
+        $pelatihanPerTahun2 = DB::table('input_pelatihan')
+            ->select(DB::raw('YEAR(waktu_pelatihan) as tahun'), DB::raw('count(*) as jumlah'))
+            ->where('id_pengguna', auth()->user()->id_pengguna) // Filter berdasarkan pengguna yang login
+            ->groupBy(DB::raw('YEAR(waktu_pelatihan)'))
+            ->orderBy('tahun', 'asc')
+            ->get();
+
+        // Tambahkan atribut 'jenis' untuk membedakan data pelatihan
+        $pelatihanPerTahun2 = $pelatihanPerTahun2->map(function ($item) {
+            $item->jenis = 'Pelatihan';
+            return $item;
+        });
+
+        // Query untuk mendapatkan jumlah sertifikasi per tahun berdasarkan pengguna yang login
+        $sertifikasiPerTahun2 = DB::table('input_sertifikasi')
+            ->select(DB::raw('YEAR(waktu_sertifikasi) as tahun'), DB::raw('count(*) as jumlah'))
+            ->where('id_pengguna', auth()->user()->id_pengguna) // Filter berdasarkan pengguna yang login
+            ->groupBy(DB::raw('YEAR(waktu_sertifikasi)'))
+            ->orderBy('tahun', 'asc')
+            ->get();
+
+        // Tambahkan atribut 'jenis' untuk membedakan data sertifikasi
+        $sertifikasiPerTahun2 = $sertifikasiPerTahun2->map(function ($item) {
+            $item->jenis = 'Sertifikasi';
+            return $item;
+        });
+
+        // Menggabungkan data pelatihan dan sertifikasi dalam satu koleksi
+        $combinedData = $pelatihanPerTahun2->merge($sertifikasiPerTahun2);
+
+        // Siapkan data untuk chart
+        $tahunData = $combinedData->pluck('tahun')->unique()->sort()->values(); // Ambil tahun unik dan urutkan
+
+        // Data pelatihan berdasarkan tahun
+        $pelatihanData = $tahunData->map(function ($tahun) use ($combinedData) {
+            return $combinedData->where('jenis', 'Pelatihan')->where('tahun', $tahun)->sum('jumlah');
+        });
+
+        // Data sertifikasi berdasarkan tahun
+        $sertifikasiData = $tahunData->map(function ($tahun) use ($combinedData) {
+            return $combinedData->where('jenis', 'Sertifikasi')->where('tahun', $tahun)->sum('jumlah');
+        });
+
     @endphp
 
     {{-- Tampilan untuk SuperAdmin --}}
     @if ($isSuperAdmin)
         <div class="row">
             <!-- Box: Total Users -->
-            <div class="col-lg-3 col-6">
+            <div class="col-lg-4 col-6">
                 <div class="small-box bg-info">
                     <div class="inner">
                         <h3>{{ $totalUsers }}</h3>
@@ -66,7 +124,7 @@
             <!-- ./col -->
 
             <!-- Box: Total Levels -->
-            <div class="col-lg-3 col-6">
+            <div class="col-lg-4 col-6">
                 <div class="small-box bg-warning">
                     <div class="inner">
                         <h3>{{ $totalLevels }}</h3>
@@ -81,7 +139,7 @@
             <!-- ./col -->
 
             <!-- Box: Total Dosen -->
-            <div class="col-lg-3 col-6">
+            <div class="col-lg-4 col-6">
                 <div class="small-box bg-success">
                     <div class="inner">
                         <h3>{{ $dosenCount }}</h3>
@@ -170,6 +228,47 @@
                     <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
+
+            <!-- Box: Jumlah Pelatihan (Warna Hijau) -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ $infoPelatihan }}</h3>
+                        <p>Jumlah Info Pelatihan</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-ios-school"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Box: Jumlah Sertifikasi (Warna Merah) -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>{{ $infoSertifikasi }}</h3>
+                        <p>Jumlah Info Sertifikasi</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-ios-rocket"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <h3 class="card-title">Jumlah Pelatihan dan Sertifikasi per Tahun</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="position-relative mb-4">
+                            <canvas id="combined-chart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     @endif
 
@@ -231,12 +330,11 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-lg-6">
                 <div class="card">
                     <div class="card-header border-0">
                         <div class="d-flex justify-content-between">
-                            <h3 class="card-title">Jumlah Pengguna per Role</h3>
+                            <h3 class="card-title">Jumlah Input Sertifikasi per Tahun</h3>
                         </div>
                     </div>
                     <div class="card-body">
@@ -254,23 +352,9 @@
                         <!-- /.d-flex -->
 
                         <div class="position-relative mb-4">
-                            <canvas id="role-chart" height="300"></canvas>
+                            <canvas id="sertifikasi-chart" height="300"></canvas>
                         </div>
 
-                        <div class="d-flex flex-row justify-content-end">
-                            <span class="mr-2">
-                                <i class="fas fa-square text-primary"></i> SuperAdmin
-                            </span>
-                            <span class="mr-2">
-                                <i class="fas fa-square text-success"></i> Admin
-                            </span>
-                            <span class="mr-2">
-                                <i class="fas fa-square text-warning"></i> Dosen
-                            </span>
-                            <span>
-                                <i class="fas fa-square text-danger"></i> Pimpinan
-                            </span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -326,40 +410,127 @@
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-                const tahun = {{ $tahun }};
-                const jumlahPelatihan = {{ $jumlahPelatihan }};
-                const ctx = document.getElementById('pelatihan-chart').getContext('2d');
-                const pelatihanChart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: @json($tahun), // Tahun
-                            datasets: [{
-                                label: 'Jumlah Input Pelatihan',
-                                data: @json($jumlahPelatihan), // Jumlah input pelatihan per tahun
-                                backgroundColor: 'rgba(54, 162, 235, 0.5)', // Warna batang
-                                borderColor: 'rgba(54, 162, 235, 1)', // Border warna
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    title: {
-                                        display: true,
-                                        text: 'Jumlah Pelatihan'
-                                    }
-                                },
-                                x: {
-                                    title: {
-                                        display: true,
-                                        text: 'Tahun'
-                                    }
-                                }
-                            }
+        const tahunData = {{ json_encode($tahunData->toArray()) }}; // Tahun data
+        const pelatihanData = {{ json_encode($pelatihanData->toArray()) }}; // Data pelatihan
+        const sertifikasiData = {{ json_encode($sertifikasiData->toArray()) }}; // Data sertifikasi
+
+        const ctx = document.getElementById('combined-chart').getContext('2d');
+        const combinedChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: tahunData, // Tahun
+                datasets: [{
+                        label: 'Pelatihan',
+                        data: pelatihanData, // Data pelatihan langsung diambil dari array
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Sertifikasi',
+                        data: sertifikasiData, // Data sertifikasi langsung diambil dari array
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Jumlah'
                         }
-                    })
-                });
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tahun'
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const tahunPelatihan = {{ $tahunPelatihan }};
+        const jumlahPelatihan = {{ $jumlahPelatihan }};
+        const ctx = document.getElementById('pelatihan-chart').getContext('2d');
+        const pelatihanChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @json($tahunPelatihan), // Tahun
+                datasets: [{
+                    label: 'Jumlah Input Pelatihan',
+                    data: @json($jumlahPelatihan), // Jumlah input pelatihan per tahun
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)', // Warna batang
+                    borderColor: 'rgba(54, 162, 235, 1)', // Border warna
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Jumlah Pelatihan'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tahun'
+                        }
+                    }
+                }
+            }
+        })
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const tahunSertifikasi = {{ $tahunSertifikasi }};
+        const jumlahSertifikasi = {{ $jumlahSertifikasi }};
+        const ctx = document.getElementById('sertifikasi-chart').getContext('2d');
+        const sertifikasiChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @json($tahunSertifikasi), // Tahun
+                datasets: [{
+                    label: 'Jumlah Input Sertifikasi',
+                    data: @json($jumlahSertifikasi), // Jumlah input pelatihan per tahun
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)', // Warna batang
+                    borderColor: 'rgba(54, 162, 235, 1)', // Border warna
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Jumlah Sertifikasi'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tahun'
+                        }
+                    }
+                }
+            }
+        })
+    });
 </script>
