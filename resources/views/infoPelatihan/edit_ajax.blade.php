@@ -30,6 +30,18 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
+                        <label>Nama Pelatihan</label>
+                        <input type="text" class="form-control" id="nama_pelatihan" name="nama_pelatihan" value="{{ old('nama_pelatihan', $infoPelatihan->nama_pelatihan) }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Level Pelatihan</label>
+                        <select name="level_pelatihan" id="level_pelatihan" class="form-control" required>
+                            <option value="{{ old('level_pelatihan', $infoPelatihan->level_pelatihan) }}">- Pilih Level Pelatihan -</option>
+                            <option value="Internasional" {{ $infoPelatihan->level_pelatihan == 'Internasional' ? 'selected' : '' }}>Internasional</option>
+                            <option value="Nasional" {{ $infoPelatihan->level_pelatihan == 'Nasional' ? 'selected' : '' }}>Nasional</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label>Vendor Pelatihan</label>
                         <select name="id_vendor_pelatihan" id="id_vendor_pelatihan" class="form-control" required>
                             <option value="">- Pilih Vendor -</option>
@@ -67,16 +79,40 @@
                         <input type="text" class="form-control" id="lokasi_pelatihan" name="lokasi_pelatihan" value="{{ old('lokasi_pelatihan', $infoPelatihan->lokasi_pelatihan) }}" required>
                     </div>
                     <div class="form-group">
-                        <label>Nama Pelatihan</label>
-                        <input type="text" class="form-control" id="nama_pelatihan" name="nama_pelatihan" value="{{ old('nama_pelatihan', $infoPelatihan->nama_pelatihan) }}" required>
+                        <label>Mata Kuliah</label>
+                        <div id="mata_kuliah">
+                            @foreach ($mataKuliah as $mk)
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" 
+                                        name="id_mata_kuliah[]" 
+                                        value="{{ $mk->id_mata_kuliah }}" 
+                                        id="mata_kuliah_{{ $mk->id_mata_kuliah }}" 
+                                        {{ in_array($mk->id_mata_kuliah, old('id_mata_kuliah', $selectedMataKuliah)) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="mata_kuliah_{{ $mk->id_mata_kuliah }}">
+                                        {{ $mk->nama_mata_kuliah }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                        <small id="error-id_mata_kuliah" class="error-text form-text text-danger"></small>
                     </div>
                     <div class="form-group">
-                        <label>Level Pelatihan</label>
-                        <select name="level_pelatihan" id="level_pelatihan" class="form-control" required>
-                            <option value="{{ old('level_pelatihan', $infoPelatihan->level_pelatihan) }}">- Pilih Level Pelatihan -</option>
-                            <option value="Internasional" {{ $infoPelatihan->level_pelatihan == 'Internasional' ? 'selected' : '' }}>Internasional</option>
-                            <option value="Nasional" {{ $infoPelatihan->level_pelatihan == 'Nasional' ? 'selected' : '' }}>Nasional</option>
-                        </select>
+                        <label>Bidang Minat</label>
+                        <div id="bidang_minat">
+                            @foreach ($bidangMinat as $bm)
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" 
+                                        name="id_bidang_minat[]" 
+                                        value="{{ $bm->id_bidang_minat }}" 
+                                        id="bidang_minat_{{ $bm->id_bidang_minat }}" 
+                                        {{ in_array($bm->id_bidang_minat, old('id_bidang_minat', $selectedBidangMinat)) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="bidang_minat_{{ $bm->id_bidang_minat }}">
+                                        {{ $bm->nama_bidang_minat }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                        <small id="error-id_bidang_minat" class="error-text form-text text-danger"></small>
                     </div>
                     <div class="form-group">
                         <label>Tanggal Mulai</label>
@@ -97,7 +133,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-success">Simpan</button>
                 </div>
             </div>
         </div>
@@ -107,8 +143,8 @@
             $("#form-edit").validate({
                 rules: {
                     id_vendor_pelatihan: {
-                    required: true,
-                    digits: true
+                        required: true,
+                        digits: true
                     },
                     id_jenis_pelatihan_sertifikasi: {
                         required: true,
@@ -117,6 +153,13 @@
                     id_periode: {
                         required: true,
                         digits: true
+                    },
+                    
+                    "id_mata_kuliah[]": {
+                    required: true
+                    },
+                    "id_bidang_minat[]": {
+                        required: true
                     },
                     lokasi_pelatihan: {
                         required: true,
@@ -147,7 +190,7 @@
                         required: true,
                         number: true
                     }
-                }
+                },
                 submitHandler: function(form) {
                     var formData = new FormData(form);
                     $.ajax({
