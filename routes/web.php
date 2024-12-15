@@ -15,6 +15,7 @@ use App\Http\Controllers\vendorSertifController;
 use App\Http\Controllers\MataKuliahController;
 use App\Http\Controllers\infoPelatihanController;
 use App\Http\Controllers\infoSertifikasiController;
+use App\Http\Controllers\accPesertaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -266,4 +267,20 @@ Route::middleware('auth')->group(function () {
         Route::get('/export_excel', [DataSertifikasiController::class, 'export_excel']);      // export excel
         Route::get('/export_pdf',[DataSertifikasiController::class,'export_pdf']); // export pdf
     });
+    Route::group(['prefix' => 'accPeserta', 'middleware' => ['authorize:PMN']], function () {
+        Route::get('/', [accPesertaController::class, 'index']);
+        Route::post('/list', [accPesertaController::class, 'list']);
+        Route::get('/{id}/tampil_peserta', [accPesertaController::class, 'tampilPeserta']);
+        Route::get('/{id}/ubah_peserta', [accPesertaController::class, 'ubahPeserta']);
+    
+        // Store peserta pelatihan
+        Route::post('/pelatihan/{id}/store_peserta', [accPesertaController::class, 'store_peserta_pelatihan']);
+    
+        // Store peserta sertifikasi
+        Route::post('/sertifikasi/{id}/store_peserta', [accPesertaController::class, 'store_peserta_sertifikasi']);
+        
+        Route::post('/{id}/ubah_status', [accPesertaController::class, 'ubahStatus']);
+    });
+    
+    
 });
