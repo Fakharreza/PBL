@@ -48,6 +48,10 @@
                         <td>{{ $dataSertifikasi->lokasi_sertifikasi }}</td>
                     </tr>
                     <tr>
+                        <th>Periode</th>
+                        <td>{{ $dataSertifikasi->periode->tahun_periode}}</td>
+                    </tr>
+                    <tr>
                         <th>Waktu Sertifikasi</th>
                         <td>{{ $dataSertifikasi->waktu_sertifikasi }}</td>
                     </tr>

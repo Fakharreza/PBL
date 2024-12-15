@@ -35,6 +35,16 @@
                     <small id="error-lokasi_sertifikasi" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
+                    <label>Periode Sertifikasi</label>
+                    <select name="id_periode" id="id_periode" class="form-control" required>
+                        <option value="">- Pilih Periode Sertifikasi -</option>
+                        @foreach ($periode as $p)
+                            <option value="{{ $p->id_periode }}">{{ $p->tahun_periode }}</option>
+                        @endforeach
+                    </select>
+                    <small id="error-id_periode" class="error-text form-text text-danger"></small>
+                </div>
+                <div class="form-group">
                     <label>Waktu Sertifikasi</label>
                     <input type="date" name="waktu_sertifikasi" id="waktu_sertifikasi" class="form-control" required>
                     <small id="error-waktu_sertifikasi" class="error-text form-text text-danger"></small>
@@ -75,6 +85,10 @@
                 lokasi_sertifikasi: {
                     required: true,
                     maxlength: 50
+                },
+                id_periode: {
+                    required: true,
+                    digits: true
                 },
                 waktu_sertifikasi: {
                     required: true,
