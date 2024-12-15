@@ -20,6 +20,7 @@ class dataPelatihanModel extends Model
     protected $fillable = [
         'id_jenis_pelatihan_sertifikasi',
         'id_pengguna',
+        'id_periode',
         'nama_pelatihan',
         'lokasi_pelatihan',
         'waktu_pelatihan',
@@ -47,6 +48,10 @@ class dataPelatihanModel extends Model
     public function pengguna(): BelongsTo
     {
         return $this->belongsTo(penggunaModel::class, 'id_pengguna', 'id_pengguna');
+    }
+
+    public function periode():BelongsTo{
+        return $this->belongsTo(PeriodeModel::class, 'id_periode', 'id_periode');
     }
 
     /**

@@ -49,6 +49,10 @@
                             <td>{{ $dataSertifikasi->no_sertifikat }}</td>
                         </tr>
                         <tr>
+                            <th>Periode Sertifikasi</th>
+                            <td>{{ $dataSertifikasi->periode->tahun_periode }}</td>
+                        </tr>
+                        <tr>
                             <th>Waktu Sertifikasi</th>
                             <td>{{ $dataSertifikasi->waktu_sertifikasi }}</td>
                         </tr>
