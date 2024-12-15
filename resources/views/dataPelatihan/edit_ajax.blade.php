@@ -52,6 +52,18 @@
                 </div>
 
                 <div class="form-group">
+                        <label>Periode Pelatihan</label>
+                        <select name="id_periode" id="id_periode" class="form-control" required>
+                            <option value="">- Pilih Periode -</option>
+                            @foreach ($periode as $p)
+                                <option value="{{ $p->id_periode }}" {{ $dataPelatihan->id_periode == $p->id_periode ? 'selected' : '' }}>
+                                    {{ $p->tahun_periode }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                <div class="form-group">
                     <label for="waktu_pelatihan">Waktu Pelatihan</label>
                     <input value="{{ old('waktu_pelatihan', \Carbon\Carbon::parse($dataPelatihan->waktu_pelatihan)->format('Y-m-d')) }}" 
                         type="date" class="form-control" id="waktu_pelatihan" name="waktu_pelatihan" required>

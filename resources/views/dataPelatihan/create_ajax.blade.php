@@ -26,6 +26,18 @@
                     <small id="error-id_jenis_pelatihan_sertifikasi" class="error-text form-text text-danger"></small>
                 </div>
 
+
+                <div class="form-group">
+                    <label>Periode Pelatihan</label>
+                    <select name="id_periode" id="id_periode" class="form-control" required>
+                        <option value="">- Pilih Periode Pelatihan -</option>
+                        @foreach ($periode as $p)
+                            <option value="{{ $p->id_periode }}">{{ $p->tahun_periode }}</option>
+                        @endforeach
+                    </select>
+                    <small id="error-id_periode" class="error-text form-text text-danger"></small>
+                </div>
+                
                 <div class="form-group">
                     <label>Waktu Pelatihan</label>
                     <input type="date" name="waktu_pelatihan" id="waktu_pelatihan" class="form-control" required>
@@ -63,6 +75,10 @@
                 },
                 id_jenis_pelatihan_sertifikasi: {
                     required: true
+                },
+                id_periode: {
+                    required: true,
+                    digits: true
                 },
                 waktu_pelatihan: {
                     required: true,
