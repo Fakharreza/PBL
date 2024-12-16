@@ -80,7 +80,7 @@
                             type="date" class="form-control" id="waktu_sertifikasi" name="waktu_sertifikasi" required>
                         <small id="error-waktu_sertifikasi" class="error-text form-text text-danger"></small>
                     </div>
-                    {{-- <div class="form-group">
+                    <div class="form-group">
                         <label for="bukti_sertifikasi">Bukti Sertifikasi (PDF)</label>
                         @if ($dataSertifikasi->bukti_sertifikasi)
                             <p>File yang diunggah:
@@ -93,7 +93,7 @@
                         <input type="file" name="bukti_sertifikasi" id="bukti_sertifikasi" class="form-control"
                             accept="application/pdf">
                         <small id="error-bukti_sertifikasi" class="error-text form-text text-danger"></small>
-                    </div> --}}
+                    </div>
                     <div class="form-group">
                         <label for="masa_berlaku">Masa Berlaku</label>
                         <input
@@ -126,8 +126,8 @@
                         maxlength: 50
                     },
                     id_periode: {
-                    required: true,
-                    digits: true
+                        required: true,
+                        digits: true
                     },
                     waktu_sertifikasi: {
                         required: true,
@@ -137,48 +137,37 @@
                         required: true,
                         date: true
                     },
-                    // bukti_sertifikasi: {
-                    //     extension: "pdf",
-                    //     filesize: 2048 // ini dalam kilobyte (KB), bisa sesuaikan dengan 2MB
-                    // }
                 },
                 submitHandler: function(form) {
                     var formData = new FormData(form);
                     $.ajax({
-                        url: '/dataSertifikasi/' + id + '/update_ajax',
-                        type: 'PUT',
+                        url: $(form).attr('action'),
+                        method: 'POST',
                         data: formData,
+                        processData: false,
+                        contentType: false,
                         success: function(response) {
-                            console.log(response); // Pastikan response JSON diterima
                             if (response.status) {
-                                // Jika berhasil
-                                alert('Data berhasil diupdate');
+                                $('#myModal').modal('hide');
+                                Swal.fire('Berhasil', response.message, 'success');
+                                dataSertifikasi.ajax.reload();
                             } else {
-                                // Jika gagal
-                                alert('Error: ' + response.message);
+                                if (response.msgField) {
+                                    $.each(response.msgField, function(field, message) {
+                                        $('#error-' + field).text(message[0]);
+                                    });
+                                }
+                                Swal.fire('Gagal', response.message, 'error');
                             }
                         },
-                        error: function(xhr, status, error) {
-                            console.log(xhr
-                            .responseText); // Debugging jika ada error di AJAX
-                            alert('Terjadi kesalahan di server!');
+                        error: function(xhr) {
+                            Swal.fire('Error', 'Terjadi kesalahan sistem', 'error');
                         }
                     });
-
                     return false;
-                },
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-group').append(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
                 }
             });
         });
+
     </script>
 @endempty

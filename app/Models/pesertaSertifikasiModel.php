@@ -28,6 +28,10 @@ class pesertaSertifikasiModel extends Model
 
     }
 
+    public function notifikasi():BelongsTo{
+        return $this->belongsTo(notifikasiModel::class, 'id_peserta_sertifikasi', 'id_peserta_sertifikasi');
+    }
+
     
     
 }
