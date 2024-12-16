@@ -220,10 +220,11 @@ public function upload_surat(Request $request, $jenis, $id)
             }
         }
 
-        return redirect()->route('suratTugas.index')->with('success', 'Surat Tugas berhasil diupload');
+        return response()->json(['success' => true, 'message' => 'Surat Tugas berhasil diupload']);
     }
 
-    return redirect()->back()->with('error', 'Gagal mengupload surat tugas');
+    return response()->json(['success' => false, 'message' => 'Gagal mengupload surat tugas']);
 }
+
 
 }

@@ -27,4 +27,9 @@ class pesertaPelatihanModel extends Model
         return $this->belongsTo(suratTugasModel::class, 'id_peserta_pelatihan', 'id_peserta_pelatihan');
 
     }
+
+    public function notifikasi():BelongsTo{
+        return $this->belongsTo(notifikasiModel::class, 'id_peserta_pelatihan', 'id_peserta_pelatihan');
+
+    }
 }
