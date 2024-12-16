@@ -281,7 +281,7 @@ Route::middleware('auth')->group(function () {
         // Route detail sertifikasi
         Route::get('/sertifikasi/{id}/detail', [daftarPelatihanSertifikasiController::class, 'detailSertifikasi'])->name('sertifikasi.detail');
     });
-    
+
     Route::group(['prefix' => 'accPeserta', 'middleware' => ['authorize:PMN']], function () {
         Route::get('/', [accPesertaController::class, 'index']);
         Route::post('/list', [accPesertaController::class, 'list']);
@@ -293,9 +293,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::group(['prefix' => 'suratTugas', 'middleware' => ['authorize:ADM,DSN,PMN']], function() {
-        // Definisikan route index dengan nama 'suratTugas.index'
-        Route::get('/', [suratTugasController::class, 'index'])->name('suratTugas.index');  // Menambahkan nama route 'suratTugas.index'
-
+        Route::get('/', [suratTugasController::class, 'index'])->name('suratTugas.index');
         Route::post('/list', [suratTugasController::class, 'list']);
         Route::get('/{jenis}/{id}/export_pdf', [suratTugasController::class, 'export_pdf']);
         Route::get('/{jenis}/{id}/upload_form', [suratTugasController::class, 'upload_form']);
