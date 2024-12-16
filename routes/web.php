@@ -5,6 +5,7 @@ use App\Http\Controllers\JenisPelatihanController;
 use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BidangMinatController;
+use App\Http\Controllers\suratTugasController;
 use App\Http\Controllers\VendorPelatihanController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ProfileController;
@@ -272,15 +273,21 @@ Route::middleware('auth')->group(function () {
         Route::post('/list', [accPesertaController::class, 'list']);
         Route::get('/{id}/tampil_peserta', [accPesertaController::class, 'tampilPeserta']);
         Route::get('/{id}/ubah_peserta', [accPesertaController::class, 'ubahPeserta']);
-    
-        // Store peserta pelatihan
         Route::post('/pelatihan/{id}/store_peserta', [accPesertaController::class, 'store_peserta_pelatihan']);
-    
-        // Store peserta sertifikasi
         Route::post('/sertifikasi/{id}/store_peserta', [accPesertaController::class, 'store_peserta_sertifikasi']);
-        
         Route::post('/{id}/ubah_status', [accPesertaController::class, 'ubahStatus']);
     });
-    
-    
+
+  // routes/web.php
+
+    Route::group(['prefix' => 'suratTugas', 'middleware' => ['authorize:ADM,DSN,PMN']], function() {
+        // Definisikan route index dengan nama 'suratTugas.index'
+        Route::get('/', [suratTugasController::class, 'index'])->name('suratTugas.index');  // Menambahkan nama route 'suratTugas.index'
+
+        Route::post('/list', [suratTugasController::class, 'list']);
+        Route::get('/{jenis}/{id}/export_pdf', [suratTugasController::class, 'export_pdf']);
+        Route::get('/{jenis}/{id}/upload_form', [suratTugasController::class, 'upload_form']);
+        Route::post('/{jenis}/{id}/upload_surat', [suratTugasController::class, 'upload_surat'])->name('suratTugas.upload');
+    });
+
 });

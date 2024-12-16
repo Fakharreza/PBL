@@ -83,28 +83,45 @@ class accPesertaController extends Controller
     }
 
     public function tampilPeserta($id)
-    {
-        $pesertaPelatihan = pesertaPelatihanModel::where('id_info_pelatihan', $id)
-            ->with('pengguna')
-            ->get()
-            ->map(function ($item) {
-                $item->jenis = 'pelatihan';
-                return $item;
-            });
+{
+    // Ambil peserta pelatihan berdasarkan id_info_pelatihan
+    $pesertaPelatihan = pesertaPelatihanModel::where('id_info_pelatihan', $id)
+        ->where('status_acc', '=', null) // Tambahkan kondisi jika diperlukan
+        ->whereHas('pengguna') // Pastikan pengguna ada
+        ->with('pengguna')
+        ->get()
+        ->map(function ($item) {
+            $item->jenis = 'pelatihan';
+            return $item;
+        });
 
-        $pesertaSertifikasi = pesertaSertifikasiModel::where('id_info_sertifikasi', $id)
-            ->with('pengguna')
-            ->get()
-            ->map(function ($item) {
-                $item->jenis = 'sertifikasi';
-                return $item;
-            });
+    // Ambil peserta sertifikasi berdasarkan id_info_sertifikasi
+    $pesertaSertifikasi = pesertaSertifikasiModel::where('id_info_sertifikasi', $id)
+        ->where('status_acc', '=', null) // Filter hanya peserta sertifikasi yang belum disetujui
+        ->whereHas('pengguna') // Pastikan pengguna ada
+        ->with('pengguna')
+        ->get()
+        ->map(function ($item) {
+            $item->jenis = 'sertifikasi';
+            return $item;
+        });
 
-        $peserta = $pesertaPelatihan->merge($pesertaSertifikasi);
-        $jenis = $pesertaPelatihan->isNotEmpty() ? 'pelatihan' : 'sertifikasi';
+    // Debug hasil query untuk memastikan data benar
+    \Log::info('Filtered Peserta Pelatihan:', $pesertaPelatihan->toArray());
+    \Log::info('Filtered Peserta Sertifikasi:', $pesertaSertifikasi->toArray());
 
-        return view('accPeserta.modal_peserta', compact('peserta', 'id', 'jenis'));
-    }
+    // Gabungkan kedua peserta dengan lebih hati-hati
+    $peserta = $pesertaPelatihan->merge($pesertaSertifikasi);
+
+    // Debug gabungan peserta
+    \Log::info('Final Gabungan Peserta:', $peserta->toArray());
+
+    // Tentukan jenis berdasarkan hasil
+    $jenis = $pesertaPelatihan->isNotEmpty() ? 'pelatihan' : 'sertifikasi';
+
+    return view('accPeserta.modal_peserta', compact('peserta', 'id', 'jenis'));
+}
+
 
     public function ubahPeserta(string $id)
     {

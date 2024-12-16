@@ -25,31 +25,6 @@
                 </tr>
             </thead>
         </table>
-
-        <!-- Tabel Disetujui -->
-        <table class="table table-bordered table-striped table-hover table-sm" id="table_disetujui" style="width:100%">
-            <thead>
-                <tr>
-                    <th style="width: 5%;">ID</th>
-                    <th style="width: 35%;">Nama</th>
-                    <th style="width: 20%;">Jenis</th>
-                    <th style="width: 40%;">Aksi</th>
-                </tr>
-            </thead>
-        </table>
-
-        <!-- Tabel Ditolak -->
-        <table class="table table-bordered table-striped table-hover table-sm" id="table_ditolak" style="width:100%">
-            <thead>
-                <tr>
-                    <th style="width: 5%;">ID</th>
-                    <th style="width: 35%;">Nama</th>
-                    <th style="width: 20%;">Jenis</th>
-                    <th style="width: 40%;">Aksi</th>
-                </tr>
-            </thead>
-        </table>
-
     </div>
 </div>
 <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static"
@@ -74,80 +49,6 @@
                     "type": "POST",
                     "data": function (d) {
                         d.status = 'belum_disetujui';
-                    }
-                },
-                columns: [
-                    {
-                        data: "DT_RowIndex",
-                        className: "text-center",
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: "nama",
-                        className: "",
-                        searchable: true
-                    },
-                    {
-                        data: "jenis",
-                        className: "text-center",
-                        searchable: false
-                    },
-                    {
-                        data: "aksi",
-                        className: "",
-                        orderable: false,
-                        searchable: false
-                    }
-                ]
-            });
-
-            // Disetujui DataTable
-            $('#table_disetujui').DataTable({
-                serverSide: true,
-                ajax: {
-                    "url": "{{ url('accPeserta/list') }}",
-                    "dataType": "json",
-                    "type": "POST",
-                    "data": function (d) {
-                        d.status = 'disetujui';
-                    }
-                },
-                columns: [
-                    {
-                        data: "DT_RowIndex",
-                        className: "text-center",
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: "nama",
-                        className: "",
-                        searchable: true
-                    },
-                    {
-                        data: "jenis",
-                        className: "text-center",
-                        searchable: false
-                    },
-                    {
-                        data: "aksi",
-                        className: "",
-                        orderable: false,
-                        searchable: false
-                    }
-                ]
-            });
-
-            // Ditolak DataTable
-            $('#table_ditolak').DataTable({
-                serverSide: true,
-                ajax: {
-                    "url": "{{ url('accPeserta/list') }}",
-                    "dataType": "json",
-                    "type": "POST",
-                    "data": function (d) {
-                        d.status = 'ditolak';
                     }
                 },
                 columns: [

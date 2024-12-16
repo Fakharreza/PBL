@@ -23,5 +23,11 @@ class pesertaSertifikasiModel extends Model
 
     }
     
+    public function suratTugas():BelongsTo{
+        return $this->belongsTo(suratTugasModel::class, 'id_peserta_sertifikasi', 'id_peserta_sertifikasi');
+
+    }
+
+    
     
 }

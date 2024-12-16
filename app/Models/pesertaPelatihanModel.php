@@ -22,6 +22,9 @@ class pesertaPelatihanModel extends Model
         return $this->belongsTo(penggunaModel::class, 'id_pengguna', 'id_pengguna');
 
     }
-    
-    
+
+    public function suratTugas():BelongsTo{
+        return $this->belongsTo(suratTugasModel::class, 'id_peserta_pelatihan', 'id_peserta_pelatihan');
+
+    }
 }
