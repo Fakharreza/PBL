@@ -6,6 +6,7 @@ use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BidangMinatController;
 use App\Http\Controllers\daftarPelatihanSertifikasiController;
+use App\Http\Controllers\suratTugasController;
 use App\Http\Controllers\VendorPelatihanController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ProfileController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\MataKuliahController;
 use App\Http\Controllers\infoPelatihanController;
 use App\Http\Controllers\infoSertifikasiController;
 use App\Http\Controllers\statistikSertifikasiController;
+use App\Http\Controllers\accPesertaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -269,15 +271,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/export_excel', [DataSertifikasiController::class, 'export_excel']);      // export excel
         Route::get('/export_pdf', [DataSertifikasiController::class, 'export_pdf']); // export pdf
     });
-
-    Route::group(['prefix' => 'statistikSertifikasi', 'middleware' => ['authorize:ADM,PMN']], function () {
-        Route::get('/', [statistikSertifikasiController::class, 'index'])->name('statistikSertifikasi.index');
-        Route::get('/show_ajax/{id}', [statistikSertifikasiController::class, 'showAjax'])->name('statistikSertifikasi.show');
-        Route::get('/detail/{id}', [statistikSertifikasiController::class, 'getDetailPelatihan'])
-        ->name('statistikSertifikasi.detailPelatihan');    
-    });
-    
-
     Route::group(['prefix' => 'daftarPelatihanSertifikasi', 'middleware' => ['authorize:ADM,DSN,PMN']], function () {
         Route::get('/', [daftarPelatihanSertifikasiController::class, 'index']); // Halaman awal
         Route::get('/list', [daftarPelatihanSertifikasiController::class, 'list']); // List pelatihan dan sertifikasi
@@ -287,5 +280,23 @@ Route::middleware('auth')->group(function () {
 
         // Route detail sertifikasi
         Route::get('/sertifikasi/{id}/detail', [daftarPelatihanSertifikasiController::class, 'detailSertifikasi'])->name('sertifikasi.detail');
+    });
+
+    Route::group(['prefix' => 'accPeserta', 'middleware' => ['authorize:PMN']], function () {
+        Route::get('/', [accPesertaController::class, 'index']);
+        Route::post('/list', [accPesertaController::class, 'list']);
+        Route::get('/{id}/tampil_peserta', [accPesertaController::class, 'tampilPeserta']);
+        Route::get('/{id}/ubah_peserta', [accPesertaController::class, 'ubahPeserta']);
+        Route::post('/pelatihan/{id}/store_peserta', [accPesertaController::class, 'store_peserta_pelatihan']);
+        Route::post('/sertifikasi/{id}/store_peserta', [accPesertaController::class, 'store_peserta_sertifikasi']);
+        Route::post('/{id}/ubah_status', [accPesertaController::class, 'ubahStatus']);
+    });
+
+    Route::group(['prefix' => 'suratTugas', 'middleware' => ['authorize:ADM,DSN,PMN']], function() {
+        Route::get('/', [suratTugasController::class, 'index'])->name('suratTugas.index');
+        Route::post('/list', [suratTugasController::class, 'list']);
+        Route::get('/{jenis}/{id}/export_pdf', [suratTugasController::class, 'export_pdf']);
+        Route::get('/{jenis}/{id}/upload_form', [suratTugasController::class, 'upload_form']);
+        Route::post('/{jenis}/{id}/upload_surat', [suratTugasController::class, 'upload_surat'])->name('suratTugas.upload');
     });
 });

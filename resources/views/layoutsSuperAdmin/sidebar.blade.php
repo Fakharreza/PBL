@@ -62,7 +62,7 @@
             </li>
             <!-- Draft Surat Tugas -->
             <li class="nav-item">
-                <a href="{{ url('/draftSuratTugas') }}" class="nav-link {{ request()->is('draftSuratTugas') ? 'active' : '' }}">
+                <a href="{{ url('/suratTugas') }}" class="nav-link {{ request()->is('draftSuratTugas') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-file-alt"></i>
                     <p>Draft Surat Tugas</p>
                 </a>
@@ -164,7 +164,7 @@
             </li>
             <!-- surat tugas -->
             <li class="nav-item">
-                <a href="{{ url('/draftSuratTugas') }}" class="nav-link {{ request()->is('draftSuratTugas') ? 'active' : '' }}">
+                <a href="{{ url('/suratTugas') }}" class="nav-link {{ request()->is('draftSuratTugas') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-file-alt"></i>
                     <p>Draft Surat Tugas</p>
                 </a>
@@ -189,7 +189,7 @@
             </li>
             <!-- surat tugas -->
             <li class="nav-item">
-                <a href="{{ url('/draftSuratTugas') }}" class="nav-link {{ request()->is('draftSuratTugas') ? 'active' : '' }}">
+                <a href="{{ url('/suratTugas') }}" class="nav-link {{ request()->is('draftSuratTugas') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-file-alt"></i>
                     <p>Draft Surat Tugas</p>
                 </a>
