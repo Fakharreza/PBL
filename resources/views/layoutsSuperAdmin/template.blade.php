@@ -37,7 +37,7 @@
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-light-primary elevation-4">
             <!-- Brand Logo dengan warna sama seperti header -->
-            <a href="{{ url('/home') }}" class="brand-link" style="background-color: #1E3A8A;">
+            <a href="{{ url('/home') }}" class="brand-link" style="background-color: #1B3767;">
                     <img src="{{ asset('assets/polinema-logo.png') }}" alt="Polinema Logo"
                         class="brand-image img-circle elevation-3" style="opacity: .8">
                 <span class="text-white font-weight-bold">POLINEMA</span>

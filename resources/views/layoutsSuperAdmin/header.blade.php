@@ -1,4 +1,4 @@
-<nav class="main-header navbar navbar-expand-md navbar-dark" style="background-color: #1E3A8A;">
+<nav class="main-header navbar navbar-expand-md navbar-dark" style="background-color: #1B3767;">
   <div class="container-fluid d-flex align-items-center justify-content-between">
       <!-- Button to close sidebar -->
       <a class="nav-link text-white" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>

@@ -299,4 +299,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/{jenis}/{id}/upload_form', [suratTugasController::class, 'upload_form']);
         Route::post('/{jenis}/{id}/upload_surat', [suratTugasController::class, 'upload_surat'])->name('suratTugas.upload');
     });
+
+    Route::group(['prefix' => 'statistikSertifikasi', 'middleware' => ['authorize:ADM,PMN']], function () {
+        Route::get('/', [statistikSertifikasiController::class, 'index'])->name('statistikSertifikasi.index');
+        Route::get('/show_ajax/{id}', [statistikSertifikasiController::class, 'showAjax'])->name('statistikSertifikasi.show');
+        Route::get('/detail/{id}', [statistikSertifikasiController::class, 'getDetailPelatihan'])
+        ->name('statistikSertifikasi.detailPelatihan');    
+    });
 });
