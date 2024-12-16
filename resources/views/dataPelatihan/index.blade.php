@@ -22,6 +22,7 @@
                         <th>ID</th>
                         <th>Nama Pelatihan</th>
                         <th>Jenis Pelatihan</th>
+                        <th>Periode</th>
                         <th>Waktu Pelatihan</th>
                         <th>Lokasi Pelatihan</th>
                         <th>Bukti Pelatihan</th>
@@ -59,6 +60,7 @@
                     { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
                     { data: "nama_pelatihan", orderable: true, searchable: true },
                     { data: "jenis_pelatihan_sertifikasi", orderable: true, searchable: true },
+                    { data: "periode", orderable: true, searchable: true },
                     { data: "waktu_pelatihan", orderable: true, searchable: true },
                     { data: "lokasi_pelatihan", orderable: true, searchable: true },
                     { data: "bukti_pelatihan", className: "text-center", orderable: false, searchable: false },

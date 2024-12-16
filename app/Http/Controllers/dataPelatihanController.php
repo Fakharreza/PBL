@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\dataPelatihanModel;
 use App\Models\JenisPelatihanModel;
+use App\Models\PeriodeModel;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Auth;
@@ -33,14 +34,11 @@ class dataPelatihanController extends Controller
 
     public function list(Request $request)
     {
+        $user = Auth::user();
 
-        $dataPelatihan = dataPelatihanModel::with('jenisPelatihan', 'pengguna')
-            ->select('id_input_pelatihan', 'nama_pelatihan', 'id_jenis_pelatihan_sertifikasi', 'waktu_pelatihan', 'lokasi_pelatihan', 'bukti_pelatihan');
-        $user = Auth::user(); // Mengambil data user yang login
-
-        // Ambil hanya data yang sesuai dengan ID pengguna yang login
         $dataPelatihan = dataPelatihanModel::where('id_pengguna', $user->id_pengguna)
-            ->with('jenisPelatihan')
+            ->with('jenisPelatihan', 'periode', 'pengguna')
+            ->select('id_input_pelatihan', 'nama_pelatihan', 'id_jenis_pelatihan_sertifikasi', 'id_periode', 'waktu_pelatihan', 'lokasi_pelatihan', 'bukti_pelatihan')
             ->get();
 
         return DataTables::of($dataPelatihan)
@@ -50,6 +48,9 @@ class dataPelatihanController extends Controller
             })
             ->addColumn('nama_pengguna', function ($dataPelatihan) {
                 return $dataPelatihan->pengguna->nama_pengguna ?? '-';
+            })
+            ->addColumn('periode', function ($dataPelatihan) {
+                return $dataPelatihan->periode->tahun_periode ?? '-';
             })
             ->addColumn('bukti_pelatihan', function ($dataPelatihan) {
                 if ($dataPelatihan->bukti_pelatihan) {
@@ -70,7 +71,8 @@ class dataPelatihanController extends Controller
     public function create_ajax()
     {
         $jenisPelatihan = JenisPelatihanModel::all();
-        return view('dataPelatihan.create_ajax', compact('jenisPelatihan'));
+        $periode = PeriodeModel::all();
+        return view('dataPelatihan.create_ajax', compact('jenisPelatihan', 'periode'));
     }
 
     public function store_ajax(Request $request)
@@ -79,6 +81,7 @@ class dataPelatihanController extends Controller
             $rules = [
                 'nama_pelatihan'    => 'required|string|max:150',
                 'id_jenis_pelatihan_sertifikasi' => 'required|exists:jenis_pelatihan_sertifikasi,id_jenis_pelatihan_sertifikasi',
+                'id_periode'        => 'required|exists:periode,id_periode',
                 'waktu_pelatihan'   => 'required|date',
                 'lokasi_pelatihan'  => 'required|string|max:200',
                 'bukti_pelatihan'   => 'nullable|mimes:pdf|max:2048',
@@ -94,7 +97,7 @@ class dataPelatihanController extends Controller
                 ]);
             }
 
-            $data = $request->only(['nama_pelatihan', 'id_jenis_pelatihan_sertifikasi', 'waktu_pelatihan', 'lokasi_pelatihan']);
+            $data = $request->only(['nama_pelatihan', 'id_jenis_pelatihan_sertifikasi', 'id_periode', 'waktu_pelatihan', 'lokasi_pelatihan']);
             $data['id_pengguna'] = auth()->id();
 
             if ($request->hasFile('bukti_pelatihan')) {
@@ -128,8 +131,9 @@ class dataPelatihanController extends Controller
     {
         $dataPelatihan = dataPelatihanModel::find($id);
         $jenisPelatihan = JenisPelatihanModel::all();
+        $periode = PeriodeModel::all();
 
-        return view('dataPelatihan.edit_ajax', compact('dataPelatihan', 'jenisPelatihan'));
+        return view('dataPelatihan.edit_ajax', compact('dataPelatihan', 'jenisPelatihan', 'periode'));
     }
 
     public function update_ajax(Request $request, $id)
@@ -138,6 +142,7 @@ class dataPelatihanController extends Controller
             $rules = [
                 'nama_pelatihan'    => 'required|string|max:150',
                 'id_jenis_pelatihan_sertifikasi' => 'required|exists:jenis_pelatihan_sertifikasi,id_jenis_pelatihan_sertifikasi',
+                'id_periode'        => 'required|exists:periode,id_periode',
                 'waktu_pelatihan'   => 'required|date',
                 'lokasi_pelatihan'  => 'required|string|max:200',
                 'bukti_pelatihan'   => 'nullable|mimes:pdf|max:2048',
@@ -156,9 +161,8 @@ class dataPelatihanController extends Controller
             $dataPelatihan = dataPelatihanModel::find($id);
 
             if ($dataPelatihan) {
-                $data = $request->only(['nama_pelatihan', 'id_jenis_pelatihan_sertifikasi', 'waktu_pelatihan', 'lokasi_pelatihan']);
+                $data = $request->only(['nama_pelatihan', 'id_jenis_pelatihan_sertifikasi', 'id_periode', 'waktu_pelatihan', 'lokasi_pelatihan']);
 
-                // Jika ada file bukti_pelatihan, simpan file tersebut
                 if ($request->hasFile('bukti_pelatihan')) {
                     $file = $request->file('bukti_pelatihan');
                     $filename = time() . '_' . $file->getClientOriginalName();
@@ -185,7 +189,6 @@ class dataPelatihanController extends Controller
 
     public function confirm_ajax(string $id)
     {
-        // Ambil data pelatihan berdasarkan ID
         $dataPelatihan = dataPelatihanModel::find($id);
 
         if ($dataPelatihan) {

@@ -63,13 +63,24 @@
                         <small id="error-lokasi_sertifikasi" class="error-text form-text text-danger"></small>
                     </div>
                     <div class="form-group">
+                        <label>Periode Sertifikasi</label>
+                        <select name="id_periode" id="id_periode" class="form-control" required>
+                            <option value="">- Pilih Periode -</option>
+                            @foreach ($periode as $p)
+                                <option value="{{ $p->id_periode }}" {{ $dataSertifikasi->id_periode == $p->id_periode ? 'selected' : '' }}>
+                                    {{ $p->tahun_periode }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="waktu_sertifikasi">Waktu Sertifikasi</label>
                         <input
                             value="{{ old('waktu_sertifikasi', \Carbon\Carbon::parse($dataSertifikasi->waktu_sertifikasi)->format('Y-m-d')) }}"
                             type="date" class="form-control" id="waktu_sertifikasi" name="waktu_sertifikasi" required>
                         <small id="error-waktu_sertifikasi" class="error-text form-text text-danger"></small>
                     </div>
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label for="bukti_sertifikasi">Bukti Sertifikasi (PDF)</label>
                         @if ($dataSertifikasi->bukti_sertifikasi)
                             <p>File yang diunggah:
@@ -82,7 +93,7 @@
                         <input type="file" name="bukti_sertifikasi" id="bukti_sertifikasi" class="form-control"
                             accept="application/pdf">
                         <small id="error-bukti_sertifikasi" class="error-text form-text text-danger"></small>
-                    </div>
+                    </div> --}}
                     <div class="form-group">
                         <label for="masa_berlaku">Masa Berlaku</label>
                         <input
@@ -114,6 +125,10 @@
                         required: true,
                         maxlength: 50
                     },
+                    id_periode: {
+                    required: true,
+                    digits: true
+                    },
                     waktu_sertifikasi: {
                         required: true,
                         date: true
@@ -122,10 +137,10 @@
                         required: true,
                         date: true
                     },
-                    bukti_sertifikasi: {
-                        extension: "pdf",
-                        filesize: 2048 // ini dalam kilobyte (KB), bisa sesuaikan dengan 2MB
-                    }
+                    // bukti_sertifikasi: {
+                    //     extension: "pdf",
+                    //     filesize: 2048 // ini dalam kilobyte (KB), bisa sesuaikan dengan 2MB
+                    // }
                 },
                 submitHandler: function(form) {
                     var formData = new FormData(form);

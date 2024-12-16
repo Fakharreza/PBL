@@ -13,7 +13,7 @@ class AuthController extends Controller
     public function login()
     {
         if (Auth::check()) { // jika sudah login, maka redirect ke halaman home 
-            return redirect('/');
+            return redirect('/home');
         }
         return view('auth.login');
     }

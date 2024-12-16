@@ -22,6 +22,7 @@
                         <th>ID</th>
                         <th>Nama Sertifikasi</th>
                         <th>Jenis Sertifikasi</th>
+                        <th>Periode</th>
                         <th>Lokasi</th>
                         <th>Masa Berlaku</th>
                         <th>Bukti Sertifikasi</th>
@@ -72,6 +73,10 @@
                     },
                     { 
                         data: "jenis_pelatihan_sertifikasi", 
+                        orderable: true, 
+                        searchable: true 
+                    },
+                    {   data: "periode", 
                         orderable: true, 
                         searchable: true 
                     },

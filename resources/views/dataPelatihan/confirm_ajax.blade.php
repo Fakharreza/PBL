@@ -45,6 +45,10 @@
                             <td>{{ $dataPelatihan->jenisPelatihan->nama_jenis_pelatihan_sertifikasi }}</td>
                         </tr>
                         <tr>
+                            <th>Periode Pelatihan</th>
+                            <td>{{ $dataPelatihan->periode->tahun_periode }}</td>
+                        </tr>
+                        <tr>
                             <th>Waktu Pelatihan</th>
                             <td>{{ $dataPelatihan->waktu_pelatihan }}</td>
                         </tr>

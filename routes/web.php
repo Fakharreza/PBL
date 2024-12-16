@@ -5,6 +5,7 @@ use App\Http\Controllers\JenisPelatihanController;
 use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BidangMinatController;
+use App\Http\Controllers\daftarPelatihanSertifikasiController;
 use App\Http\Controllers\suratTugasController;
 use App\Http\Controllers\VendorPelatihanController;
 use App\Http\Controllers\WelcomeController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\vendorSertifController;
 use App\Http\Controllers\MataKuliahController;
 use App\Http\Controllers\infoPelatihanController;
 use App\Http\Controllers\infoSertifikasiController;
+use App\Http\Controllers\statistikSertifikasiController;
 use App\Http\Controllers\accPesertaController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,14 +31,15 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 Route::pattern('id', '[0-9]+'); // Parameter {id} harus berupa angka
 
+Route::get('/', [AuthController::class, 'login']);
 Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'postlogin']);
 Route::get('logout', [AuthController::class, 'logout'])->middleware('auth');
 Route::get('register', [AuthController::class, 'register']);
 Route::post('register', [AuthController::class, 'store']);
-Route::get('/', [WelcomeController::class, 'index']);
 
 
 // Group route yang memerlukan autentikasi
@@ -59,7 +62,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/import', [penggunaController::class, 'import']);  // Ajax form upload excel
         Route::post('/import_ajax', [penggunaController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [penggunaController::class, 'export_excel']);      // export excel
-        Route::get('/export_pdf',[penggunaController::class,'export_pdf']); // export pdf
+        Route::get('/export_pdf', [penggunaController::class, 'export_pdf']); // export pdf
     });
     Route::group(['prefix' => 'jenisPengguna', 'middleware' => 'authorize:SADM'], function () {
         Route::get('/', [jenisPenggunaController::class, 'index']);  // Menampilkan halaman awal Stok
@@ -76,7 +79,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/import', [jenisPenggunaController::class, 'import']);  // Ajax form upload excel
         Route::post('/import_ajax', [jenisPenggunaController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [jenisPenggunaController::class, 'export_excel']);      // export excel
-        Route::get('/export_pdf',[jenisPenggunaController::class,'export_pdf']); // export pdf
+        Route::get('/export_pdf', [jenisPenggunaController::class, 'export_pdf']); // export pdf
     });
 
     Route::group(['prefix' => 'profile', 'middleware' => ['authorize:SADM,ADM,DSN,PMN']], function () {
@@ -85,7 +88,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/{id}', [ProfileController::class, 'update']);
     });
 
-    Route::group(['prefix' => 'jenisPelatihan','middleware' => ['authorize:ADM']] , function(){
+    Route::group(['prefix' => 'jenisPelatihan', 'middleware' => ['authorize:ADM']], function () {
         Route::get('/', [JenisPelatihanController::class, 'index']);  // Menampilkan halaman awal Stok
         Route::post('/list', [JenisPelatihanController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
         Route::get('/create', [JenisPelatihanController::class, 'create']);  // Menampilkan form tambah Stok
@@ -100,7 +103,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/import', [JenisPelatihanController::class, 'import']);  // Ajax form upload excel
         Route::post('/import_ajax', [JenisPelatihanController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [JenisPelatihanController::class, 'export_excel']);      // export excel
-        Route::get('/export_pdf',[JenisPelatihanController::class,'export_pdf']); // export pdf
+        Route::get('/export_pdf', [JenisPelatihanController::class, 'export_pdf']); // export pdf
     });
 
     Route::group(['prefix' => 'dataPelatihan', 'middleware' => ['authorize:DSN']], function () {
@@ -120,8 +123,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/export_excel', [dataPelatihanController::class, 'export_excel']); // Mengekspor data ke Excel
         Route::get('/export_pdf', [dataPelatihanController::class, 'export_pdf']); // Mengekspor data ke PDF
     });
-    
-    Route::group(['prefix' => 'vendorPelatihan','middleware' => ['authorize:ADM']] , function(){
+
+    Route::group(['prefix' => 'vendorPelatihan', 'middleware' => ['authorize:ADM']], function () {
         Route::get('/', [VendorPelatihanController::class, 'index']);  // Menampilkan halaman awal Stok
         Route::post('/list', [VendorPelatihanController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
         Route::get('/create', [VendorPelatihanController::class, 'create']);  // Menampilkan form tambah Stok
@@ -136,10 +139,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/import', [VendorPelatihanController::class, 'import']);  // Ajax form upload excel
         Route::post('/import_ajax', [VendorPelatihanController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [VendorPelatihanController::class, 'export_excel']);      // export excel
-        Route::get('/export_pdf',[VendorPelatihanController::class,'export_pdf']); // export pdf
+        Route::get('/export_pdf', [VendorPelatihanController::class, 'export_pdf']); // export pdf
     });
 
-    Route::group(['prefix' => 'vendorSertif','middleware' => ['authorize:ADM']] , function(){
+    Route::group(['prefix' => 'vendorSertif', 'middleware' => ['authorize:ADM']], function () {
         Route::get('/', [vendorSertifController::class, 'index']);  // Menampilkan halaman awal Stok
         Route::post('/list', [vendorSertifController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
         Route::get('/create', [vendorSertifController::class, 'create']);  // Menampilkan form tambah Stok
@@ -154,10 +157,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/import', [vendorSertifController::class, 'import']);  // Ajax form upload excel
         Route::post('/import_ajax', [vendorSertifController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [vendorSertifController::class, 'export_excel']);      // export excel
-        Route::get('/export_pdf',[vendorSertifController::class,'export_pdf']); // export pdf
+        Route::get('/export_pdf', [vendorSertifController::class, 'export_pdf']); // export pdf
     });
-  
-    Route::group(['prefix' => 'mataKuliah','middleware' => ['authorize:ADM']] , function(){
+
+    Route::group(['prefix' => 'mataKuliah', 'middleware' => ['authorize:ADM']], function () {
         Route::get('/', [MataKuliahController::class, 'index']);  // Menampilkan halaman awal Stok
         Route::post('/list', [MataKuliahController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
         Route::get('/create', [MataKuliahController::class, 'create']);  // Menampilkan form tambah Stok
@@ -172,9 +175,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/import', [MataKuliahController::class, 'import']);  // Ajax form upload excel
         Route::post('/import_ajax', [MataKuliahController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [MataKuliahController::class, 'export_excel']);      // export excel
-        Route::get('/export_pdf',[MataKuliahController::class,'export_pdf']); // export pdf
+        Route::get('/export_pdf', [MataKuliahController::class, 'export_pdf']); // export pdf
     });
-    Route::group(['prefix' => 'bidangMinat','middleware' => ['authorize:ADM']] , function(){
+    Route::group(['prefix' => 'bidangMinat', 'middleware' => ['authorize:ADM']], function () {
         Route::get('/', [BidangMinatController::class, 'index']);  // Menampilkan halaman awal Stok
         Route::post('/list', [BidangMinatController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
         Route::get('/create', [BidangMinatController::class, 'create']);  // Menampilkan form tambah Stok
@@ -189,10 +192,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/import', [BidangMinatController::class, 'import']);  // Ajax form upload excel
         Route::post('/import_ajax', [BidangMinatController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [BidangMinatController::class, 'export_excel']);      // export excel
-        Route::get('/export_pdf',[BidangMinatController::class,'export_pdf']); // export pdf
+        Route::get('/export_pdf', [BidangMinatController::class, 'export_pdf']); // export pdf
     });
 
-    Route::group(['prefix' => 'periode','middleware' => ['authorize:ADM']] , function(){
+    Route::group(['prefix' => 'periode', 'middleware' => ['authorize:ADM']], function () {
         Route::get('/', [PeriodeController::class, 'index']);  // Menampilkan halaman awal Stok
         Route::post('/list', [PeriodeController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
         Route::get('/create', [PeriodeController::class, 'create']);  // Menampilkan form tambah Stok
@@ -207,9 +210,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/import', [PeriodeController::class, 'import']);  // Ajax form upload excel
         Route::post('/import_ajax', [PeriodeController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [PeriodeController::class, 'export_excel']);      // export excel
-        Route::get('/export_pdf',[PeriodeController::class,'export_pdf']); // export pdf
+        Route::get('/export_pdf', [PeriodeController::class, 'export_pdf']); // export pdf
     });
-    Route::group(['prefix' => 'infoPelatihan','middleware' => ['authorize:ADM']] , function(){
+    Route::group(['prefix' => 'infoPelatihan', 'middleware' => ['authorize:ADM']], function () {
         Route::get('/', [infoPelatihanController::class, 'index']);  // Menampilkan halaman awal Stok
         Route::post('/list', [infoPelatihanController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
         Route::get('/create', [infoPelatihanController::class, 'create']);  // Menampilkan form tambah Stok
@@ -227,10 +230,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/import', [infoPelatihanController::class, 'import']);  // Ajax form upload excel
         Route::post('/import_ajax', [infoPelatihanController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [infoPelatihanController::class, 'export_excel']);      // export excel
-        Route::get('/export_pdf',[infoPelatihanController::class,'export_pdf']); // export pdf
+        Route::get('/export_pdf', [infoPelatihanController::class, 'export_pdf']); // export pdf
     });
-    
-    Route::group(['prefix' => 'infoSertifikasi','middleware' => ['authorize:ADM']] , function(){
+
+    Route::group(['prefix' => 'infoSertifikasi', 'middleware' => ['authorize:ADM']], function () {
         Route::get('/', [infoSertifikasiController::class, 'index']);  // Menampilkan halaman awal Stok
         Route::post('/list', [infoSertifikasiController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
         Route::get('/create', [infoSertifikasiController::class, 'create']);  // Menampilkan form tambah Stok
@@ -248,10 +251,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/import', [infoSertifikasiController::class, 'import']);  // Ajax form upload excel
         Route::post('/import_ajax', [infoSertifikasiController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [infoSertifikasiController::class, 'export_excel']);      // export excel
-        Route::get('/export_pdf',[infoSertifikasiController::class,'export_pdf']); // export pdf
+        Route::get('/export_pdf', [infoSertifikasiController::class, 'export_pdf']); // export pdf
     });
 
-    Route::group(['prefix' => 'dataSertifikasi','middleware' => ['authorize:DSN']] , function(){
+    Route::group(['prefix' => 'dataSertifikasi', 'middleware' => ['authorize:DSN']], function () {
         Route::get('/', [DataSertifikasiController::class, 'index']);  // Menampilkan halaman awal Stok
         Route::post('/list', [DataSertifikasiController::class, 'list']);  // Menampilkan data Stok dalam bentuk json untuk datatables
         Route::get('/create', [DataSertifikasiController::class, 'create']);  // Menampilkan form tambah Stok
@@ -266,8 +269,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/import', [DataSertifikasiController::class, 'import']);  // Ajax form upload excel
         Route::post('/import_ajax', [DataSertifikasiController::class, 'import_ajax']);  // Ajax import excel
         Route::get('/export_excel', [DataSertifikasiController::class, 'export_excel']);      // export excel
-        Route::get('/export_pdf',[DataSertifikasiController::class,'export_pdf']); // export pdf
+        Route::get('/export_pdf', [DataSertifikasiController::class, 'export_pdf']); // export pdf
     });
+    Route::group(['prefix' => 'daftarPelatihanSertifikasi', 'middleware' => ['authorize:ADM,DSN,PMN']], function () {
+        Route::get('/', [daftarPelatihanSertifikasiController::class, 'index']); // Halaman awal
+        Route::get('/list', [daftarPelatihanSertifikasiController::class, 'list']); // List pelatihan dan sertifikasi
+
+        // Route detail pelatihan
+        Route::get('/pelatihan/{id}/detail', [daftarPelatihanSertifikasiController::class, 'detailPelatihan'])->name('pelatihan.detail');
+
+        // Route detail sertifikasi
+        Route::get('/sertifikasi/{id}/detail', [daftarPelatihanSertifikasiController::class, 'detailSertifikasi'])->name('sertifikasi.detail');
+    });
+    
     Route::group(['prefix' => 'accPeserta', 'middleware' => ['authorize:PMN']], function () {
         Route::get('/', [accPesertaController::class, 'index']);
         Route::post('/list', [accPesertaController::class, 'list']);
@@ -278,8 +292,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/{id}/ubah_status', [accPesertaController::class, 'ubahStatus']);
     });
 
-  // routes/web.php
-
     Route::group(['prefix' => 'suratTugas', 'middleware' => ['authorize:ADM,DSN,PMN']], function() {
         // Definisikan route index dengan nama 'suratTugas.index'
         Route::get('/', [suratTugasController::class, 'index'])->name('suratTugas.index');  // Menambahkan nama route 'suratTugas.index'
@@ -289,5 +301,4 @@ Route::middleware('auth')->group(function () {
         Route::get('/{jenis}/{id}/upload_form', [suratTugasController::class, 'upload_form']);
         Route::post('/{jenis}/{id}/upload_surat', [suratTugasController::class, 'upload_surat'])->name('suratTugas.upload');
     });
-
 });

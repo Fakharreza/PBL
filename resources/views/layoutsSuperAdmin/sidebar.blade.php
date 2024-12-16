@@ -13,7 +13,7 @@
         <ul class="nav nav-pills nav-sidebar flex-column" role="menu" data-accordion="false">
             <!-- Beranda -->
             <li class="nav-item">
-                <a href="{{ url('/') }}" class="nav-link {{ request()->is('/') ? 'active' : '' }}">
+                <a href="{{ url('/home') }}" class="nav-link {{ request()->is('/') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-home"></i>
                     <p>Beranda</p>
                 </a>
