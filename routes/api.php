@@ -2,7 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\homeController;
+use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\Api\riwayatGabunganController;
+use App\Http\Controllers\Api\riwayatPelatihanController;
+use App\Http\Controllers\Api\riwayatSertifikasiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,8 +19,15 @@ use App\Http\Controllers\Api\AuthController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('/login', [LoginController::class, '__invoke'])->name('login');
+
+Route::middleware('auth:api')->group(function() {
+    // Menampilkan semua sertifikasi pengguna yang terautentikasi
+    Route::get('sertifikasi', [riwayatSertifikasiController::class, 'index']);
+    Route::get('pelatihan', [riwayatPelatihanController::class, 'index']);
+    Route::get('/riwayat/gabungan', [riwayatGabunganController::class, 'index']);
 });
 
-Route::post('/login', [AuthController::class, 'login']);
+
+Route::get('dosen/{id_pengguna}/data', [homeController::class, 'getDataPelatihanSertifikasi']);
+

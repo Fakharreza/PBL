@@ -1,30 +1,91 @@
+import 'dart:convert'; // For converting response to JSON
 import 'package:flutter/material.dart';
-import 'package:pbl/pages/data_serpel.dart';
-import 'package:pbl/pages/info_serpel.dart';
-import 'package:pbl/pages/profile_dosen.dart';
-import 'package:pbl/pages/surat_tugas.dart'; // Import halaman SuratTugasPage
+import 'package:http/http.dart' as http; // To make HTTP requests
+import 'package:pbl/pages/dataku_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pbl/pages/riwayat_pelatihan.dart';
+import 'package:pbl/pages/riwayat_sertifikasi.dart';
+import 'package:pbl/pages/login_page.dart';
+import 'package:pbl/services/auth_service.dart';
+import 'package:pbl/pages/info_serpel.dart'; // Assuming this is the page for info
+import 'package:pbl/pages/surat_tugas.dart'; // Assuming this is the page for Surat Tugas
+import 'package:pbl/pages/profile_dosen.dart'; // Assuming this is the page for Profile Dosen
 
-class DosenHome extends StatelessWidget {
+class DosenHome extends StatefulWidget {
+  @override
+  _DosenHomeState createState() => _DosenHomeState();
+}
+
+class _DosenHomeState extends State<DosenHome> {
+  String _dosenName = "Dosen"; // Default jika tidak ada nama dosen
+  List<dynamic> _riwayatData = []; // Data to display in the table
+  bool _isLoading = true; // To handle loading state
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDosenName();
+    _fetchRiwayatData(); // Fetch data when the page is initialized
+  }
+
+  // Mengambil nama dosen dari SharedPreferences
+  Future<void> _loadDosenName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _dosenName = prefs.getString('nama') ?? "Dosen"; // Default to "Dosen"
+    });
+  }
+
+  // Fetch data from the API
+  Future<void> _fetchRiwayatData() async {
+    final user = await _getUser(); // Assuming the user is already logged in
+    final response = await http.get(
+      Uri.parse(
+          'http://10.0.2.2:8000/api/riwayat/gabungan'), // Your API URL here
+      headers: {
+        'Authorization':
+            'Bearer ${user['token']}', // If your API requires auth token
+      },
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _riwayatData =
+            json.decode(response.body)['data']; // Parse the JSON response
+        _isLoading = false;
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+      // Handle error response (e.g., show a message or retry)
+    }
+  }
+
+  // Simulate getting user data, e.g., from SharedPreferences
+  Future<Map<String, dynamic>> _getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return {
+      'token': prefs.getString('token'), // Fetch the token
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFECECEC), // Light gray background
+      backgroundColor: Color(0xFFECECEC),
       body: Column(
         children: [
           // Header
           Container(
-            color: Color(0xFF051C3D), // Dark blue background
+            color: Color(0xFF051C3D),
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Logo dan Teks
                 Row(
                   children: [
-                    Image.asset(
-                      'assets/images/logo_polinema.png',
-                      width: 50,
-                    ),
+                    Image.asset('assets/images/logo_polinema.png', width: 50),
                     SizedBox(width: 8),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,56 +93,59 @@ class DosenHome extends StatelessWidget {
                         Text(
                           'POLINEMA',
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'Manage Pelatihan & Sertifikasi',
                           style: TextStyle(
-                            color: Color(0xFFF4D35E),
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
+                              color: Color(0xFFF4D35E),
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
                   ],
                 ),
                 SizedBox(height: 24),
-                // Teks Welcome dan Role dengan Ikon Notifikasi
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Welcome Back!',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFFF4D35E),
-                          ),
-                        ),
-                        Text(
-                          'Dosen',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
+                        Text('Welcome Back!',
+                            style: TextStyle(
+                                fontSize: 14, color: Color(0xFFF4D35E))),
+                        Text(_dosenName,
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
                       ],
                     ),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/notif');
-                      },
-                      icon: Icon(
-                        Icons.notifications_none,
-                        color: Colors.white,
-                      ),
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/notif');
+                          },
+                          icon: Icon(Icons.notifications_none,
+                              color: Colors.white),
+                        ),
+                        IconButton(
+                          onPressed: () async {
+                            await AuthService().logout();
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginPage()),
+                            );
+                          },
+                          icon: Icon(Icons.logout, color: Colors.white),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -94,71 +158,31 @@ class DosenHome extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Tabel Pelatihan dan Sertifikasi
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 4,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Judul Tabel
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                              'Pelatihan Dan Sertifikasi Yang Anda Dapatkan',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                          // Tabel
-                          SingleChildScrollView(
+                    // Table to display Sertifikasi data
+                    SizedBox(height: 16),
+                    _isLoading
+                        ? CircularProgressIndicator() // Show loading spinner
+                        : SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: DataTable(
-                              columnSpacing: 76.0, // Jarak antar kolom
+                              columnSpacing: 50.0, // Mengurangi jarak antar kolom agar lebih pas
                               headingRowColor:
                                   MaterialStateProperty.all(Color(0xFF051C3D)),
                               dataRowColor:
                                   MaterialStateProperty.all(Color(0xFFF5F5F5)),
                               border: TableBorder(
                                 horizontalInside: BorderSide(
-                                  width: 1,
-                                  color: Colors.grey.shade300,
-                                ),
+                                    width: 1, color: Colors.grey.shade300),
                               ),
                               columns: const [
                                 DataColumn(
                                   label: Expanded(
                                     child: Text(
-                                      'No.',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Expanded(
-                                    child: Text(
                                       'Periode',
                                       style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                 ),
@@ -167,231 +191,95 @@ class DosenHome extends StatelessWidget {
                                     child: Text(
                                       'Total Sertifikasi',
                                       style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Expanded(
+                                    child: Text(
+                                      'Total Pelatihan',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                 ),
                               ],
-                              rows: const [
-                                DataRow(cells: [
-                                  DataCell(Text(
-                                    '1',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  )),
-                                  DataCell(Text('2020')),
-                                  DataCell(Text('2')),
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Text(
-                                    '2',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  )),
-                                  DataCell(Text('2021')),
-                                  DataCell(Text('0')),
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Text(
-                                    '3',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  )),
-                                  DataCell(Text('2023')),
-                                  DataCell(Text('1')),
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Text(
-                                    '4',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  )),
-                                  DataCell(Text('2024')),
-                                  DataCell(Text('1')),
-                                ]),
+                              rows: _riwayatData.map<DataRow>((item) {
+                                return DataRow(cells: [
+                                  DataCell(Text(item['tahun_periode'])),
+                                  DataCell(
+                                      Text('${item['total_sertifikasi']}')),
+                                  DataCell(Text('${item['total_pelatihan']}')),
+                                ]);
+                              }).toList(),
+                            )),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          RiwayatPelatihan()));
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Color(0xFF051C3D),
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              elevation: 5,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.school, size: 35),
+                                SizedBox(height: 8),
+                                Text('Lihat Riwayat Pelatihan',
+                                    style: TextStyle(fontSize: 16)),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    // Jarak antara tabel dan Card pertama
-                    SizedBox(height: 16),
-                    // Card Data Pelatihan dan Sertifikasi
-                    Card(
-                      color: Colors
-                          .white, // Menentukan warna background card menjadi putih
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      elevation: 2,
-                      margin: EdgeInsets.symmetric(horizontal: 4),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Judul
-                            Text(
-                              'Data Pelatihan dan Sertifikasi',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
+                        ),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          RiwayatSertifikasi()));
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Color(0xFF051C3D),
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              elevation: 5,
                             ),
-                            SizedBox(height: 8),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                // Ikon di kiri
-                                Icon(
-                                  Icons.folder,
-                                  size: 48,
-                                  color: Color(0xFF051C3D),
-                                ),
-                                SizedBox(
-                                    width: 16), // Jarak antara ikon dan teks
-                                // Teks deskripsi
-                                Expanded(
-                                  child: Text(
-                                    'Lihat data pelatihan dan sertifikasi yang telah anda didapatkan',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                ),
+                                Icon(Icons.assignment_turned_in, size: 35),
+                                SizedBox(height: 8),
+                                Text('Lihat Riwayat Sertifikasi',
+                                    style: TextStyle(fontSize: 16)),
                               ],
                             ),
-                            SizedBox(
-                                height:
-                                    16), // Jarak antara teks dan "READ MORE"
-                            // READ MORE di kanan bawah
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      // Navigasi ke halaman yang diinginkan saat "READ MORE" diklik
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => DataSerpel()),
-                                      );
-                                    },
-                                    child: Text(
-                                      'READ MORE',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Color(0xFF051C3D),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 4),
-                                  Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 14,
-                                    color: Colors.black,
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                    // Jarak antara Card pertama dan kedua
-                    SizedBox(height: 16),
-                    // Card Daftar Pelatihan dan Sertifikasi
-                    Card(
-                      color: Colors
-                          .white, // Menentukan warna background card menjadi putih
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      elevation: 2,
-                      margin: EdgeInsets.symmetric(horizontal: 4),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Judul
-                            Text(
-                              'Daftar Pelatihan dan Sertifikasi',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Ikon di kiri
-                                Icon(
-                                  Icons.list_alt,
-                                  size: 48,
-                                  color: Color(0xFF051C3D),
-                                ),
-                                SizedBox(
-                                    width: 16), // Jarak antara ikon dan teks
-                                // Teks deskripsi
-                                Expanded(
-                                  child: Text(
-                                    'Lihat daftar pelatihan dan sertifikasi yang tersedia',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                                height:
-                                    16), // Jarak antara teks dan "READ MORE"
-                            // READ MORE di kanan bawah
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      // Navigasi ke halaman yang diinginkan saat "READ MORE" diklik
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => InfoSerpel()),
-                                      );
-                                    },
-                                    child: Text(
-                                      'READ MORE',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Color(0xFF051C3D),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 4),
-                                  Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 14,
-                                    color: Colors.black,
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
+                      ],
                     ),
                   ],
                 ),
@@ -400,16 +288,48 @@ class DosenHome extends StatelessWidget {
           ),
         ],
       ),
-      // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed, // Menampilkan semua item
-        backgroundColor: Color(0xFF051C3D), // Dark blue background
-        selectedItemColor: Color(0xFFF4D35E), // Yellow for selected icon
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Color(0xFF051C3D),
+        selectedItemColor: Color(0xFFF4D35E),
         unselectedItemColor: Colors.white,
-        selectedLabelStyle: TextStyle(fontSize: 12),
-        unselectedLabelStyle: TextStyle(fontSize: 12),
         showSelectedLabels: true,
         showUnselectedLabels: true,
+        currentIndex: 0,
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => DosenHome()),
+              );
+              break;
+            case 1:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => InfoSerpel()),
+              );
+              break;
+            case 2:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SuratTugas()),
+              );
+              break;
+            case 3:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Dataku()),
+              );
+              break;
+            case 4:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfileDosen()),
+              );
+              break;
+          }
+        },
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
@@ -432,40 +352,75 @@ class DosenHome extends StatelessWidget {
             label: 'Profile',
           ),
         ],
-        currentIndex: 0, // Indeks menu aktif
-        onTap: (index) {
-          if (index == 0) {
-            // Navigasi ke halaman Surat Tugas
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => DosenHome()),
-            );
-          } else if (index == 1) {
-            // Navigasi ke halaman profile
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => InfoSerpel()),
-            );
-          } else if (index == 2) {
-            // Navigasi ke halaman profile
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SuratTugas()),
-            );
-          } else if (index == 3) {
-            // Navigasi ke halaman profile
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => DataSerpel()),
-            );
-          } else if (index == 4) {
-            // Navigasi ke halaman profile
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ProfileDosen()),
-            );
-          }
-        },
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(BuildContext context,
+      {required String title,
+      required String description,
+      required IconData icon,
+      required Widget destination}) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  icon,
+                  size: 48,
+                  color: Color(0xFF051C3D),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    description,
+                    style: TextStyle(fontSize: 14, color: Colors.black54),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => destination),
+                  );
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'READ MORE',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF051C3D),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 4),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: Colors.black,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
