@@ -38,72 +38,114 @@
         $totalInputSertifikasi = DB::table('input_sertifikasi')->count();
 
         $pelatihanPerTahun = DB::table('input_pelatihan')
-    ->join('periode', 'input_pelatihan.id_periode', '=', 'periode.id_periode')
-    ->select(DB::raw('periode.tahun_periode as tahun'), DB::raw('count(*) as jumlah'))
-    ->groupBy('periode.tahun_periode')
-    ->orderBy('tahun', 'asc')
-    ->get();
+            ->join('periode', 'input_pelatihan.id_periode', '=', 'periode.id_periode')
+            ->select(DB::raw('periode.tahun_periode as tahun'), DB::raw('count(*) as jumlah'))
+            ->groupBy('periode.tahun_periode')
+            ->orderBy('tahun', 'asc')
+            ->get();
 
-$sertifikasiPerTahun = DB::table('input_sertifikasi')
-    ->join('periode', 'input_sertifikasi.id_periode', '=', 'periode.id_periode')
-    ->select(DB::raw('periode.tahun_periode as tahun'), DB::raw('count(*) as jumlah'))
-    ->groupBy('periode.tahun_periode')
-    ->orderBy('tahun', 'asc')
-    ->get();
+        $sertifikasiPerTahun = DB::table('input_sertifikasi')
+            ->join('periode', 'input_sertifikasi.id_periode', '=', 'periode.id_periode')
+            ->select(DB::raw('periode.tahun_periode as tahun'), DB::raw('count(*) as jumlah'))
+            ->groupBy('periode.tahun_periode')
+            ->orderBy('tahun', 'asc')
+            ->get();
 
-// Siapkan data untuk chart
-$tahunPelatihan = $pelatihanPerTahun->pluck('tahun');
-$jumlahPelatihan = $pelatihanPerTahun->pluck('jumlah');
+        // Siapkan data untuk chart
+        $tahunPelatihan = $pelatihanPerTahun->pluck('tahun');
+        $jumlahPelatihan = $pelatihanPerTahun->pluck('jumlah');
 
-$tahunSertifikasi = $sertifikasiPerTahun->pluck('tahun');
-$jumlahSertifikasi = $sertifikasiPerTahun->pluck('jumlah');
+        $tahunSertifikasi = $sertifikasiPerTahun->pluck('tahun');
+        $jumlahSertifikasi = $sertifikasiPerTahun->pluck('jumlah');
 
-// Query untuk mendapatkan jumlah pelatihan per tahun berdasarkan pengguna yang login
-$pelatihanPerTahun2 = DB::table('input_pelatihan')
-    ->join('periode', 'input_pelatihan.id_periode', '=', 'periode.id_periode')
-    ->select(DB::raw('periode.tahun_periode as tahun'), DB::raw('count(*) as jumlah'))
-    ->where('id_pengguna', auth()->user()->id_pengguna) // Filter berdasarkan pengguna yang login
-    ->groupBy('periode.tahun_periode')
-    ->orderBy('tahun', 'asc')
-    ->get();
+        // Query untuk mendapatkan jumlah pelatihan per tahun berdasarkan pengguna yang login
+        // $pelatihanPerTahun2 = DB::table('input_pelatihan')
+        //     ->select(DB::raw('YEAR(waktu_pelatihan) as tahun'), DB::raw('count(*) as jumlah'))
+        //     ->where('id_pengguna', auth()->user()->id_pengguna) // Filter berdasarkan pengguna yang login
+        //     ->groupBy(DB::raw('YEAR(waktu_pelatihan)'))
+        //     ->orderBy('tahun', 'asc')
+        //     ->get();
 
-// Tambahkan atribut 'jenis' untuk membedakan data pelatihan
-$pelatihanPerTahun2 = $pelatihanPerTahun2->map(function ($item) {
-    $item->jenis = 'Pelatihan';
-    return $item;
-});
+        // // Tambahkan atribut 'jenis' untuk membedakan data pelatihan
+        // $pelatihanPerTahun2 = $pelatihanPerTahun2->map(function ($item) {
+        //     $item->jenis = 'Pelatihan';
+        //     return $item;
+        // });
 
-// Query untuk mendapatkan jumlah sertifikasi per tahun berdasarkan pengguna yang login
-$sertifikasiPerTahun2 = DB::table('input_sertifikasi')
-    ->join('periode', 'input_sertifikasi.id_periode', '=', 'periode.id_periode')
-    ->select(DB::raw('periode.tahun_periode as tahun'), DB::raw('count(*) as jumlah'))
-    ->where('id_pengguna', auth()->user()->id_pengguna) // Filter berdasarkan pengguna yang login
-    ->groupBy('periode.tahun_periode')
-    ->orderBy('tahun', 'asc')
-    ->get();
+        // // Query untuk mendapatkan jumlah sertifikasi per tahun berdasarkan pengguna yang login
+        // $sertifikasiPerTahun2 = DB::table('input_sertifikasi')
+        //     ->select(DB::raw('YEAR(waktu_sertifikasi) as tahun'), DB::raw('count(*) as jumlah'))
+        //     ->where('id_pengguna', auth()->user()->id_pengguna) // Filter berdasarkan pengguna yang login
+        //     ->groupBy(DB::raw('YEAR(waktu_sertifikasi)'))
+        //     ->orderBy('tahun', 'asc')
+        //     ->get();
 
-// Tambahkan atribut 'jenis' untuk membedakan data sertifikasi
-$sertifikasiPerTahun2 = $sertifikasiPerTahun2->map(function ($item) {
-    $item->jenis = 'Sertifikasi';
-    return $item;
-});
+        // // Tambahkan atribut 'jenis' untuk membedakan data sertifikasi
+        // $sertifikasiPerTahun2 = $sertifikasiPerTahun2->map(function ($item) {
+        //     $item->jenis = 'Sertifikasi';
+        //     return $item;
+        // });
 
-// Menggabungkan data pelatihan dan sertifikasi dalam satu koleksi
-$combinedData = $pelatihanPerTahun2->merge($sertifikasiPerTahun2);
+        // // Menggabungkan data pelatihan dan sertifikasi dalam satu koleksi
+        // $combinedData = $pelatihanPerTahun2->merge($sertifikasiPerTahun2);
 
-// Siapkan data untuk chart
-$tahunData = $combinedData->pluck('tahun')->unique()->sort()->values(); // Ambil tahun unik dan urutkan
+        // // Siapkan data untuk chart
+        // $tahunData = $combinedData->pluck('tahun')->unique()->sort()->values(); // Ambil tahun unik dan urutkan
 
-// Data pelatihan berdasarkan tahun
-$pelatihanData = $tahunData->map(function ($tahun) use ($combinedData) {
-    return $combinedData->where('jenis', 'Pelatihan')->where('tahun', $tahun)->sum('jumlah');
-});
+        // // Data pelatihan berdasarkan tahun
+        // $pelatihanData = $tahunData->map(function ($tahun) use ($combinedData) {
+        //     return $combinedData->where('jenis', 'Pelatihan')->where('tahun', $tahun)->sum('jumlah');
+        // });
 
-// Data sertifikasi berdasarkan tahun
-$sertifikasiData = $tahunData->map(function ($tahun) use ($combinedData) {
-    return $combinedData->where('jenis', 'Sertifikasi')->where('tahun', $tahun)->sum('jumlah');
-});
+        // // Data sertifikasi berdasarkan tahun
+        // $sertifikasiData = $tahunData->map(function ($tahun) use ($combinedData) {
+        //     return $combinedData->where('jenis', 'Sertifikasi')->where('tahun', $tahun)->sum('jumlah');
+        // });
 
+        $pelatihanPerTahun2 = DB::table('input_pelatihan')
+            ->join('periode', 'input_pelatihan.id_periode', '=', 'periode.id_periode') // Join dengan tabel periode
+            ->select(DB::raw('periode.tahun_periode as tahun'), DB::raw('count(*) as jumlah'))
+            ->where('id_pengguna', auth()->user()->id_pengguna) // Filter berdasarkan pengguna yang login
+            ->groupBy('periode.tahun_periode')
+            ->orderBy('tahun', 'asc')
+            ->get();
+
+        // Tambahkan atribut 'jenis' untuk membedakan data pelatihan
+        $pelatihanPerTahun2 = $pelatihanPerTahun2->map(function ($item) {
+            $item->jenis = 'Pelatihan';
+            return $item;
+        });
+
+        // Query untuk mendapatkan jumlah sertifikasi per tahun berdasarkan pengguna yang login
+        $sertifikasiPerTahun2 = DB::table('input_sertifikasi')
+            ->join('periode', 'input_sertifikasi.id_periode', '=', 'periode.id_periode') // Join dengan tabel periode
+            ->select(DB::raw('periode.tahun_periode as tahun'), DB::raw('count(*) as jumlah'))
+            ->where('id_pengguna', auth()->user()->id_pengguna) // Filter berdasarkan pengguna yang login
+            ->groupBy('periode.tahun_periode')
+            ->orderBy('tahun', 'asc')
+            ->get();
+
+        // Tambahkan atribut 'jenis' untuk membedakan data sertifikasi
+        $sertifikasiPerTahun2 = $sertifikasiPerTahun2->map(function ($item) {
+            $item->jenis = 'Sertifikasi';
+            return $item;
+        });
+
+        // Menggabungkan data pelatihan dan sertifikasi dalam satu koleksi
+        $combinedData = $pelatihanPerTahun2->merge($sertifikasiPerTahun2);
+
+        // Siapkan data untuk chart
+        $tahunData = $combinedData->pluck('tahun')->unique()->sort()->values(); // Ambil tahun unik dan urutkan
+
+        // Data pelatihan berdasarkan tahun
+        $pelatihanData = $tahunData->map(function ($tahun) use ($combinedData) {
+            return $combinedData->where('jenis', 'Pelatihan')->where('tahun', $tahun)->sum('jumlah');
+        });
+
+        // Data sertifikasi berdasarkan tahun
+        $sertifikasiData = $tahunData->map(function ($tahun) use ($combinedData) {
+            return $combinedData->where('jenis', 'Sertifikasi')->where('tahun', $tahun)->sum('jumlah');
+        });
 
     @endphp
 
@@ -409,26 +451,74 @@ $sertifikasiData = $tahunData->map(function ($tahun) use ($combinedData) {
         });
     });
 
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     const tahunData = {{ json_encode($tahunData->toArray()) }}; // Tahun data
+    //     const pelatihanData = {{ json_encode($pelatihanData->toArray()) }}; // Data pelatihan
+    //     const sertifikasiData = {{ json_encode($sertifikasiData->toArray()) }}; // Data sertifikasi
+
+    //     const ctx = document.getElementById('combined-chart').getContext('2d');
+    //     const combinedChart = new Chart(ctx, {
+    //         type: 'bar',
+    //         data: {
+    //             labels: tahunData, // Tahun
+    //             datasets: [{
+    //                     label: 'Pelatihan',
+    //                     data: pelatihanData, // Data pelatihan langsung diambil dari array
+    //                     backgroundColor: 'rgba(54, 162, 235, 0.5)',
+    //                     borderColor: 'rgba(54, 162, 235, 1)',
+    //                     borderWidth: 1
+    //                 },
+    //                 {
+    //                     label: 'Sertifikasi',
+    //                     data: sertifikasiData, // Data sertifikasi langsung diambil dari array
+    //                     backgroundColor: 'rgba(255, 99, 132, 0.5)',
+    //                     borderColor: 'rgba(255, 99, 132, 1)',
+    //                     borderWidth: 1
+    //                 }
+    //             ]
+    //         },
+    //         options: {
+    //             responsive: true,
+    //             maintainAspectRatio: false,
+    //             scales: {
+    //                 y: {
+    //                     beginAtZero: true,
+    //                     title: {
+    //                         display: true,
+    //                         text: 'Jumlah'
+    //                     }
+    //                 },
+    //                 x: {
+    //                     title: {
+    //                         display: true,
+    //                         text: 'Tahun'
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     });
+    // });
+
     document.addEventListener('DOMContentLoaded', function() {
-        const tahunData = {{ json_encode($tahunData->toArray()) }}; // Tahun data dari tabel periode
-        const pelatihanData = {{ json_encode($pelatihanData->toArray()) }}; // Data pelatihan
-        const sertifikasiData = {{ json_encode($sertifikasiData->toArray()) }}; // Data sertifikasi
+        const tahunData = <?php echo json_encode($tahunData->toArray()); ?>; // Tahun data
+        const pelatihanData = <?php echo json_encode($pelatihanData->toArray()); ?>; // Data pelatihan
+        const sertifikasiData = <?php echo json_encode($sertifikasiData->toArray()); ?>; // Data sertifikasi
 
         const ctx = document.getElementById('combined-chart').getContext('2d');
         const combinedChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: tahunData, // Tahun dari tabel periode
+                labels: tahunData, // Tahun
                 datasets: [{
                         label: 'Pelatihan',
-                        data: pelatihanData,
+                        data: pelatihanData, // Data pelatihan langsung diambil dari array
                         backgroundColor: 'rgba(54, 162, 235, 0.5)',
                         borderColor: 'rgba(54, 162, 235, 1)',
                         borderWidth: 1
                     },
                     {
                         label: 'Sertifikasi',
-                        data: sertifikasiData,
+                        data: sertifikasiData, // Data sertifikasi langsung diambil dari array
                         backgroundColor: 'rgba(255, 99, 132, 0.5)',
                         borderColor: 'rgba(255, 99, 132, 1)',
                         borderWidth: 1
@@ -456,6 +546,7 @@ $sertifikasiData = $tahunData->map(function ($tahun) use ($combinedData) {
             }
         });
     });
+
 
     document.addEventListener('DOMContentLoaded', function() {
         const tahunPelatihan = @json($tahunPelatihan); // Tahun pelatihan
