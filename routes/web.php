@@ -16,6 +16,7 @@ use App\Http\Controllers\vendorSertifController;
 use App\Http\Controllers\MataKuliahController;
 use App\Http\Controllers\infoPelatihanController;
 use App\Http\Controllers\infoSertifikasiController;
+use App\Http\Controllers\statistikSertifikasiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -270,8 +271,13 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::group(['prefix' => 'statistikSertifikasi', 'middleware' => ['authorize:ADM,PMN']], function () {
-        Route::get('/', [DataSertifikasiController::class, 'index']);  // Menampilkan halaman awal Stok
+        Route::get('/', [statistikSertifikasiController::class, 'index'])->name('statistikSertifikasi.index');
+        Route::get('/show_ajax/{id}', [statistikSertifikasiController::class, 'showAjax'])->name('statistikSertifikasi.show');
+        Route::get('/detail/{id}', [statistikSertifikasiController::class, 'getDetailPelatihan'])
+        ->name('statistikSertifikasi.detailPelatihan');    
     });
+    
+
     Route::group(['prefix' => 'daftarPelatihanSertifikasi', 'middleware' => ['authorize:ADM,DSN,PMN']], function () {
         Route::get('/', [daftarPelatihanSertifikasiController::class, 'index']); // Halaman awal
         Route::get('/list', [daftarPelatihanSertifikasiController::class, 'list']); // List pelatihan dan sertifikasi

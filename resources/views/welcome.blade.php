@@ -59,49 +59,6 @@
         $jumlahSertifikasi = $sertifikasiPerTahun->pluck('jumlah');
 
         // Query untuk mendapatkan jumlah pelatihan per tahun berdasarkan pengguna yang login
-        // $pelatihanPerTahun2 = DB::table('input_pelatihan')
-        //     ->select(DB::raw('YEAR(waktu_pelatihan) as tahun'), DB::raw('count(*) as jumlah'))
-        //     ->where('id_pengguna', auth()->user()->id_pengguna) // Filter berdasarkan pengguna yang login
-        //     ->groupBy(DB::raw('YEAR(waktu_pelatihan)'))
-        //     ->orderBy('tahun', 'asc')
-        //     ->get();
-
-        // // Tambahkan atribut 'jenis' untuk membedakan data pelatihan
-        // $pelatihanPerTahun2 = $pelatihanPerTahun2->map(function ($item) {
-        //     $item->jenis = 'Pelatihan';
-        //     return $item;
-        // });
-
-        // // Query untuk mendapatkan jumlah sertifikasi per tahun berdasarkan pengguna yang login
-        // $sertifikasiPerTahun2 = DB::table('input_sertifikasi')
-        //     ->select(DB::raw('YEAR(waktu_sertifikasi) as tahun'), DB::raw('count(*) as jumlah'))
-        //     ->where('id_pengguna', auth()->user()->id_pengguna) // Filter berdasarkan pengguna yang login
-        //     ->groupBy(DB::raw('YEAR(waktu_sertifikasi)'))
-        //     ->orderBy('tahun', 'asc')
-        //     ->get();
-
-        // // Tambahkan atribut 'jenis' untuk membedakan data sertifikasi
-        // $sertifikasiPerTahun2 = $sertifikasiPerTahun2->map(function ($item) {
-        //     $item->jenis = 'Sertifikasi';
-        //     return $item;
-        // });
-
-        // // Menggabungkan data pelatihan dan sertifikasi dalam satu koleksi
-        // $combinedData = $pelatihanPerTahun2->merge($sertifikasiPerTahun2);
-
-        // // Siapkan data untuk chart
-        // $tahunData = $combinedData->pluck('tahun')->unique()->sort()->values(); // Ambil tahun unik dan urutkan
-
-        // // Data pelatihan berdasarkan tahun
-        // $pelatihanData = $tahunData->map(function ($tahun) use ($combinedData) {
-        //     return $combinedData->where('jenis', 'Pelatihan')->where('tahun', $tahun)->sum('jumlah');
-        // });
-
-        // // Data sertifikasi berdasarkan tahun
-        // $sertifikasiData = $tahunData->map(function ($tahun) use ($combinedData) {
-        //     return $combinedData->where('jenis', 'Sertifikasi')->where('tahun', $tahun)->sum('jumlah');
-        // });
-
         $pelatihanPerTahun2 = DB::table('input_pelatihan')
             ->join('periode', 'input_pelatihan.id_periode', '=', 'periode.id_periode') // Join dengan tabel periode
             ->select(DB::raw('periode.tahun_periode as tahun'), DB::raw('count(*) as jumlah'))
@@ -162,7 +119,6 @@
                     <div class="icon">
                         <i class="ion ion-person"></i>
                     </div>
-                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
             <!-- ./col -->
@@ -177,7 +133,6 @@
                     <div class="icon">
                         <i class="ion ion-pie-graph"></i>
                     </div>
-                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
             <!-- ./col -->
@@ -192,7 +147,6 @@
                     <div class="icon">
                         <i class="ion ion-university"></i>
                     </div>
-                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
             <!-- ./col -->
@@ -255,7 +209,6 @@
                     <div class="icon">
                         <i class="ion ion-ios-albums"></i>
                     </div>
-                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
 
@@ -269,7 +222,6 @@
                     <div class="icon">
                         <i class="ion ion-ios-clipboard"></i>
                     </div>
-                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
 
@@ -283,7 +235,6 @@
                     <div class="icon">
                         <i class="ion ion-ios-school"></i>
                     </div>
-                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
 
@@ -297,14 +248,13 @@
                     <div class="icon">
                         <i class="ion ion-ios-rocket"></i>
                     </div>
-                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
 
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header border-0">
-                        <h3 class="card-title">Jumlah Pelatihan dan Sertifikasi per Tahun</h3>
+                        <h3 class="card-title">Jumlah Pelatihan dan Sertifikasi yang telah di Inputkan per Tahun</h3>
                     </div>
                     <div class="card-body">
                         <div class="position-relative mb-4">
@@ -328,7 +278,6 @@
                     <div class="icon">
                         <i class="ion ion-ios-albums"></i>
                     </div>
-                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
 
@@ -342,7 +291,6 @@
                     <div class="icon">
                         <i class="ion ion-ios-clipboard"></i>
                     </div>
-                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
 
@@ -350,7 +298,7 @@
                 <div class="card">
                     <div class="card-header border-0">
                         <div class="d-flex justify-content-between">
-                            <h3 class="card-title">Jumlah Input Pelatihan per Tahun</h3>
+                            <h3 class="card-title">Jumlah Input Pelatihan Dosen per Tahun</h3>
                         </div>
                     </div>
                     <div class="card-body">
@@ -378,7 +326,7 @@
                 <div class="card">
                     <div class="card-header border-0">
                         <div class="d-flex justify-content-between">
-                            <h3 class="card-title">Jumlah Input Sertifikasi per Tahun</h3>
+                            <h3 class="card-title">Jumlah Input Sertifikasi Dosen per Tahun</h3>
                         </div>
                     </div>
                     <div class="card-body">
@@ -450,54 +398,6 @@
             }
         });
     });
-
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     const tahunData = {{ json_encode($tahunData->toArray()) }}; // Tahun data
-    //     const pelatihanData = {{ json_encode($pelatihanData->toArray()) }}; // Data pelatihan
-    //     const sertifikasiData = {{ json_encode($sertifikasiData->toArray()) }}; // Data sertifikasi
-
-    //     const ctx = document.getElementById('combined-chart').getContext('2d');
-    //     const combinedChart = new Chart(ctx, {
-    //         type: 'bar',
-    //         data: {
-    //             labels: tahunData, // Tahun
-    //             datasets: [{
-    //                     label: 'Pelatihan',
-    //                     data: pelatihanData, // Data pelatihan langsung diambil dari array
-    //                     backgroundColor: 'rgba(54, 162, 235, 0.5)',
-    //                     borderColor: 'rgba(54, 162, 235, 1)',
-    //                     borderWidth: 1
-    //                 },
-    //                 {
-    //                     label: 'Sertifikasi',
-    //                     data: sertifikasiData, // Data sertifikasi langsung diambil dari array
-    //                     backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    //                     borderColor: 'rgba(255, 99, 132, 1)',
-    //                     borderWidth: 1
-    //                 }
-    //             ]
-    //         },
-    //         options: {
-    //             responsive: true,
-    //             maintainAspectRatio: false,
-    //             scales: {
-    //                 y: {
-    //                     beginAtZero: true,
-    //                     title: {
-    //                         display: true,
-    //                         text: 'Jumlah'
-    //                     }
-    //                 },
-    //                 x: {
-    //                     title: {
-    //                         display: true,
-    //                         text: 'Tahun'
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     });
-    // });
 
     document.addEventListener('DOMContentLoaded', function() {
         const tahunData = <?php echo json_encode($tahunData->toArray()); ?>; // Tahun data
