@@ -15,6 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscurePassword = true;
   bool _isLoading = false;
 
+  // Fungsi untuk login
   Future<void> _login() async {
     setState(() {
       _isLoading = true;
@@ -25,20 +26,22 @@ class _LoginPageState extends State<LoginPage> {
     String password = _passwordController.text.trim();
 
     try {
-      final result = await AuthService.login(namaPengguna, password);
+      final authService = AuthService();
+      final result = await authService.login(namaPengguna, password);
 
-      if (result['success']) {
-        // If login is successful, navigate to DosenHome with the username
+      if (result != null && !result.containsKey('error')) {
+        // Debug token setelah login
+        final token = await authService.getToken();
+        print('Token setelah login: $token');
+
+        // Navigasi ke halaman home
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => DosenHome(),
-          ),
+          MaterialPageRoute(builder: (context) => DosenHome()),
         );
-
       } else {
         setState(() {
-          errorMessage = result['message'] ?? 'Login failed.';
+          errorMessage = result?['error'] ?? 'Login failed';
         });
       }
     } catch (e) {
@@ -54,7 +57,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    // Clean up the controllers when the widget is disposed
     _namaPenggunaController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -66,9 +68,7 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Color(0xFF051C3D),
       body: Column(
         children: [
-          // Header with "Welcome Back!"
           _buildHeader(),
-          // Login Form
           _buildLoginForm(),
         ],
       ),
@@ -164,9 +164,7 @@ class _LoginPageState extends State<LoginPage> {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () {
-                  // Logic for "Forgot Password" can be added here
-                },
+                onPressed: () {},
                 child: Text(
                   'Forgot Password?',
                   style: TextStyle(
