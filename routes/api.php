@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\profileController;
 use App\Http\Controllers\Api\riwayatGabunganController;
 use App\Http\Controllers\Api\riwayatPelatihanController;
 use App\Http\Controllers\Api\riwayatSertifikasiController;
+use App\Http\Controllers\Api\SuratTugasController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +32,8 @@ Route::middleware('auth:api')->group(function() {
     Route::get('pelatihan', [riwayatPelatihanController::class, 'index']);
     Route::get('/riwayat/gabungan', [riwayatGabunganController::class, 'index']);
     Route::get('profile', [profileController::class, 'index']);
+    Route::get('download-surat-tugas/{id}', [SuratTugasController::class, 'downloadSuratTugas']);
+    Route::get('surat-tugas', [SuratTugasController::class, 'getSuratTugasByUser']);
 });
 
 
@@ -38,3 +41,5 @@ Route::get('infoSertif', [infoSertifikasiController::class, 'index']);
 Route::get('infoPelatihan', [infoPelatihanController::class, 'index']);
 
 Route::get('info', [infoController::class, 'index']);
+
+Route::get('list-surat', [SuratTugasController::class, 'index']);

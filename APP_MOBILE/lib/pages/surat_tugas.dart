@@ -1,81 +1,206 @@
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:pbl/pages/dataku_page.dart';
-import 'package:pbl/pages/detail_surat_tugas.dart';
 import 'package:pbl/pages/dosen_home.dart';
 import 'package:pbl/pages/info_serpel.dart';
-import 'package:pbl/pages/profile_dosen.dart';  // Pastikan untuk import halaman Detail Surat Tugas
+import 'package:pbl/pages/profile_dosen.dart';
+import 'dart:convert';
+import 'dart:html' as html;
+import 'package:pbl/services/auth_service.dart';
 
-class SuratTugas extends StatelessWidget {
+class SuratTugas extends StatefulWidget {
+  @override
+  _SuratTugasState createState() => _SuratTugasState();
+}
+
+class _SuratTugasState extends State<SuratTugas> {
+  final AuthService _authService = AuthService();
+  List<Map<String, dynamic>> suratTugasList = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadSuratTugas();
+  }
+
+  Future<void> loadSuratTugas() async {
+    try {
+      final token = await _authService.getToken();
+      final response = await http.get(
+        Uri.parse('http://127.0.0.1:8000/api/surat-tugas'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        print('Response body: ${response.body}'); // Debugging
+        final List<dynamic> data = json.decode(response.body);
+        setState(() {
+          suratTugasList = List<Map<String, dynamic>>.from(data);
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error loading surat tugas: $e');
+      setState(() => isLoading = false);
+    }
+  }
+
+  String determineTipe(Map<String, dynamic> suratTugas) {
+    if (suratTugas['id_peserta_pelatihan'] != null) {
+      return 'pelatihan';
+    } else if (suratTugas['id_peserta_sertifikasi'] != null) {
+      return 'sertifikasi';
+    }
+    return 'pelatihan'; // default value
+  }
+
+  Future<void> downloadFile(BuildContext context, dynamic id, String type) async {
+    if (id == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('ID surat tugas tidak valid'),
+        backgroundColor: Colors.red,
+      ));
+      return;
+    }
+
+    final suratTugasId = id.toString();
+    final token = await _authService.getToken();
+    
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Token tidak ditemukan. Silakan login ulang.'),
+        backgroundColor: Colors.red,
+      ));
+      return;
+    }
+
+    final url = 'http://127.0.0.1:8000/api/download-surat-tugas/$suratTugasId?tipe=$type';
+    print('Download URL: $url'); // Debugging
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+    };
+
+    try {
+      final response = await http.get(Uri.parse(url), headers: headers);
+      print('Response status: ${response.statusCode}'); // Debugging
+      
+      if (response.statusCode == 200) {
+        final contentType = response.headers['content-type'] ?? 'application/octet-stream';
+        final blob = html.Blob([response.bodyBytes], contentType);
+        final downloadUrl = html.Url.createObjectUrlFromBlob(blob);
+
+        final anchor = html.AnchorElement(href: downloadUrl)
+          ..target = '_blank'
+          ..download = 'surat_tugas_$suratTugasId.pdf'
+          ..click();
+
+        html.Url.revokeObjectUrl(downloadUrl);
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('File berhasil diunduh'),
+          backgroundColor: Colors.green,
+        ));
+      } else {
+        String errorMessage = 'Gagal mengunduh file.';
+        if (response.statusCode == 403) {
+          errorMessage = 'Anda tidak memiliki hak akses untuk file ini.';
+        } else if (response.statusCode == 404) {
+          errorMessage = 'File tidak ditemukan di server.';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ));
+      }
+    } catch (e) {
+      print('Download error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Terjadi kesalahan: $e'),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF051C3D), // Dark blue
-        iconTheme: IconThemeData(
-          color: Colors.white, // Icon warna putih
-        ),
+        backgroundColor: Color(0xFF051C3D),
+        iconTheme: IconThemeData(color: Colors.white),
         title: Text(
           'Surat Tugas',
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.white,
-          ),
+          style: TextStyle(fontSize: 20, color: Colors.white),
         ),
       ),
-      backgroundColor: Color(0xFFF5F5F5), // Background warna abu-abu muda
-      body: Column(
-        children: [
-          // Pencarian Surat Tugas
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(vertical: 10),
-                hintText: 'Pencarian Surat Tugas',
-                prefixIcon: Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
+      backgroundColor: Color(0xFFF5F5F5),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: isLoading 
+          ? Center(child: CircularProgressIndicator())
+          : suratTugasList.isEmpty 
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.document_scanner_outlined, size: 64, color: Colors.grey),
+                    SizedBox(height: 16),
+                    Text(
+                      'Tidak ada surat tugas tersedia',
+                      style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    ),
+                  ],
                 ),
-              ),
-            ),
-          ),
-          // Daftar Surat Tugas
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              itemCount: 1, // Jumlah surat tugas (ubah sesuai kebutuhan)
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    // Navigasi ke halaman Detail Surat Tugas
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DetailSuratTugasPage(
-                          judulSurat: 'Surat Tugas ${index + 1}',
-                          deskripsiSurat: 'Deskripsi singkat tentang surat tugas ${index + 1}.',
-                          tanggal: '25 Oktober 2024', // Tanggal surat tugas
-                          status: 'Aktif',
+              )
+            : ListView.builder(
+                itemCount: suratTugasList.length,
+                itemBuilder: (context, index) {
+                  final suratTugas = suratTugasList[index];
+                  final id = suratTugas['id_surat_tugas'];
+                  final type = determineTipe(suratTugas);
+                  
+                  return Card(
+                    elevation: 2,
+                    margin: EdgeInsets.only(bottom: 12),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      title: Text(
+                        suratTugas['nama_surat_tugas'] ?? 'Surat Tugas ${index + 1}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
-                    );
-                  },
-                  child: SuratTugasCard(
-                    title: 'Surat Tugas ${index + 1}',
-                    description: 'Deskripsi singkat tentang surat tugas ${index + 1}.',
-                    date: '25 Oktober 2024', // Tanggal surat tugas
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 4),
+                          Text(
+                            'Tipe: ${type.toUpperCase()}',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                        ],
+                      ),
+                      trailing: ElevatedButton.icon(
+                        onPressed: id != null ? () => downloadFile(context, id, type) : null,
+                        icon: Icon(Icons.download, size: 20),
+                        label: Text('Download'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF051C3D),
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
       ),
-      // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Color(0xFF051C3D),
@@ -105,7 +230,7 @@ class SuratTugas extends StatelessWidget {
         ],
         selectedFontSize: 12,
         unselectedFontSize: 12,
-        currentIndex: 2, // Surat Tugas sebagai menu aktif
+        currentIndex: 1, // Current tab index
         onTap: (index) {
           if (index == 0) {
             // Navigasi ke halaman Surat Tugas
@@ -139,66 +264,6 @@ class SuratTugas extends StatelessWidget {
             );
           }
         },
-      ),
-    );
-  }
-}
-
-class SuratTugasCard extends StatelessWidget {
-  final String title;
-  final String description;
-  final String date;
-
-  const SuratTugasCard({
-    Key? key,
-    required this.title,
-    required this.description,
-    required this.date,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      elevation: 3,
-      margin: EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Judul Surat Tugas
-            Text(
-              title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 8),
-            // Deskripsi Surat Tugas
-            Text(
-              description,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.black87,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            SizedBox(height: 8),
-            // Tanggal Surat Tugas
-            Text(
-              'Tanggal: $date',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.black45,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
