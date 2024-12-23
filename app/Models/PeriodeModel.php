@@ -16,7 +16,10 @@ class PeriodeModel extends Model
 
     public $timestamps = true;
 
-    public function infoPelathian(): BelongsTo{
+    public function infoPelatihan(): BelongsTo{
         return $this->belongsTo(infoPelatihanModel::class, 'id_periode', 'id_periode');
+    }
+    public function infoSertifikasi(): BelongsTo{
+        return $this->belongsTo(infoSertifikasiModel::class, 'id_periode', 'id_periode');
     }
 }
