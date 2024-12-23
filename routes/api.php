@@ -3,7 +3,11 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\homeController;
+use App\Http\Controllers\Api\infoController;
+use App\Http\Controllers\Api\infoPelatihanController;
+use App\Http\Controllers\Api\infoSertifikasiController;
 use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\Api\profileController;
 use App\Http\Controllers\Api\riwayatGabunganController;
 use App\Http\Controllers\Api\riwayatPelatihanController;
 use App\Http\Controllers\Api\riwayatSertifikasiController;
@@ -26,8 +30,11 @@ Route::middleware('auth:api')->group(function() {
     Route::get('sertifikasi', [riwayatSertifikasiController::class, 'index']);
     Route::get('pelatihan', [riwayatPelatihanController::class, 'index']);
     Route::get('/riwayat/gabungan', [riwayatGabunganController::class, 'index']);
+    Route::get('profile', [profileController::class, 'index']);
 });
 
 
-Route::get('dosen/{id_pengguna}/data', [homeController::class, 'getDataPelatihanSertifikasi']);
+Route::get('infoSertif', [infoSertifikasiController::class, 'index']);
+Route::get('infoPelatihan', [infoPelatihanController::class, 'index']);
 
+Route::get('info', [infoController::class, 'index']);

@@ -41,7 +41,7 @@ class _DosenHomeState extends State<DosenHome> {
     final user = await _getUser(); // Assuming the user is already logged in
     final response = await http.get(
       Uri.parse(
-          'http://10.0.2.2:8000/api/riwayat/gabungan'), // Your API URL here
+          'http://127.0.0.1:8000/api/riwayat/gabungan'), // Your API URL here
       headers: {
         'Authorization':
             'Bearer ${user['token']}', // If your API requires auth token
@@ -127,13 +127,13 @@ class _DosenHomeState extends State<DosenHome> {
                     ),
                     Row(
                       children: [
-                        IconButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/notif');
-                          },
-                          icon: Icon(Icons.notifications_none,
-                              color: Colors.white),
-                        ),
+                        // IconButton(
+                        //   onPressed: () {
+                        //     Navigator.pushNamed(context, '/notif');
+                        //   },
+                        //   icon: Icon(Icons.notifications_none,
+                        //       color: Colors.white),
+                        // ),
                         IconButton(
                           onPressed: () async {
                             await AuthService().logout();

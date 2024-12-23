@@ -25,7 +25,7 @@ class _RiwayatPelatihanState extends State<RiwayatPelatihan> {
 
   /// Fungsi untuk mengambil data dari API
   Future<void> fetchData() async {
-    const String apiUrl = 'http://10.0.2.2:8000/api/pelatihan'; // Ubah dengan IP Laravel Anda
+    const String apiUrl = 'http://127.0.0.1:8000/api/pelatihan'; // Ubah dengan IP Laravel Anda
     final authService = AuthService();
 
     try {

@@ -8,7 +8,7 @@ class AuthService {
 
   // Fungsi login
   Future<Map<String, dynamic>?> login(String namaPengguna, String password) async {
-  const String apiUrl = 'http://10.0.2.2:8000/api/login'; // Ganti IP jika diperlukan
+  const String apiUrl = 'http://127.0.0.1:8000/api/login'; // Ganti IP jika diperlukan
 
   try {
     // Kirim request POST ke API

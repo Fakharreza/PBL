@@ -1,10 +1,61 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:pbl/pages/dataku_page.dart';
 import 'package:pbl/pages/dosen_home.dart';
 import 'package:pbl/pages/profile_dosen.dart';
 import 'package:pbl/pages/surat_tugas.dart';
 
-class InfoSerpel extends StatelessWidget {
+class InfoSerpel extends StatefulWidget {
+  @override
+  _InfoSerpelState createState() => _InfoSerpelState();
+}
+
+class _InfoSerpelState extends State<InfoSerpel> {
+  String _selectedType = 'pelatihan'; // Default pilihan dropdown
+  List<dynamic> _items = [];
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData(); // Ambil data pertama kali
+  }
+
+  Future<void> _fetchData() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final url = Uri.parse(
+          'http://127.0.0.1:8000/api/info?type=$_selectedType'); // Ganti dengan URL API Anda
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          _items = data; // Asumsikan API mengembalikan array
+        });
+      } else {
+        setState(() {
+          _errorMessage =
+              jsonDecode(response.body)['message'] ?? 'Gagal memuat data';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Terjadi kesalahan: $e';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,172 +72,96 @@ class InfoSerpel extends StatelessWidget {
           ),
         ),
       ),
-      backgroundColor: Color(0xFFF5F5F5), // Light gray background
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Filter Section
-            Row(
-              children: [
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-                    ),
-                    value: null,
-                    items: [
-                      DropdownMenuItem(
-                        value: 'Mata Kuliah',
-                        child: Text('Mata Kuliah'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Jaringan Komputer',
-                        child: Text('Jaringan Komputer'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Sistem Operasi',
-                        child: Text('Sistem Operasi'),
-                      ),
-                    ],
-                    onChanged: (value) {},
-                    hint: Text('Mata Kuliah'),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-                    ),
-                    value: null,
-                    items: [
-                      DropdownMenuItem(
-                        value: 'Bidang Minat',
-                        child: Text('Bidang Minat'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Data Science',
-                        child: Text('Data Science'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Pengembangan Perangkat Lunak',
-                        child: Text('Pengembangan Perangkat Lunak'),
-                      ),
-                    ],
-                    onChanged: (value) {},
-                    hint: Text('Bidang Minat'),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-                      hintText: 'Pencarian',
-                      suffixIcon: Icon(Icons.search),
-                    ),
-                  ),
-                ),
+            // Dropdown untuk memilih pelatihan atau sertifikasi
+            DropdownButtonFormField<String>(
+              value: _selectedType,
+              items: [
+                DropdownMenuItem(value: 'pelatihan', child: Text('Pelatihan')),
+                DropdownMenuItem(
+                    value: 'sertifikasi', child: Text('Sertifikasi')),
               ],
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    _selectedType = value;
+                  });
+                  _fetchData(); // Ambil data ulang saat pilihan berubah
+                }
+              },
+              decoration: InputDecoration(
+                labelText: 'Pilih Tipe',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
             ),
             SizedBox(height: 16),
-
-            // List of Training Info
+            // Tampilkan loading, error, atau data
             Expanded(
-              child: ListView.builder(
-                itemCount: 3, // Number of items in the list
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: EdgeInsets.only(bottom: 16.0),
-                    padding: EdgeInsets.all(12.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
+              child: _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : _errorMessage != null
+                      ? Center(child: Text(_errorMessage!))
+                      : ListView.builder(
+                          itemCount: _items.length,
+                          itemBuilder: (context, index) {
+                            final item = _items[index];
+
+                            // Tampilan untuk pelatihan
+                            if (_selectedType == 'pelatihan') {
+                              return Card(
+                                margin: EdgeInsets.symmetric(vertical: 8.0),
+                                child: ListTile(
+                                  title: Text(item['nama_pelatihan'] ??
+                                      'Nama tidak tersedia'),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                          'Lokasi: ${item['lokasi_pelatihan'] ?? '-'}'),
+                                      Text(
+                                          'Level: ${item['level_pelatihan'] ?? '-'}'),
+                                      Text(
+                                          'Tanggal: ${item['tanggal_mulai'] ?? '-'} - ${item['tanggal_selesai'] ?? '-'}'),
+                                      Text(
+                                          'Kuota: ${item['kuota_peserta'] ?? '-'}'),
+                                      Text('Biaya: ${item['biaya'] ?? '-'}'),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+                            // Tampilan untuk sertifikasi
+                            else {
+                              return Card(
+                                margin: EdgeInsets.symmetric(vertical: 8.0),
+                                child: ListTile(
+                                  title: Text(item['nama_sertifikasi'] ??
+                                      'Nama tidak tersedia'),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                          'Level: ${item['level_sertifikasi'] ?? '-'}'),
+                                      Text(
+                                          'Tanggal: ${item['tanggal_mulai'] ?? '-'} - ${item['tanggal_selesai'] ?? '-'}'),
+                                      Text(
+                                          'Kuota: ${item['kuota_peserta'] ?? '-'}'),
+                                      Text(
+                                          'Masa Berlaku: ${item['masa_berlaku'] ?? '-'}'),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+                          },
                         ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          index == 0
-                              ? 'Pelatihan Cloud Computing : Tingkatkan K'
-                              : index == 1
-                                  ? 'Sertifikasi AWS Cloud Practitioner'
-                                  : 'Pelatihan Cloud Computing : Tingkatkan K',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.0,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(height: 8.0),
-                        Text(
-                          'AWS Academy',
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                        SizedBox(height: 8.0),
-                        Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Tanggal Pelaksanaan: ',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              TextSpan(text: '1 Desember 2024 - 5 Desember 2024\n'),
-                              TextSpan(
-                                text: 'Bidang Minat: ',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              TextSpan(
-                                text: 'Jaringan dan Infrastruktur, Pengembangan Perangkat Lunak, Data Science & Big Data\n',
-                              ),
-                              TextSpan(
-                                text: 'Mata Kuliah: ',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              TextSpan(
-                                text: 'Jaringan Komputer, Sistem Operasi',
-                              ),
-                            ],
-                          ),
-                          style: TextStyle(fontSize: 14.0, color: Colors.black),
-                        ),
-                        SizedBox(height: 12.0),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {
-                              // "READ MORE" button action
-                            },
-                            child: Text('READ MORE'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
             ),
           ],
         ),

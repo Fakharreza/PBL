@@ -25,7 +25,7 @@ class _RiwayatSertifikasiState extends State<RiwayatSertifikasi> {
 
   /// Fungsi untuk mengambil data sertifikasi dari API
   Future<void> fetchData() async {
-    const String apiUrl = 'http://10.0.2.2:8000/api/sertifikasi'; // Ubah ke IP komputer Anda
+    const String apiUrl = 'http://127.0.0.1:8000/api/sertifikasi'; // Ubah ke IP komputer Anda
 
     try {
       final authService = AuthService();
@@ -70,7 +70,7 @@ class _RiwayatSertifikasiState extends State<RiwayatSertifikasi> {
         backgroundColor: Color(0xFF051C3D), // Dark blue
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          'Data Pelatihan dan Sertifikasi',
+          'Data Sertifikasi',
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
       ),
