@@ -8,6 +8,7 @@ use App\Models\infoPelatihanModel;
 use App\Models\infoSertifikasiModel;
 use App\Models\mataKuliahPelatihanModel;
 use App\Models\mataKuliahSertifikasiModel;
+use App\Models\notifikasiModel;
 use App\Models\penggunaModel;
 use App\Models\pesertaPelatihanModel;
 use App\Models\pesertaSertifikasiModel;
@@ -83,44 +84,44 @@ class accPesertaController extends Controller
     }
 
     public function tampilPeserta($id)
-{
-    // Ambil peserta pelatihan berdasarkan id_info_pelatihan
-    $pesertaPelatihan = pesertaPelatihanModel::where('id_info_pelatihan', $id)
-        ->where('status_acc', '=', null) // Tambahkan kondisi jika diperlukan
-        ->whereHas('pengguna') // Pastikan pengguna ada
-        ->with('pengguna')
-        ->get()
-        ->map(function ($item) {
-            $item->jenis = 'pelatihan';
-            return $item;
-        });
+    {
+        // Ambil peserta pelatihan berdasarkan id_info_pelatihan
+        $pesertaPelatihan = pesertaPelatihanModel::where('id_info_pelatihan', $id)
+            ->where('status_acc', '=', null) // Tambahkan kondisi jika diperlukan
+            ->whereHas('pengguna') // Pastikan pengguna ada
+            ->with('pengguna')
+            ->get()
+            ->map(function ($item) {
+                $item->jenis = 'pelatihan';
+                return $item;
+            });
 
-    // Ambil peserta sertifikasi berdasarkan id_info_sertifikasi
-    $pesertaSertifikasi = pesertaSertifikasiModel::where('id_info_sertifikasi', $id)
-        ->where('status_acc', '=', null) // Filter hanya peserta sertifikasi yang belum disetujui
-        ->whereHas('pengguna') // Pastikan pengguna ada
-        ->with('pengguna')
-        ->get()
-        ->map(function ($item) {
-            $item->jenis = 'sertifikasi';
-            return $item;
-        });
+        // Ambil peserta sertifikasi berdasarkan id_info_sertifikasi
+        $pesertaSertifikasi = pesertaSertifikasiModel::where('id_info_sertifikasi', $id)
+            ->where('status_acc', '=', null) // Filter hanya peserta sertifikasi yang belum disetujui
+            ->whereHas('pengguna') // Pastikan pengguna ada
+            ->with('pengguna')
+            ->get()
+            ->map(function ($item) {
+                $item->jenis = 'sertifikasi';
+                return $item;
+            });
 
-    // Debug hasil query untuk memastikan data benar
-    \Log::info('Filtered Peserta Pelatihan:', $pesertaPelatihan->toArray());
-    \Log::info('Filtered Peserta Sertifikasi:', $pesertaSertifikasi->toArray());
+        // Debug hasil query untuk memastikan data benar
+        \Log::info('Filtered Peserta Pelatihan:', $pesertaPelatihan->toArray());
+        \Log::info('Filtered Peserta Sertifikasi:', $pesertaSertifikasi->toArray());
 
-    // Gabungkan kedua peserta dengan lebih hati-hati
-    $peserta = $pesertaPelatihan->merge($pesertaSertifikasi);
+        // Gabungkan kedua peserta dengan lebih hati-hati
+        $peserta = $pesertaPelatihan->merge($pesertaSertifikasi);
 
-    // Debug gabungan peserta
-    \Log::info('Final Gabungan Peserta:', $peserta->toArray());
+        // Debug gabungan peserta
+        \Log::info('Final Gabungan Peserta:', $peserta->toArray());
 
-    // Tentukan jenis berdasarkan hasil
-    $jenis = $pesertaPelatihan->isNotEmpty() ? 'pelatihan' : 'sertifikasi';
+        // Tentukan jenis berdasarkan hasil
+        $jenis = $pesertaPelatihan->isNotEmpty() ? 'pelatihan' : 'sertifikasi';
 
-    return view('accPeserta.modal_peserta', compact('peserta', 'id', 'jenis'));
-}
+        return view('accPeserta.modal_peserta', compact('peserta', 'id', 'jenis'));
+    }
 
 
     public function ubahPeserta(string $id)
@@ -251,37 +252,61 @@ class accPesertaController extends Controller
     }
 
     public function ubahStatus(Request $request, $id)
-    {
-        $jenis = $request->jenis;
-        $status = $request->status;
+{
+    $jenis = $request->jenis; // Jenis (pelatihan atau sertifikasi)
+    $status = $request->status; // Status (setuju atau ditolak)
 
-        // Tentukan model peserta berdasarkan jenis
-        $modelPeserta = $jenis === 'pelatihan' ? pesertaPelatihanModel::class : pesertaSertifikasiModel::class;
+    // Tentukan model peserta berdasarkan jenis
+    $modelPeserta = $jenis === 'pelatihan' ? pesertaPelatihanModel::class : pesertaSertifikasiModel::class;
 
-        // Validasi status
-        if (!in_array($status, ['setuju', 'ditolak'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Status tidak valid.'
-            ]);
-        }
-
-        // Perbarui status peserta
-        $peserta = $modelPeserta::where($jenis === 'pelatihan' ? 'id_info_pelatihan' : 'id_info_sertifikasi', $id)
-            ->update(['status_acc' => $status]);
-
-        if ($peserta) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Status peserta berhasil diperbarui.'
-            ]);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat mengubah status peserta.'
-            ]);
-        }
+    // Validasi status
+    if (!in_array($status, ['setuju', 'ditolak'])) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Status tidak valid.'
+        ]);
     }
+
+    // Perbarui status peserta
+    $peserta = $modelPeserta::where($jenis === 'pelatihan' ? 'id_info_pelatihan' : 'id_info_sertifikasi', $id)
+        ->update(['status_acc' => $status]);
+
+    if ($peserta) {
+        // Ambil data peserta terkait
+        $pesertaData = $modelPeserta::where($jenis === 'pelatihan' ? 'id_info_pelatihan' : 'id_info_sertifikasi', $id)->get();
+
+        // Kirim notifikasi ke setiap peserta terkait
+        foreach ($pesertaData as $peserta) {
+            $this->buatNotifikasi($peserta->id_pengguna, $status);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status peserta berhasil diperbarui.'
+        ]);
+    } else {
+        return response()->json([
+            'success' => false,
+            'message' => 'Terjadi kesalahan saat mengubah status peserta.'
+        ]);
+    }
+}
+
+
+private function buatNotifikasi($idPengguna, $status)
+{
+    // Buat pesan notifikasi
+    $pesan = $status === 'setuju' 
+        ? 'Status Anda telah disetujui.' 
+        : 'Status Anda telah ditolak.';
+
+    // Simpan notifikasi ke database
+    notifikasiModel::create([
+        'id_pengguna' => $idPengguna,
+        'pesan' => $pesan,
+        'is_read' => false,
+    ]);
+}
 
 
 }

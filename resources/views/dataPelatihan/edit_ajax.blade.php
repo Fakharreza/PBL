@@ -98,4 +98,61 @@
         </div>
     </div>
 </form>
+<script>
+        $(document).ready(function() {
+            $("#form-edit").validate({
+                rules: {
+                    nama_pelatihan: {
+                        required: true,
+                        maxlength: 100
+                    },
+                    id_jenis_pelatihan_sertifikasi: {
+                        required: true,
+                        digits: true
+                    },
+                    id_periode: {
+                        required: true,
+                        digits: true
+                    },
+                    waktu_pelatihan: {
+                        required: true,
+                        date: true
+                    },
+                    lokasi_pelatihan: {
+                        required: true,
+                        maxlength: 100
+                    },
+                },
+                submitHandler: function(form) {
+                    var formData = new FormData(form);
+                    $.ajax({
+                        url: $(form).attr('action'),
+                        method: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            if (response.status) {
+                                $('#myModal').modal('hide');
+                                Swal.fire('Berhasil', response.message, 'success');
+                                dataSertifikasi.ajax.reload();
+                            } else {
+                                if (response.msgField) {
+                                    $.each(response.msgField, function(field, message) {
+                                        $('#error-' + field).text(message[0]);
+                                    });
+                                }
+                                Swal.fire('Gagal', response.message, 'error');
+                            }
+                        },
+                        error: function(xhr) {
+                            Swal.fire('Error', 'Terjadi kesalahan sistem', 'error');
+                        }
+                    });
+                    return false;
+                }
+            });
+        });
+
+    </script>
 @endempty

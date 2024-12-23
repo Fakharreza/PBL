@@ -32,76 +32,82 @@ class suratTugasController extends Controller
     }
 
     public function list(Request $request)
-    {
-        // Get the authenticated user and load the jenisPengguna relation
-        $user = auth()->user()->load('jenisPengguna');
-        $role = $user->jenisPengguna->nama_jenis_pengguna;
-    
-        // Debugging untuk memastikan data role berhasil terambil
-        \Log::info('Role pengguna: ' . $role);
-    
-        // Query untuk pelatihan dengan join ke surat_tugas
-        $infoPelatihan = infoPelatihanModel::join('peserta_pelatihan', 'info_pelatihan.id_info_pelatihan', '=', 'peserta_pelatihan.id_info_pelatihan')
-            ->leftJoin('surat_tugas', 'peserta_pelatihan.id_peserta_pelatihan', '=', 'surat_tugas.id_peserta_pelatihan')
-            ->select(
-                'info_pelatihan.id_info_pelatihan AS id',
-                'info_pelatihan.nama_pelatihan AS nama',
-                \DB::raw("'Pelatihan' AS jenis"),
-                'surat_tugas.file_surat_tugas' // Tambahkan kolom ini untuk pengecekan
-            )
-            ->where('peserta_pelatihan.status_acc', 'setuju');
-    
-        if ($role == 'Dosen') {
-            $infoPelatihan = $infoPelatihan->where('peserta_pelatihan.id_pengguna', $user->id_pengguna);
-        }
-    
-        $infoPelatihan = $infoPelatihan->groupBy('info_pelatihan.id_info_pelatihan', 'info_pelatihan.nama_pelatihan', 'surat_tugas.file_surat_tugas');
-    
-        // Query untuk sertifikasi dengan join ke surat_tugas
-        $infoSertifikasi = infoSertifikasiModel::join('peserta_sertifikasi', 'info_sertifikasi.id_info_sertifikasi', '=', 'peserta_sertifikasi.id_info_sertifikasi')
-            ->leftJoin('surat_tugas', 'peserta_sertifikasi.id_peserta_sertifikasi', '=', 'surat_tugas.id_peserta_sertifikasi')
-            ->select(
-                'info_sertifikasi.id_info_sertifikasi AS id',
-                'info_sertifikasi.nama_sertifikasi AS nama',
-                \DB::raw("'Sertifikasi' AS jenis"),
-                'surat_tugas.file_surat_tugas' // Tambahkan kolom ini untuk pengecekan
-            )
-            ->where('peserta_sertifikasi.status_acc', 'setuju');
-    
-        if ($role == 'Dosen') {
-            $infoSertifikasi = $infoSertifikasi->where('peserta_sertifikasi.id_pengguna', $user->id_pengguna);
-        }
-    
-        $infoSertifikasi = $infoSertifikasi->groupBy('info_sertifikasi.id_info_sertifikasi', 'info_sertifikasi.nama_sertifikasi', 'surat_tugas.file_surat_tugas');
-    
-        // Gabungkan kedua query menggunakan UNION
-        $data = $infoPelatihan->union($infoSertifikasi);
-    
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->addColumn('aksi', function ($row) use ($role) {
-                $btn = '';
-                
-                // Jika pengguna adalah Admin, mereka bisa mengupload dan mendownload PDF
-                if ($role == 'Admin') {
-                    $btn .= '<a href="' . url('/suratTugas/' . $row->jenis . '/' . $row->id . '/export_pdf') . '" target="_blank" class="btn btn-primary btn-sm">Download PDF</a>';
-                    $btn .= '<button onclick="openUploadForm(\'' . $row->jenis . '\', ' . $row->id . ')" class="btn btn-success btn-sm">Upload Surat Tugas</button>';
-                }
-    
-                // Jika pengguna adalah Dosen, mereka bisa mendownload Surat Tugas yang sudah ditandatangani
-                if ($role == 'Dosen') {
-                    if (!empty($row->file_surat_tugas)) {
-                        $btn .= '<a href="' . url('storage/' . $row->file_surat_tugas) . '" class="btn btn-info btn-sm" target="_blank">Download Signed Surat Tugas</a>';
-                    } else {
-                        $btn .= '<button class="btn btn-warning btn-sm" disabled>Waiting for Signature</button>';
-                    }
-                }
-    
-                return $btn;
-            })
-            ->rawColumns(['aksi'])
-            ->make(true);
+{
+    // Get the authenticated user and load the jenisPengguna relation
+    $user = auth()->user()->load('jenisPengguna');
+    $role = $user->jenisPengguna->nama_jenis_pengguna;
+
+    // Debugging untuk memastikan data role berhasil terambil
+    \Log::info('Role pengguna: ' . $role);
+
+    // Query untuk pelatihan dengan join ke surat_tugas
+    $infoPelatihan = infoPelatihanModel::join('peserta_pelatihan', 'info_pelatihan.id_info_pelatihan', '=', 'peserta_pelatihan.id_info_pelatihan')
+        ->leftJoin('surat_tugas', 'peserta_pelatihan.id_peserta_pelatihan', '=', 'surat_tugas.id_peserta_pelatihan')
+        ->select(
+            'info_pelatihan.id_info_pelatihan AS id',
+            'info_pelatihan.nama_pelatihan AS nama',
+            \DB::raw("'Pelatihan' AS jenis"),
+            'surat_tugas.file_surat_tugas' // Tambahkan kolom ini untuk pengecekan
+        )
+        ->where('peserta_pelatihan.status_acc', 'setuju');
+
+    if ($role == 'Dosen') {
+        $infoPelatihan = $infoPelatihan->where('peserta_pelatihan.id_pengguna', $user->id_pengguna);
     }
+
+    $infoPelatihan = $infoPelatihan->groupBy('info_pelatihan.id_info_pelatihan', 'info_pelatihan.nama_pelatihan', 'surat_tugas.file_surat_tugas');
+
+    // Query untuk sertifikasi dengan join ke surat_tugas
+    $infoSertifikasi = infoSertifikasiModel::join('peserta_sertifikasi', 'info_sertifikasi.id_info_sertifikasi', '=', 'peserta_sertifikasi.id_info_sertifikasi')
+        ->leftJoin('surat_tugas', 'peserta_sertifikasi.id_peserta_sertifikasi', '=', 'surat_tugas.id_peserta_sertifikasi')
+        ->select(
+            'info_sertifikasi.id_info_sertifikasi AS id',
+            'info_sertifikasi.nama_sertifikasi AS nama',
+            \DB::raw("'Sertifikasi' AS jenis"),
+            'surat_tugas.file_surat_tugas' // Tambahkan kolom ini untuk pengecekan
+        )
+        ->where('peserta_sertifikasi.status_acc', 'setuju');
+
+    if ($role == 'Dosen') {
+        $infoSertifikasi = $infoSertifikasi->where('peserta_sertifikasi.id_pengguna', $user->id_pengguna);
+    }
+
+    $infoSertifikasi = $infoSertifikasi->groupBy('info_sertifikasi.id_info_sertifikasi', 'info_sertifikasi.nama_sertifikasi', 'surat_tugas.file_surat_tugas');
+
+    // Gabungkan kedua query menggunakan UNION
+    $data = $infoPelatihan->union($infoSertifikasi);
+
+    return DataTables::of($data)
+        ->addIndexColumn()
+        ->addColumn('aksi', function ($row) use ($role) {
+            $btn = '';
+
+            // Jika pengguna adalah Admin, mereka bisa mengupload dan mendownload PDF
+            if ($role == 'Admin') {
+                $btn .= '<a href="' . url('/suratTugas/' . $row->jenis . '/' . $row->id . '/export_pdf') . '" target="_blank" class="btn btn-primary btn-sm">Download PDF</a>';
+                $btn .= '<button onclick="openUploadForm(\'' . $row->jenis . '\', ' . $row->id . ')" class="btn btn-success btn-sm">Upload Surat Tugas</button>';
+            }
+
+            // Jika pengguna adalah Dosen, mereka bisa mendownload Surat Tugas yang sudah ditandatangani
+            if ($role == 'Dosen') {
+                if (!empty($row->file_surat_tugas)) {
+                    $btn .= '<a href="' . url('storage/' . $row->file_surat_tugas) . '" class="btn btn-info btn-sm" target="_blank">Download Signed Surat Tugas</a>';
+                } else {
+                    $btn .= '<button class="btn btn-warning btn-sm" disabled>Waiting for Signature</button>';
+                }
+            }
+
+            // Jika pengguna adalah Pimpinan, mereka hanya bisa mendownload template
+            if ($role == 'Pimpinan') {
+                $btn .= '<a href="' . url('/suratTugas/' . $row->jenis . '/' . $row->id . '/export_pdf') . '" target="_blank" class="btn btn-primary btn-sm">Download PDF</a>';
+            }
+
+            return $btn;
+        })
+        ->rawColumns(['aksi'])
+        ->make(true);
+}
+
     
 
 
@@ -214,10 +220,11 @@ public function upload_surat(Request $request, $jenis, $id)
             }
         }
 
-        return redirect()->route('suratTugas.index')->with('success', 'Surat Tugas berhasil diupload');
+        return response()->json(['success' => true, 'message' => 'Surat Tugas berhasil diupload']);
     }
 
-    return redirect()->back()->with('error', 'Gagal mengupload surat tugas');
+    return response()->json(['success' => false, 'message' => 'Gagal mengupload surat tugas']);
 }
+
 
 }
