@@ -8,12 +8,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use App\Models\jenisPenggunaModel;
-
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class penggunaModel extends Authenticatable
+class penggunaModel extends Authenticatable implements JWTSubject
 {
-    use HasFactory;
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
 
     protected $table = 'pengguna';
     protected $primaryKey = 'id_pengguna';

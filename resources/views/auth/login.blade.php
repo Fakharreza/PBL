@@ -274,12 +274,6 @@
                 <button type="submit" class="btn">
                     Sign In
                 </button>
-                <div class="register-link">
-                    Belum punya akun?
-                    <a href="{{ url('register') }}">
-                        Daftar Sekarang
-                    </a>
-                </div>
             </form>
         </div>
     </div>

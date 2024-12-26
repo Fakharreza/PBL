@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pbl/pages/data_serpel.dart';
+
+import 'package:pbl/pages/dataku_page.dart';
 import 'package:pbl/pages/detail_surat_tugas.dart';
 import 'package:pbl/pages/dosen_home.dart';
 import 'package:pbl/pages/info_serpel.dart';
@@ -128,7 +129,7 @@ class SuratTugas extends StatelessWidget {
             // Navigasi ke halaman profile
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => DataSerpel()),
+              MaterialPageRoute(builder: (context) => Dataku()),
             );
           }else if (index == 4) {
             // Navigasi ke halaman profile

@@ -137,7 +137,7 @@ class DataSertifikasiController extends Controller
         $jenisPelatihan = JenisPelatihanModel::all();
         $periode = PeriodeModel::all();
 
-        return view('dataSertifikasi.edit_ajax', compact('dataSertifikasi', 'pengguna', 'jenisPelatihan', 'periode'));
+        return view('dataSertifikasi.edit_ajax', ['dataSertifikasi' => $dataSertifikasi, 'pengguna' => $pengguna, 'jenisPelatihan' => $jenisPelatihan, 'periode' => $periode]);
     }
     public function update_ajax(Request $request, $id)
     {

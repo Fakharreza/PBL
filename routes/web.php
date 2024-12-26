@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\jenisPenggunaController;
 use App\Http\Controllers\JenisPelatihanController;
+use App\Http\Controllers\notifikasiController;
 use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BidangMinatController;
@@ -271,6 +272,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/export_excel', [DataSertifikasiController::class, 'export_excel']);      // export excel
         Route::get('/export_pdf', [DataSertifikasiController::class, 'export_pdf']); // export pdf
     });
+
+    Route::group(['prefix' => 'statistikSertifikasi', 'middleware' => ['authorize:ADM,PMN']], function () {
+        Route::get('/', [statistikSertifikasiController::class, 'index'])->name('statistikSertifikasi.index');
+        Route::get('/show_ajax/{id}', [statistikSertifikasiController::class, 'showAjax'])->name('statistikSertifikasi.show');
+        Route::get('/detail/{id}', [statistikSertifikasiController::class, 'getDetailPelatihan'])
+        ->name('statistikSertifikasi.detailPelatihan');    
+    });
+
     Route::group(['prefix' => 'daftarPelatihanSertifikasi', 'middleware' => ['authorize:ADM,DSN,PMN']], function () {
         Route::get('/', [daftarPelatihanSertifikasiController::class, 'index']); // Halaman awal
         Route::get('/list', [daftarPelatihanSertifikasiController::class, 'list']); // List pelatihan dan sertifikasi
@@ -306,4 +315,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/detail/{id}', [statistikSertifikasiController::class, 'getDetailPelatihan'])
         ->name('statistikSertifikasi.detailPelatihan');    
     });
+
+    Route::group(['prefix' => 'notifikasi', 'middleware' => ['authorize:SADM,ADM,DSN,PMN']], function() {
+        Route::get('/', [notifikasiController::class, 'index'])->name('notifikasi.index');
+        Route::get('/{id}', [notifikasiController::class, 'show'])->name('notifikasi.show');
+        Route::post('/mark-all-as-read', [notifikasiController::class, 'markAllAsRead'])->name('notifikasi.markAllAsRead');
+    });
+
 });

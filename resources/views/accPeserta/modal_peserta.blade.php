@@ -37,38 +37,68 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-        // Handler for Setuju and Tolak buttons
-        $('#btn-setuju, #btn-tolak').on('click', function () {
-            var id = $(this).data('id');
-            var jenis = $(this).data('jenis');
-            var status = $(this).attr('id') === 'btn-setuju' ? 'setuju' : 'ditolak';
+   $(document).ready(function () {
+    // Handler untuk tombol Setuju dan Tolak
+    $('#btn-setuju, #btn-tolak').on('click', function () {
+        var id = $(this).data('id');
+        var jenis = $(this).data('jenis');
+        var status = $(this).attr('id') === 'btn-setuju' ? 'setuju' : 'ditolak';
 
-            if (!confirm(`Apakah Anda yakin ingin mengubah status seluruh peserta menjadi "${status}"?`)) {
-                return;
-            }
-
-            $.ajax({
-                url: `accPeserta/${id}/ubah_status`,
-                type: 'POST',
-                data: {
-                    status: status,
-                    jenis: jenis,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function (response) {
-                    if (response.success) {
-                        alert(response.message);
-                        $('#myModal').modal('hide');
-                        location.reload();
-                    } else {
-                        alert(response.message);
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: `Apakah Anda yakin ingin mengubah status seluruh peserta menjadi "${status}"?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Ubah Status!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `accPeserta/${id}/ubah_status`,
+                    type: 'POST',
+                    data: {
+                        status: status,
+                        jenis: jenis,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: response.message,
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                            $('#myModal').modal('hide');
+                            setTimeout(() => {
+                                location.reload();
+                            }, 2000);
+                        } else {
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: response.message,
+                                icon: 'error',
+                                timer: 3000,
+                                showConfirmButton: false
+                            });
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            title: 'Terjadi Kesalahan!',
+                            text: 'Silakan coba lagi.',
+                            icon: 'error',
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
                     }
-                },
-                error: function (xhr) {
-                    alert('Terjadi kesalahan. Silakan coba lagi.');
-                }
-            });
+                });
+            }
         });
     });
+});
+
 </script>
