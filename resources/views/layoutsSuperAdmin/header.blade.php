@@ -1,4 +1,4 @@
-<nav class="main-header navbar navbar-expand-md navbar-dark" style="background-color: #1E3A8A;">
+<nav class="main-header navbar navbar-expand-md navbar-dark" style="background-color: #1B3767;">
   <div class="container-fluid">
     <!-- Sidebar Toggle (Jika diperlukan) -->
     <a class="nav-link text-white" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
@@ -21,6 +21,7 @@
       <span class="dropdown-item {{ $notif->is_read ? 'text-muted' : '' }}">
       {{ $notif->pesan }}
       <small class="text-muted float-end">{{ $notif->created_at->diffForHumans() }}</small>
+
       </span>
       </li>
     @endforeach
